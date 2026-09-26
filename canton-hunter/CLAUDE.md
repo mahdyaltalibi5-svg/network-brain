@@ -50,14 +50,20 @@ Read these before writing code:
   `zodOutputFormat`). Web research uses the `web_search_20260209` server tool. Before writing
   any Claude API code, load the `claude-api` skill to check current API shapes.
 
-## Commands
+## Commands (run from canton-hunter/)
 
-Fill these in as the scaffold lands (ticket M0-2):
-- `pnpm -C packages/core test`: core unit tests (vitest). They must pass before every commit.
-- `pnpm -C apps/mobile typecheck` and `pnpm -C apps/mobile lint`
-- `supabase db reset`: apply migrations and seed locally
-- `supabase functions serve`: run the Edge Functions locally
-- `eas build -p ios --profile preview` and `eas update --branch production`
+- `pnpm test`: core unit tests (vitest). They must pass before every commit. This includes a check
+  that `supabase/functions/_shared/core` is an up-to-date copy of core.
+- `pnpm sync:core`: run after editing `packages/core` (it copies core into the Edge Functions).
+- `pnpm gen:seed`: regenerate `supabase/seed.sql` after changing config defaults in core.
+- `pnpm test:db`: applies every migration to a throwaway local Postgres 16 and runs
+  `supabase/tests/db_test.sql`.
+- `pnpm check:functions`: Deno type-check of the Edge Functions.
+- `pnpm -C apps/mobile typecheck`, plus
+  `cd apps/mobile && npx expo export --platform ios --output-dir /tmp/x` (a full Metro bundle check).
+- `cd apps/mobile && npx expo-doctor`
+- Deploy and ship: see docs/SETUP.md (`supabase db push`, `supabase functions deploy`,
+  `eas build`, `eas update`).
 
 ## Conventions
 

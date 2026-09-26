@@ -100,35 +100,50 @@ multi-tenant support.
 ## 4. Offline-first sync
 
 ### 4.1 Principles
-- The **device SQLite is the source of truth for the UI**. Screens read only local data.
-- Every row gets a client UUID v7 (time-sortable). There are no server-generated IDs for user data.
-- Writes go to the local table **and** to `outbox(id, table, row_id, op, payload, attempts,
-  last_error)` in the same SQLite transaction.
-- Conflicts are resolved **last-write-wins per row** by `updated_at`, which is set on the client
-  and fixed by the server if clock skew exceeds 24h. Almost all data is append-mostly and
-  single-author, so this is good enough.
-- Deletes are soft: `deleted_at` is set, and the row syncs like any other change.
+- The **device SQLite is the source of truth for the UI**. Screens read only local data, which is
+  held in memory, so they render instantly.
+- Every row gets a client UUID v7 (time-sortable). User data never gets a server-generated ID.
+- Writes go to the local row **and** to `outbox(seq, tbl, row_id, patch)` in the same SQLite
+  transaction.
+- **Patches, not whole rows.**
+  - An outbox entry holds only the columns that changed. A new row is the exception: its entry is
+    the full row.
+  - The server applies each patch's columns as they arrive, so two people editing different
+    fields of the same find never overwrite each other.
+  - A stale device can't erase an AI fill, because AI columns are server-only (see
+    `sync_protected_columns`). The server's AI writes never touch `updated_at`, which is the
+    device's clock.
+  - If two people change the **same** column, the change that reaches the server last wins. With
+    3 users that is acceptable.
+- Deletes are soft: `deleted_at` is set, and it syncs like any other change.
 
 ### 4.2 Push (device → server)
-- The sync loop runs when the app is foregrounded, on network regain (NetInfo), every 30s while
+- **When it runs:** on app foreground, when the network comes back (NetInfo), every 30s while
   online, and in a background task (expo-background-task, best effort).
-- It sends batches of up to 100 outbox entries to `rpc sync_push(changes jsonb)`. That RPC is a
-  Postgres function that upserts each row with `ON CONFLICT (id) DO UPDATE ... WHERE
-  excluded.updated_at > t.updated_at`. It returns accepted and rejected IDs.
-- Accepted entries are deleted from the outbox. Failures back off exponentially. The UI shows a
-  small sync badge ("12 waiting").
+- **What it sends:** up to 300 outbox entries per batch. Patches are merged per row
+  (`mergePatches`) and ordered parents-first, so finds go before media.
+- **The server side:** `rpc sync_push(changes)` updates the columns sent, or inserts the row if
+  it's new. It returns accepted IDs and per-row errors.
+- **Results:** accepted entries are deleted from the outbox. Rejected ones keep their error, are
+  retried, and show up in More → Sync.
 
 ### 4.3 Pull (server → device)
-- `rpc sync_pull(since timestamptz)` returns changed rows from all synced tables, where
-  `server_updated_at > since`. The column is set by a trigger so client clock skew can't break it.
-- Pull also runs when a Realtime event arrives, so teammates' finds show up live.
+- `rpc sync_pull(cursors, lim, overlap_seconds)` returns changed rows from every synced table, with
+  one cursor per table on `server_updated_at`. A trigger sets that column with `clock_timestamp()`,
+  so the phone's clock doesn't matter.
+- The first page re-reads a 10s overlap to catch rows committed out of order. Merging is
+  idempotent, so re-reads are harmless.
+- **Merging on the device:** take the server row, then re-apply this phone's still-pending patches
+  on top (`applyPending`).
+- A Realtime event on finds, scores, research, votes or pings triggers a pull, so teammates'
+  finds show up live.
 
 ### 4.4 Media
 1. The capture saves files to `documentDirectory/media/<uuid>.jpg|mp4|m4a` and inserts a `media`
    row with `upload_state='pending'`.
-2. The uploader asks the Edge Function `media-sign` for a signed upload URL (Storage
-   `createSignedUploadUrl`), then calls `FileSystem.uploadAsync(url, fileUri, { sessionType:
-   BACKGROUND, httpMethod: 'PUT' })`.
+2. The uploader shrinks photos to 1600px JPEG, then asks the `api` Edge Function
+   (`action: media_sign`) for a signed upload URL. It sends the file with the expo-file-system
+   `File.upload(url, { httpMethod: 'PUT', sessionType: 'background' })`.
 3. On success it sets `upload_state='uploaded'` and syncs the row. The server trigger enqueues AI
    jobs only once all required media for a find is uploaded.
 4. **The local file is never deleted automatically in v1.** Phones have room. An "Free up space"

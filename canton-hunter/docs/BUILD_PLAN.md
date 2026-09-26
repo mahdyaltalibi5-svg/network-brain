@@ -4,6 +4,33 @@ Today: Sat Sep 26, 2026. Flight: Wed Oct 28. Work tickets in order. Each ticket 
 its acceptance criteria (AC) pass and core tests are green. After **Oct 25 (Capture freeze)**, the
 capture path ships only critical fixes, through EAS Update.
 
+## Status (updated 2026-09-26)
+
+Code for M0–M5 is written. What was verified in the build environment:
+- Core logic: 41 unit tests pass.
+- Database: all migrations apply to Postgres 16, and the RLS, sync, job queue, triggers and launch
+  state machine tests pass.
+- Edge Functions: Deno type-check passes.
+- iPhone app: TypeScript passes, a full iOS Metro bundle builds, and expo-doctor passes 21/21.
+
+**Not verified yet.** These need real accounts and real phones, so they are the work for the next
+three weeks:
+
+| Needs | Tickets |
+|---|---|
+| Humans create accounts (docs/SETUP.md, docs/PRE_TRIP.md) | M0-1, M0-6 |
+| First TestFlight build on real iPhones | M0-6, then every AC that says "on a real iPhone" |
+| A live Anthropic key: tune prompts on 10 real business cards | M2-2 AC, M3-3 AC |
+| A Shopify store and Meta ad account | M5-3 AC, M5-4 AC |
+| **The field test (Oct 18–20)** | the whole capture path |
+
+Known gaps to watch during the field test:
+- Swipe gestures in Nightly Review are buttons for now.
+- Photos taken on a teammate's phone show only after that phone uploads them.
+- Voice audio stays on the phone that recorded it; only the transcript syncs.
+- The sync push is best-effort in the background: iOS decides when background tasks run, so open
+  the app to force a sync.
+
 | Milestone | Dates | Outcome |
 |---|---|---|
 | M0 Foundations | Sep 27 – Sep 29 | Scaffold, Supabase schema, auth, TestFlight build on all 3 phones |

@@ -1,0 +1,112 @@
+{%- comment -%}
+  Canton Hunter test product page. Products created by the app use template suffix "test-product".
+  Content comes from product metafields in namespace "canton" (set by the launch_build job):
+    mode (waitlist|preorder), ship_by (text), angles (json), faq (json), bullets (json), positioning (json)
+  Waitlist mode: no checkout. The customer form saves the email with tag waitlist-<handle>, which the app counts.
+  Preorder mode: normal add-to-cart with an honest ship-by date shown on the page and on the line item.
+{%- endcomment -%}
+{%- liquid
+  assign m = product.metafields.canton
+  assign mode = m.mode.value | default: 'waitlist'
+  assign ship_by = m.ship_by.value
+  assign angles = m.angles.value
+  assign faq = m.faq.value
+  assign bullets = m.bullets.value
+  assign variant = product.selected_or_first_available_variant
+-%}
+<div class="ch-page">
+  <div class="ch-hero">
+    <div class="ch-media">
+      {%- for media in product.media limit: 6 -%}
+        <img src="{{ media | image_url: width: 1200 }}" alt="{{ media.alt | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="1200" height="1200">
+      {%- endfor -%}
+    </div>
+    <div class="ch-info">
+      <h1>{{ product.title }}</h1>
+      <div class="ch-price">
+        {{ variant.price | money }}
+        {%- if variant.compare_at_price > variant.price -%}<s>{{ variant.compare_at_price | money }}</s>{%- endif -%}
+      </div>
+      {%- if bullets -%}
+        <ul class="ch-bullets">{%- for b in bullets -%}<li>{{ b | escape }}</li>{%- endfor -%}</ul>
+      {%- endif -%}
+
+      {%- if mode == 'preorder' -%}
+        {%- form 'product', product, class: 'ch-form' -%}
+          <input type="hidden" name="id" value="{{ variant.id }}">
+          <input type="hidden" name="properties[Preorder]" value="Ships by {{ ship_by }}">
+          <button type="submit" class="ch-btn">Preorder now</button>
+          <p class="ch-note">Preorder: ships by <strong>{{ ship_by }}</strong>. If anything changes we’ll email you and you can get a full refund.</p>
+        {%- endform -%}
+      {%- else -%}
+        {%- form 'customer', class: 'ch-form', id: 'ch-waitlist' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="ch-ok">You’re on the list! We’ll email you the early-bird price first.</p>
+          {%- else -%}
+            <input type="hidden" name="contact[tags]" value="waitlist-{{ product.handle }},waitlist">
+            <input type="email" name="contact[email]" required placeholder="Your email" class="ch-input" autocomplete="email">
+            <button type="submit" class="ch-btn">Get early access</button>
+            <p class="ch-note">Launching soon (expected {{ ship_by }}). Join the list for the early-bird price. No spam.</p>
+          {%- endif -%}
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if angles -%}
+    <div class="ch-angles">
+      {%- for a in angles -%}
+        <div class="ch-angle"><h3>{{ a.name | escape }}</h3><p>{{ a.pitch | escape }}</p></div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="ch-desc">{{ product.description }}</div>
+
+  {%- if faq -%}
+    <div class="ch-faq">
+      <h2>FAQ</h2>
+      {%- for q in faq -%}
+        <details><summary>{{ q.q | escape }}</summary><p>{{ q.a | escape }}</p></details>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  // Tell Meta a lead happened (the Shopify Facebook channel handles page views / purchases).
+  document.getElementById('ch-waitlist')?.addEventListener('submit', function () {
+    try { if (window.fbq) window.fbq('track', 'Lead'); } catch (e) {}
+  });
+</script>
+
+<style>
+  .ch-page { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; font-size: 17px; line-height: 1.5; }
+  .ch-hero { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 800px) { .ch-hero { grid-template-columns: 1.1fr 1fr; } }
+  .ch-media { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; border-radius: 16px; }
+  .ch-media img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; scroll-snap-align: start; border-radius: 16px; }
+  .ch-info h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; }
+  .ch-price { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+  .ch-price s { opacity: .5; font-weight: 400; margin-left: 8px; font-size: 18px; }
+  .ch-bullets { padding-left: 20px; margin: 0 0 16px; }
+  .ch-bullets li { margin-bottom: 6px; }
+  .ch-form { display: grid; gap: 10px; }
+  .ch-input { padding: 14px; font-size: 17px; border: 1px solid #ccc; border-radius: 10px; }
+  .ch-btn { padding: 16px; font-size: 18px; font-weight: 700; border: 0; border-radius: 12px; background: #111; color: #fff; cursor: pointer; }
+  .ch-note { font-size: 14px; opacity: .75; margin: 0; }
+  .ch-ok { font-weight: 700; color: #137a3e; }
+  .ch-angles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 40px 0; }
+  .ch-angle { background: #f5f5f5; border-radius: 14px; padding: 16px; }
+  .ch-angle h3 { margin: 0 0 6px; font-size: 18px; }
+  .ch-desc { margin: 24px 0; }
+  .ch-faq details { border-bottom: 1px solid #e5e5e5; padding: 12px 0; }
+  .ch-faq summary { font-weight: 600; cursor: pointer; }
+</style>
+
+{% schema %}
+{
+  "name": "Canton test product",
+  "settings": []
+}
+{% endschema %}

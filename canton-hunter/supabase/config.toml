@@ -418,6 +418,8 @@ enabled = true
 # worker is called by pg_cron with a shared secret header, not a user JWT.
 [functions.worker]
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.api]
 verify_jwt = true
+import_map = "./functions/deno.json"

@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "canton-test-product", "settings": {} }
+  },
+  "order": ["main"]
+}
