@@ -6,7 +6,7 @@ test page plus a paused $10/day Meta campaign.
 
 | Where | What |
 |---|---|
-| `apps/mobile` | Expo iPhone app (capture, feed, deal room, review, content, launch, tools) |
+| `apps/mobile` | Expo app for iPhone **and** web: **Journal** (log products with a + form; photo fields open the camera), **Build** (search a product, follow the 8 steps: numbers → sample → supplier → landing page → ads → $10/day test → decide → order), and **Tools** |
 | `supabase/` | Postgres schema + sync RPCs + job queue, Edge Functions (`worker`, `api`) |
 | `packages/core` | Shared logic: schemas, landed cost, scorecard, dedupe, kill rules, sync |
 | `shopify-theme/` | Test-product page template |

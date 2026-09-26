@@ -348,3 +348,16 @@ export const FollowupDraft = z.object({
   asks: z.array(z.string()).describe("Each concrete thing we are asking for, in English"),
 });
 export type FollowupDraft = z.infer<typeof FollowupDraft>;
+
+/** The Build guide: the steps that turn a find into a tested product. Order matters. */
+export const BUILD_STEPS = [
+  { key: "numbers", title: "Check the numbers", why: "Make sure it can make money after freight, tariffs, fees and ads." },
+  { key: "sample", title: "Get a sample", why: "Never sell what you haven't held. Film real content with it." },
+  { key: "supplier", title: "Vet the supplier", why: "Confirm they're real, can deliver, and take safe payment." },
+  { key: "website", title: "Build the landing page", why: "One page on your store: waitlist or preorder, honest ship date." },
+  { key: "ads", title: "Make the ads", why: "Real footage beats AI images. Shoot the scripts below." },
+  { key: "launch", title: "Launch the $10/day test", why: "Five to seven days on Meta. Nothing spends until you tap Go live." },
+  { key: "decide", title: "Read the results and decide", why: "Kill fast if it doesn't work; scale if it does." },
+  { key: "order", title: "Place the first order", why: "Only after the test wins and the supplier is vetted." },
+] as const;
+export type BuildStepKey = (typeof BUILD_STEPS)[number]["key"];

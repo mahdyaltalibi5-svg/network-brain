@@ -1,2 +1,2 @@
-import { CaptureScreen } from "@/features/capture";
-export default CaptureScreen;
+import { JournalScreen } from "@/features/journal";
+export default JournalScreen;

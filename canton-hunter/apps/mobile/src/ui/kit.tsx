@@ -3,9 +3,10 @@
  * near-black text, one accent (ink). Color only carries meaning (good / bad / warning), never decoration.
  */
 import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import type { ReactNode } from "react";
 import {
-  ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
+  ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View,
   type StyleProp, type TextInputProps, type TextStyle, type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,12 +29,60 @@ export const C = {
   onAccent: "#FFFFFF",
 };
 
-export function Screen({ children, scroll = true, pad = true, style }: { children: ReactNode; scroll?: boolean; pad?: boolean; style?: StyleProp<ViewStyle> }) {
+export const isWeb = Platform.OS === "web";
+
+/** Wide layout (desktop web / iPad): more columns, centered content. */
+export function useWide(): { wide: boolean; cols: number } {
+  const { width } = useWindowDimensions();
+  return { wide: width >= 820, cols: width >= 1180 ? 3 : width >= 820 ? 2 : 1 };
+}
+
+export const MAX_WIDTH = 1120;
+
+export function Screen({ children, scroll = true, pad = true, style, narrow }: { children: ReactNode; scroll?: boolean; pad?: boolean; style?: StyleProp<ViewStyle>; narrow?: boolean }) {
   const insets = useSafeAreaInsets();
-  const inner = [{ paddingTop: insets.top + 12, paddingBottom: insets.bottom + 90, paddingHorizontal: pad ? 20 : 0 }, style];
+  const inner = [{ paddingTop: isWeb ? 28 : insets.top + 8, paddingBottom: insets.bottom + (isWeb ? 60 : 110), paddingHorizontal: pad ? 20 : 0,
+    width: "100%" as const, maxWidth: narrow ? 760 : MAX_WIDTH, alignSelf: "center" as const }, style];
   return scroll
     ? <ScrollView style={s.screen} contentContainerStyle={inner} keyboardShouldPersistTaps="handled">{children}</ScrollView>
     : <View style={[s.screen, ...inner]}>{children}</View>;
+}
+
+/** Page title with optional back link and actions. Replaces the native header so web and phone look the same. */
+export function PageHeader({ title, subtitle, back, right }: { title: string; subtitle?: string; back?: string; right?: ReactNode }) {
+  return (
+    <View style={{ marginBottom: 20 }}>
+      {back ? (
+        <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))} style={{ alignSelf: "flex-start", paddingVertical: 6, marginBottom: 4 }}>
+          <T size={15} dim>‹ {back}</T>
+        </Pressable>
+      ) : null}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <T size={30} bold style={{ flex: 1, fontWeight: "700" }} numberOfLines={2}>{title}</T>
+        {right}
+      </View>
+      {subtitle ? <T dim size={15} style={{ marginTop: 4 }}>{subtitle}</T> : null}
+    </View>
+  );
+}
+
+/** Floating "+" on phones. */
+export function Fab({ onPress, label = "+" }: { onPress: () => void; label?: string }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [{ position: "absolute", right: 20, bottom: insets.bottom + 84, width: 60, height: 60, borderRadius: 30,
+      backgroundColor: C.text, alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.18, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }, pressed && { opacity: 0.85 }]}>
+      <T size={30} style={{ color: C.onAccent, marginTop: -3 }}>{label}</T>
+    </Pressable>
+  );
+}
+
+/** Search box. */
+export function SearchBar({ value, onChangeText, placeholder }: { value: string; onChangeText: (v: string) => void; placeholder: string }) {
+  return (
+    <TextInput value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor="#A8A4A0" clearButtonMode="always"
+      style={[s.input, { fontSize: 16, paddingVertical: 13, marginBottom: 16 }]} />
+  );
 }
 
 export function T({ children, style, dim, size = 16, bold, numberOfLines, selectable }: {

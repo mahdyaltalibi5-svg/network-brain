@@ -12,7 +12,9 @@ import { setMe } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { startSync } from "@/lib/sync";
 import { Login } from "@/features/login";
-import { C, Screen, T } from "@/ui/kit";
+import { C, isWeb, Screen, T } from "@/ui/kit";
+import { WebNav } from "@/ui/webNav";
+import { View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,22 +50,13 @@ export default function RootLayout() {
         ) : !session ? (
           <Login />
         ) : (
-          <Stack screenOptions={{ headerStyle: { backgroundColor: C.bg }, headerTintColor: C.text, headerShadowVisible: false, contentStyle: { backgroundColor: C.bg }, headerBackTitle: "Back" }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="find/[id]" options={{ title: "Find" }} />
-            <Stack.Screen name="launch/[id]" options={{ title: "Launch" }} />
-            <Stack.Screen name="review" options={{ title: "Nightly Review" }} />
-            <Stack.Screen name="phrasebook" options={{ title: "Supplier Questions", presentation: "modal" }} />
-            <Stack.Screen name="translate" options={{ title: "Quick Translate" }} />
-            <Stack.Screen name="hunt" options={{ title: "Hunt List" }} />
-            <Stack.Screen name="halls" options={{ title: "Hall Plan" }} />
-            <Stack.Screen name="samples" options={{ title: "Samples & Packing" }} />
-            <Stack.Screen name="suppliers" options={{ title: "Suppliers" }} />
-            <Stack.Screen name="settings" options={{ title: "Settings & Verify" }} />
-            <Stack.Screen name="sync" options={{ title: "Sync" }} />
-            <Stack.Screen name="followups" options={{ title: "Follow-ups" }} />
-            <Stack.Screen name="dashboard" options={{ title: "Trip Dashboard" }} />
-          </Stack>
+          <View style={{ flex: 1, backgroundColor: C.bg }}>
+            {isWeb ? <WebNav /> : null}
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg } }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="new" options={{ presentation: isWeb ? "card" : "modal" }} />
+            </Stack>
+          </View>
         )}
       </ThemeProvider>
     </GestureHandlerRootView>

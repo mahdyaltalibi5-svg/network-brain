@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { supabase } from "./supabase";
 import { syncSoon } from "./sync";
+import { all } from "./store";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
@@ -24,10 +25,10 @@ export function listenForTaps(): () => void {
   const sub = Notifications.addNotificationResponseReceivedListener((resp) => {
     const d = resp.notification.request.content.data as { type?: string; find_id?: string; launch_id?: string };
     syncSoon(0);
-    if (d.find_id) router.push(`/find/${d.find_id}`);
-    else if (d.launch_id) router.push(`/launch/${d.launch_id}`);
-    else if (d.type === "digest") router.push("/deals");
-    else if (d.type === "content") router.push("/content");
+    const launch = d.launch_id ? all("launches").find((l) => l.id === d.launch_id) : undefined;
+    if (launch) router.push(`/build/${launch.find_id}`);
+    else if (d.find_id) router.push(`/find/${d.find_id}`);
+    else if (d.type === "digest" || d.type === "content") router.push("/");
     else if (d.type === "followups") router.push("/followups");
   });
   return () => sub.remove();

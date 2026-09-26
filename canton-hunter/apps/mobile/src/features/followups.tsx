@@ -7,7 +7,7 @@ import { findTitle } from "@/lib/data";
 import { all, get, insert, myId, patch, useTable, type Row } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { syncNow, syncSoon } from "@/lib/sync";
-import { Badge, Button, C, Card, Chip, Empty, Field, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { Badge, Button, C, Card, Chip, Empty, Field, Row as HRow, Screen, Section, T, PageHeader } from "@/ui/kit";
 
 const ACTIVE = ["shortlisted", "quote_requested", "quote_received", "sample_requested", "sample_in_hand", "testing", "negotiating"];
 const PURPOSES = ["quote", "sample", "negotiate", "order"] as const;
@@ -121,6 +121,7 @@ export function FollowupsScreen() {
 
   return (
     <Screen>
+      <PageHeader title="Follow-ups" back="Tools" />
       <T dim>Suppliers with shortlisted products get a bilingual message. Copy the 中文, paste in WeChat, mark sent.</T>
       {needs.length ? (
         <Section title={`Needs a follow-up (${needs.length})`}>

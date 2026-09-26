@@ -1,14 +1,14 @@
 import { eff, scoreFind, STAGES, type CostOverrides, type FreightMode } from "@canton/core";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Linking, ScrollView, Switch, View } from "react-native";
 import { findCategory, findDescription, findTitle, formatMoney, GUT_EMOJI, mediaFor, useConfig, useMediaSource, usePeople } from "@/lib/data";
 import { all, insert, myId, patch, softDelete, useRow, useTable, type Row } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { syncSoon } from "@/lib/sync";
-import { Badge, Button, C, Card, Chip, Field, KV, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { Badge, Button, C, Card, Chip, Field, KV, PageHeader, Row as HRow, Screen, Section, T } from "@/ui/kit";
 import { CompareSection } from "./compare";
 import { requestDraft } from "./followups";
 
@@ -16,8 +16,10 @@ const copy = (v: string) => { void Clipboard.setStringAsync(v); Alert.alert("Cop
 
 function Photo({ m }: { m: Row }) {
   const src = useMediaSource(m);
-  return src ? <Image source={src} style={{ width: 280, height: 280, borderRadius: 16, backgroundColor: C.card2 }} contentFit="cover" cachePolicy="disk" />
-    : <View style={{ width: 280, height: 280, borderRadius: 16, backgroundColor: C.card2, alignItems: "center", justifyContent: "center" }}><T dim>{m.upload_state === "uploaded" ? "Loading…" : "On teammate's phone"}</T></View>;
+  const card = m.kind === "card_photo";
+  const box = { width: card ? 420 : 300, height: card ? 252 : 300, borderRadius: 14, backgroundColor: C.card2 };
+  return src ? <Image source={src} style={box} contentFit={card ? "contain" : "cover"} cachePolicy="disk" />
+    : <View style={[box, { alignItems: "center", justifyContent: "center" }]}><T dim>{m.upload_state === "uploaded" ? "Loading…" : "On teammate's phone"}</T></View>;
 }
 
 /** Text/number field that saves when you finish editing. */
@@ -63,7 +65,7 @@ export function FindDetail({ id }: { id: string }) {
   const [scenario, setScenario] = useState<CostOverrides>(() => (calc?.inputs ?? {}) as CostOverrides);
   const live = useMemo(() => f ? scoreFind(f as never, research as never, votes.map((v) => v.value), cfg, scenario) : null, [f, research, votes.length, cfg, scenario]);
 
-  if (!f) return <Screen><T dim>Not found.</T></Screen>;
+  if (!f) return <Screen><PageHeader title="Not found" back="Journal" /></Screen>;
   const set = (p: Partial<Row>) => patch("finds", f.id, p);
 
   function vote(value: number) {
@@ -131,53 +133,28 @@ export function FindDetail({ id }: { id: string }) {
   const cur = f.fob_currency ?? "USD";
 
   return (
-    <Screen>
-      <Stack.Screen options={{ title: findTitle(f).slice(0, 28) }} />
+    <Screen narrow>
+      <PageHeader title={findTitle(f)} back="Journal"
+        subtitle={[people.get(f.captured_by)?.name, new Date(f.captured_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }), f.gut ? GUT_EMOJI[f.gut] : null, f.booth_code].filter(Boolean).join(" · ")} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
         {photos.map((m) => <Photo key={m.id} m={m} />)}
       </ScrollView>
-      <HRow style={{ marginTop: 10 }}>
-        {f.gut ? <Badge label={GUT_EMOJI[f.gut]!} /> : null}
-        {hasVideo ? <Badge label="video" /> : null}
-        {score ? <Badge label={`Score ${Math.round(score.total)}`} color={score.gates_failed?.length ? C.bad : undefined} /> : null}
-        {f.hunt_item_id ? <Badge label="on hunt list" /> : null}
-        <T dim size={13}>{people.get(f.captured_by)?.name} · {new Date(f.captured_at).toLocaleString()}</T>
+      {f.processing_state === "pending" || f.processing_state === "processing" ? <T dim size={14} style={{ marginTop: 12 }}>The AI is reading the photos and business card…</T> : null}
+
+      <HRow style={{ marginTop: 20 }}>
+        <Button title="Build this product" onPress={() => router.push(`/build/${f.id}`)} />
+        <Button title="Ask team to look" kind="secondary" onPress={ping} />
+        <Button title="Research" kind="secondary" onPress={() => requestJob("research_find")} />
+        {f.processing_state === "error" ? <Button title="Retry AI" kind="secondary" onPress={() => requestJob("process_find")} /> : null}
       </HRow>
 
-      <View style={{ marginTop: 12 }}>
-        <EditField key={`t-${f.title_ai}`} label="Title" value={findTitle(f)} onSave={(v) => set({ title_override: v || null })} />
-      </View>
-
-      <Section title="Team vote">
-        <HRow>
-          {[{ v: -1, l: "Pass" }, { v: 1, l: "Like" }, { v: 2, l: "Must test" }].map((o) => (
-            <Chip key={o.v} label={o.l} active={myVote?.value === o.v} onPress={() => vote(o.v)} color={o.v === -1 ? C.bad : o.v === 2 ? C.accent : C.good} />
-          ))}
-        </HRow>
-        <HRow style={{ marginTop: 8 }}>
-          {votes.map((v) => <Badge key={v.id} label={`${people.get(v.user_id)?.name ?? "?"}: ${v.value === 2 ? "must test" : v.value === 1 ? "like" : v.value === -1 ? "pass" : "—"}`} />)}
-        </HRow>
-      </Section>
-
-      <Section title="Actions">
-        <HRow>
-          <Button title="Ask team to look" kind="secondary" onPress={ping} />
-          <Button title="Research now" kind="secondary" onPress={() => requestJob("research_find")} />
-          {f.processing_state === "error" ? <Button title="Retry AI" kind="secondary" onPress={() => requestJob("process_find")} /> : null}
-          <Button title={launch ? "Open launch" : "Launch this"} onPress={startLaunch} />
-        </HRow>
-      </Section>
-
-      <Section title="Stage">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }}>
-          {STAGES.map((s) => <Chip key={s} label={s.replace(/_/g, " ")} active={f.stage === s} onPress={() => setStage(s)} color={s === "killed" ? C.bad : C.blue} />)}
-        </ScrollView>
-        {f.killed_reason ? <T dim style={{ marginTop: 6 }}>Killed: {f.killed_reason}</T> : null}
+      <Section title="Name">
+        <EditField key={`t-${f.title_ai}`} label="" value={findTitle(f)} onSave={(v) => set({ title_override: v || null })} />
       </Section>
 
       {lowConf.length ? <Card style={{ marginTop: 16 }}><T size={14} style={{ color: C.warn }}>Double-check: {lowConf.join(", ")}</T></Card> : null}
 
-      <Section title="Deal terms">
+      <Section title="Details">
         <HRow gap={8}>
           <View style={{ flex: 2 }}><EditField key={`p-${f.fob_price_cents}`} label={`FOB price (${cur})`} value={f.fob_price_cents != null ? (f.fob_price_cents / 100).toFixed(2) : null} numeric onSave={(v) => set({ fob_price_cents: num(v) == null ? null : Math.round(num(v)! * 100) })} /></View>
           <View style={{ flex: 1 }}>
@@ -202,7 +179,7 @@ export function FindDetail({ id }: { id: string }) {
 
       <CompareSection f={f} />
 
-      <Section title="Landed cost (live)">
+      <Section title="Numbers">
         <HRow>{(["air", "express", "sea"] as FreightMode[]).map((m) => <Chip key={m} label={m} active={(scenario.mode ?? "air") === m} onPress={() => setScenario({ ...scenario, mode: m })} />)}</HRow>
         <HRow gap={8} style={{ marginTop: 8 }}>
           <View style={{ flex: 1 }}><Field label="Qty" keyboardType="number-pad" value={String(scenario.qty ?? live?.costInput?.qty ?? "")} onChangeText={(v) => setScenario({ ...scenario, qty: num(v) ?? undefined })} /></View>
@@ -225,14 +202,7 @@ export function FindDetail({ id }: { id: string }) {
         ) : <T dim>Add a FOB price to see the real margin.</T>}
       </Section>
 
-      {live ? (
-        <Section title={`Score ${Math.round(live.score.total)} (base ${Math.round(live.score.base)} + heat ${live.score.heat_bonus})`}>
-          {live.score.gates_failed.map((g) => <T key={g} style={{ color: C.bad }}>{g}</T>)}
-          <Card>{live.score.breakdown.map((b) => <KV key={b.key} k={`${b.label} ×${b.weight}`} v={`${b.score}${b.unknown ? " (unknown)" : ""}`} />)}</Card>
-        </Section>
-      ) : null}
-
-      <Section title="Research">
+      <Section title="Market research">
         {research?.report ? (
           <Card>
             <T style={{ marginBottom: 8 }}>{research.summary}</T>
@@ -271,7 +241,7 @@ export function FindDetail({ id }: { id: string }) {
         ) : <T dim>{f.processing_state === "done" ? "No business card on this find." : "Reading the business card…"}</T>}
       </Section>
 
-      <Section title="Product">
+      <Section title="Notes & description">
         <EditField key={`desc-${f.description_ai}`} label="Description" value={findDescription(f)} multiline onSave={(v) => set({ description_override: v || null })} />
         <EditField key={`cat-${f.category_ai}`} label="Category" value={findCategory(f)} onSave={(v) => set({ category_override: v || null })} />
         {compliance ? <KV k="Compliance" v={<T bold style={{ color: compliance.risk === "none" ? C.good : compliance.risk === "easy" ? C.warn : C.bad }}>{compliance.risk}{compliance.flags.length ? ` · ${compliance.flags.join(", ")}` : ""}</T>} /> : null}
@@ -280,36 +250,7 @@ export function FindDetail({ id }: { id: string }) {
         {f.transcript ? <Card style={{ marginTop: 8 }}><T dim size={13}>Voice note</T><T selectable>“{f.transcript}”</T></Card> : null}
       </Section>
 
-      {["negotiating", "vetting", "ordered", "qc", "shipped", "landed"].includes(f.stage) ? (
-        <Section title="Vetting (required before ordering)">
-          <Card>
-            {cfg.vetting_checklist.map((i) => (
-              <HRow key={i.key} style={{ justifyContent: "space-between", paddingVertical: 6 }}>
-                <T size={14} style={{ flex: 1 }}>{i.label}</T>
-                <Switch value={!!vetting?.checklist?.[i.key]?.done} onValueChange={(v) => setVet(i.key, v)} />
-              </HRow>
-            ))}
-            <EditField key={`ovr-${vetting?.override_reason}`} label="Override reason (logged, shown in red)" value={vetting?.override_reason}
-              onSave={(v) => vetting ? patch("vetting", vetting.id, { override_reason: v || null }) : insert("vetting", { id: f.id, find_id: f.id, checklist: {}, override_reason: v || null })} />
-          </Card>
-        </Section>
-      ) : null}
-
-      <Section title="Samples" right={<Button title="+ Sample" kind="ghost" onPress={() => insert("samples", { find_id: f.id, supplier_id: f.supplier_id, status: "requested", carried_by: me })} />}>
-        {samples.map((s) => (
-          <Card key={s.id}>
-            <HRow>{["requested", "paid", "in_hand", "shipping", "arrived"].map((st) => <Chip key={st} label={st.replace("_", " ")} active={s.status === st} onPress={() => { patch("samples", s.id, { status: st }); if (st === "in_hand" && ["found", "shortlisted", "quote_requested", "quote_received", "sample_requested"].includes(f.stage)) setStage("sample_in_hand"); }} />)}</HRow>
-            <EditField key={`bag-${s.bag_label}`} label="Which bag?" value={s.bag_label} placeholder="Mahdy – grey suitcase" onSave={(v) => patch("samples", s.id, { bag_label: v || null })} />
-            <HRow>{[...people.entries()].map(([pid, p]) => <Chip key={pid} label={p.name} active={s.carried_by === pid} onPress={() => patch("samples", s.id, { carried_by: pid })} color={p.color} />)}</HRow>
-            <HRow gap={8} style={{ marginTop: 8 }}>
-              <View style={{ flex: 1 }}><EditField key={`paid-${s.paid_cents}`} label="Paid $" value={s.paid_cents != null ? s.paid_cents / 100 : null} numeric onSave={(v) => patch("samples", s.id, { paid_cents: num(v) == null ? null : Math.round(num(v)! * 100) })} /></View>
-              <View style={{ flex: 1 }}><EditField key={`dec-${s.declared_value_cents}`} label="Declared $" value={s.declared_value_cents != null ? s.declared_value_cents / 100 : null} numeric onSave={(v) => patch("samples", s.id, { declared_value_cents: num(v) == null ? null : Math.round(num(v)! * 100) })} /></View>
-            </HRow>
-          </Card>
-        ))}
-      </Section>
-
-      <Button title="Delete this find" kind="ghost" style={{ marginTop: 30 }} onPress={() => Alert.alert("Delete?", "It disappears for everyone.", [
+      <Button title="Delete entry" kind="ghost" style={{ marginTop: 30 }} onPress={() => Alert.alert("Delete?", "It disappears for everyone.", [
         { text: "Cancel", style: "cancel" },
         { text: "Delete", style: "destructive", onPress: () => { softDelete("finds", f.id); router.back(); } },
       ])} />

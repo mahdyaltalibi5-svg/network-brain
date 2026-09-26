@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { fairDay, findTitle, usePeople } from "@/lib/data";
 import { useTable, type Row } from "@/lib/store";
-import { C, Card, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { C, Card, Row as HRow, Screen, Section, T, PageHeader } from "@/ui/kit";
 
 function Tile({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
@@ -84,6 +84,7 @@ export function DashboardScreen() {
 
   return (
     <Screen>
+      <PageHeader title="Trip stats" back="Tools" />
       <HRow gap={10}>
         <Tile label="Finds" value={finds.length} sub={`${d.today} today · ${d.products} distinct products`} />
         <Tile label="Winners" value={d.fire} sub={`${d.processed} processed by AI`} />
