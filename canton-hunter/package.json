@@ -1,0 +1,10 @@
+{
+  "name": "canton-hunter",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "test": "pnpm -C packages/core test",
+    "typecheck": "pnpm -r typecheck",
+    "gen:seed": "node --experimental-strip-types scripts/gen-seed-config.ts"
+  }
+}
