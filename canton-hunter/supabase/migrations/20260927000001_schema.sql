@@ -134,6 +134,7 @@ create table public.finds (
   hall text,
   booth_code text,
   transcript text,
+  qr_payload text,
   gut public.gut,
   title_ai text, title_override text,
   description_ai text, description_override text,

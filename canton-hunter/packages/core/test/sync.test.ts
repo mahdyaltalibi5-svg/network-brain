@@ -59,3 +59,23 @@ describe("AI schemas", () => {
     expect(JSON.stringify(js)).toContain("supplier");
   });
 });
+
+import { mergePatches, applyPending, diffColumns } from "../src/index.ts";
+describe("patches", () => {
+  it("merge in order", () => {
+    const m = mergePatches([
+      { id: "a", updated_at: "2026-10-01T00:00:02Z", gut: "fire" },
+      { id: "b", updated_at: "2026-10-01T00:00:01Z", hall: "9.1" },
+      { id: "a", updated_at: "2026-10-01T00:00:01Z", gut: "meh", hall: "11.2" },
+    ]);
+    expect(m).toHaveLength(2);
+    expect(m[0]).toEqual({ id: "a", updated_at: "2026-10-01T00:00:02Z", gut: "meh", hall: "11.2" });
+  });
+  it("pending patches win over pulled row", () => {
+    const r = applyPending({ id: "a", updated_at: "x", title_ai: "Lamp", gut: "good" }, [{ id: "a", updated_at: "y", gut: "fire" }]);
+    expect(r).toEqual({ id: "a", updated_at: "y", title_ai: "Lamp", gut: "fire" });
+  });
+  it("diff", () => {
+    expect(diffColumns({ a: 1, b: [1], c: "x" }, { a: 1, b: [1, 2], c: "y" })).toEqual({ b: [1, 2], c: "y" });
+  });
+});

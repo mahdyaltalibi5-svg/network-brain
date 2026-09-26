@@ -46,9 +46,11 @@ create or replace function public.sync_protected_columns(t text) returns text[] 
 $$;
 
 /**
- * Push a batch of row changes from a device. Each change: {"table": "...", "row": {...full row...}}.
- * Last-write-wins by updated_at. Protected (server-computed) columns are ignored on update but allowed
- * on first insert only for 'finds.processing_state' default. Returns accepted ids and per-row errors.
+ * Push a batch of row changes from a device. Each change: {"table": "...", "row": {id, updated_at, ...changed columns}}.
+ * Devices send PATCHES (only the columns they changed; the full row on first insert). Each column in a patch is
+ * applied as it arrives, so two people editing different fields of the same find never clobber each other, and a
+ * server-side AI fill is never overwritten by a stale full row. updated_at only moves forward.
+ * Protected (server-computed) columns are always ignored. Returns accepted ids and per-row errors.
  */
 create or replace function public.sync_push(changes jsonb) returns jsonb
 language plpgsql security invoker set search_path = public as $$
@@ -69,17 +71,18 @@ begin
       if r->>'updated_at' is null then r := r || jsonb_build_object('updated_at', now()); end if;
 
       select string_agg(quote_ident(col.column_name), ','),
-             string_agg(format('%1$I = x.%1$I', col.column_name), ',')
+             string_agg(format('%1$I = x.%1$I', col.column_name), ',') filter (where col.column_name not in ('id','updated_at','created_at','created_by'))
         into cols, upd
       from information_schema.columns col
       where col.table_schema = 'public' and col.table_name = t
         and r ? col.column_name
         and not (col.column_name = any(public.sync_protected_columns(t)));
 
-      -- existing row: update only the columns sent, and only if the change is newer (LWW)
+      -- existing row: update only the columns sent; updated_at never moves backwards
       execute format(
-        'update public.%1$I t set %2$s from jsonb_populate_record(null::public.%1$I, $1) x
-         where t.id = x.id and t.updated_at < x.updated_at', t, upd) using r;
+        'update public.%1$I t set %2$s updated_at = greatest(t.updated_at, x.updated_at)
+         from jsonb_populate_record(null::public.%1$I, $1) x where t.id = x.id',
+        t, coalesce(upd || ',', '')) using r;
       get diagnostics n = row_count;
       if n = 0 then
         execute format('select exists (select 1 from public.%I where id = ($1->>''id'')::uuid)', t) into found_row using r;

@@ -17,10 +17,10 @@ set role authenticated;
 set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000a';
 select public.sync_push('[
   {"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","captured_by":"00000000-0000-0000-0000-00000000000a",
-   "captured_at":"2026-10-31T02:00:00Z","hall":"11.2","gut":"fire","transcript":"LED lamp two ten FOB MOQ 500",
-   "tags_ai":[],"certifications":[],"updated_at":"2026-10-31T02:00:00Z","title_ai":"HACK","processing_state":"done"}},
+   "captured_at":"2026-09-01T02:00:00Z","hall":"11.2","gut":"fire","transcript":"LED lamp two ten FOB MOQ 500",
+   "tags_ai":[],"certifications":[],"updated_at":"2026-09-01T02:00:00Z","title_ai":"HACK","processing_state":"done"}},
   {"table":"media","row":{"id":"22222222-2222-7222-8222-222222222222","find_id":"11111111-1111-7111-8111-111111111111",
-   "kind":"product_photo","upload_state":"pending","updated_at":"2026-10-31T02:00:00Z"}},
+   "kind":"product_photo","upload_state":"pending","updated_at":"2026-09-01T02:00:00Z"}},
   {"table":"jobs","row":{"id":"33333333-3333-7333-8333-333333333333"}}
 ]'::jsonb) as r \gset
 \echo :r
@@ -32,11 +32,12 @@ select (:'r'::jsonb->'accepted') @> '["11111111-1111-7111-8111-111111111111","22
 select title_ai is null and processing_state = 'pending' as protected_ok from public.finds where id = '11111111-1111-7111-8111-111111111111' \gset
 \if :protected_ok \else \echo 'FAIL protected columns' \q \endif
 
--- LWW: older update loses, newer wins
-select public.sync_push('[{"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","hall":"OLD","updated_at":"2026-10-31T01:00:00Z"}}]');
-select public.sync_push('[{"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","hall":"9.1","updated_at":"2026-10-31T03:00:00Z"}}]');
-select hall = '9.1' as lww_ok from public.finds where id = '11111111-1111-7111-8111-111111111111' \gset
-\if :lww_ok \else \echo 'FAIL lww' \q \endif
+-- patches: each column applies on arrival, other columns untouched, updated_at never goes backwards
+select public.sync_push('[{"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","hall":"9.1","updated_at":"2026-09-01T03:00:00Z"}}]');
+select public.sync_push('[{"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","gut":"good","updated_at":"2026-09-01T01:00:00Z"}}]');
+select hall = '9.1' and gut = 'good' and transcript like 'LED%' and updated_at = '2026-09-01T03:00:00Z' as patch_ok
+  from public.finds where id = '11111111-1111-7111-8111-111111111111' \gset
+\if :patch_ok \else \echo 'FAIL patch semantics' \q \endif
 
 -- future clock clamped
 select public.sync_push('[{"table":"finds","row":{"id":"11111111-1111-7111-8111-111111111111","hall":"FUTURE","updated_at":"2030-01-01T00:00:00Z"}}]');
@@ -48,8 +49,8 @@ reset role;
 select count(*) = 0 as nojob from public.jobs where type = 'process_find' \gset
 \if :nojob \else \echo 'FAIL job too early' \q \endif
 set role authenticated;
-select public.sync_push('[{"table":"media","row":{"id":"22222222-2222-7222-8222-222222222222","upload_state":"uploaded","storage_path":"x.jpg","updated_at":"2026-10-31T04:00:00Z"}}]');
-select public.sync_push('[{"table":"media","row":{"id":"22222222-2222-7222-8222-222222222222","upload_state":"uploaded","storage_path":"x.jpg","updated_at":"2026-10-31T05:00:00Z"}}]');
+select public.sync_push('[{"table":"media","row":{"id":"22222222-2222-7222-8222-222222222222","upload_state":"uploaded","storage_path":"x.jpg","updated_at":"2026-09-01T04:00:00Z"}}]');
+select public.sync_push('[{"table":"media","row":{"id":"22222222-2222-7222-8222-222222222222","upload_state":"uploaded","storage_path":"x.jpg","updated_at":"2026-09-01T05:00:00Z"}}]');
 reset role;
 select count(*) = 1 as onejob from public.jobs where type = 'process_find' and status = 'queued' \gset
 \if :onejob \else \echo 'FAIL process job count' \q \endif
@@ -91,7 +92,7 @@ select count(*) = 1 as requeued from public.jobs where type='process_find' and s
 
 -- votes enqueue score_find (deduped)
 set role authenticated;
-select public.sync_push('[{"table":"votes","row":{"id":"44444444-4444-7444-8444-444444444444","find_id":"11111111-1111-7111-8111-111111111111","user_id":"00000000-0000-0000-0000-00000000000a","value":2,"updated_at":"2026-10-31T06:00:00Z"}}]');
+select public.sync_push('[{"table":"votes","row":{"id":"44444444-4444-7444-8444-444444444444","find_id":"11111111-1111-7111-8111-111111111111","user_id":"00000000-0000-0000-0000-00000000000a","value":2,"updated_at":"2026-09-01T06:00:00Z"}}]');
 reset role;
 select count(*) = 1 as scorejob from public.jobs where type='score_find' and status='queued' \gset
 \if :scorejob \else \echo 'FAIL score job' \q \endif

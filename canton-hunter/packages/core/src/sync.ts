@@ -1,4 +1,9 @@
-/** Sync helpers shared by the device and tests. The server applies the same rule in SQL (sync_push). */
+/**
+ * Sync model (mirrors sync_push in SQL):
+ *  - Devices send PATCHES: {id, updated_at, ...only changed columns}. First insert sends the full row.
+ *  - The server applies each patch's columns on arrival; server-computed columns are never client-writable.
+ *  - On pull, the device takes the server row and re-applies its own still-pending patches on top.
+ */
 
 export interface Versioned {
   id: string;
@@ -35,4 +40,33 @@ export function uuidv7(now: number = Date.now()): string {
 /** Effective value of an AI field with human override. */
 export function eff<T>(override: T | null | undefined, ai: T | null | undefined): T | null {
   return override ?? ai ?? null;
+}
+
+export type Patch = Record<string, unknown> & { id: string; updated_at: string };
+
+/** Coalesce patches for the same row, in order (later columns win, updated_at = max). */
+export function mergePatches(patches: Patch[]): Patch[] {
+  const byId = new Map<string, Patch>();
+  for (const p of patches) {
+    const cur = byId.get(p.id);
+    if (!cur) byId.set(p.id, { ...p });
+    else byId.set(p.id, { ...cur, ...p, updated_at: cur.updated_at > p.updated_at ? cur.updated_at : p.updated_at });
+  }
+  return [...byId.values()];
+}
+
+/** Device-side merge on pull: server row, then pending local patches on top. */
+export function applyPending<T extends Record<string, unknown>>(serverRow: T, pending: Patch[]): T {
+  let row: Record<string, unknown> = { ...serverRow };
+  for (const p of pending) row = { ...row, ...p };
+  return row as T;
+}
+
+/** Only the columns that changed between two versions of a row (for building a patch). */
+export function diffColumns(before: Record<string, unknown>, after: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const k of Object.keys(after)) {
+    if (JSON.stringify(before[k]) !== JSON.stringify(after[k])) out[k] = after[k];
+  }
+  return out;
 }

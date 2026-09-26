@@ -93,6 +93,7 @@ export const Find = z.object({
   hall: z.string().nullable(),
   booth_code: z.string().nullable(),
   transcript: z.string().nullable(),
+  qr_payload: z.string().nullable(),
   gut: Gut.nullable(),
   title_ai: z.string().nullable(),
   title_override: z.string().nullable(),
