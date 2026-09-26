@@ -466,6 +466,46 @@ scope.
 - Local device data stays on the phone until it is uploaded (§4.4). A lost phone loses only the
   un-synced captures.
 
+### 6.9 Same product at many booths (quote comparison)
+- **The problem:** at Canton the same product shows up at 5–20 booths.
+- **How finds get grouped:**
+  - `process_find` asks Claude for a generic `product_key` (for example "sunset projection lamp").
+  - `assignProductGroup` (core) puts the find into the group of the most similar existing key
+    (trigram similarity ≥ 0.55), or starts a new group.
+- **On a find's page:** "Same product at N booths" lists every quote converted to USD, with MOQ,
+  lead time, logo option and the live landed-cost margin multiple. The cheapest quote and the best
+  margin are highlighted, ready to use as negotiation leverage.
+- **Fixing mistakes:** "This one is a different product" gives the find a fresh group ID.
+  `product_group_id` is client-writable; `product_key_ai` is AI-owned.
+- Feed cards show "×N booths".
+
+### 6.10 Follow-up Center
+- **Why it matters:** the fair only starts the relationship; the money comes from following up.
+- **Which suppliers show up:** any supplier with a find in an active stage (shortlisted through
+  negotiating) that has no follow-up yet.
+- **Drafting:** the `draft_followups` job writes one message per supplier. It's in natural
+  Chinese first, WeChat style, plus English. It reminds them of the booth and products and asks
+  only for what's missing.
+- **The four purposes:**
+  - `quote`: prices at MOQ and 5× MOQ, lead time, logo options, carton size
+  - `sample`: sample cost and shipping to the `company.ship_to` address in config
+  - `negotiate`
+  - `order`: confirm specs; pay only through Trade Assurance or a company account
+- **Sending:** a person taps Copy 中文, pastes it into WeChat (or uses the email button), then
+  taps **Mark sent**. That moves the finds forward (quote → quote_requested, sample →
+  sample_requested, …).
+- **Replies:** reply notes are saved, and **Mark replied** moves quotes to quote_received.
+- Table: `followups` (client-writable, synced, realtime).
+
+### 6.11 Trip dashboard
+Stat tiles plus single-hue bar lists:
+- finds today / total and distinct products
+- winners, suppliers, and follow-ups sent / replied
+- money out (samples + ad spend)
+- top 5 by score
+- finds by person, by day and by hall
+- pipeline counts
+
 ---
 
 ## 7. Landed cost (`packages/core/landedCost.ts`)

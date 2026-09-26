@@ -7,9 +7,14 @@ capture path ships only critical fixes, through EAS Update.
 ## Status (updated 2026-09-26)
 
 Code for M0–M5 is written. What was verified in the build environment:
-- Core logic: 41 unit tests pass.
+- Core logic: 44 unit tests pass.
 - Database: all migrations apply to Postgres 16, and the RLS, sync, job queue, triggers and launch
   state machine tests pass.
+- **Multi-phone sync simulation** (`supabase/tests/sync_sim.mjs`): two simulated phones run the
+  app's sync algorithm against real Postgres. It covers offline captures, an AI fill racing an
+  offline edit, two people editing different fields, stale AI columns, 1,200-row paging,
+  idempotent re-pulls, and upload → AI job queued exactly once. All 13 checks pass.
+- Shopify (API 2026-07) and Meta (Graph v26) request shapes checked against the current docs.
 - Edge Functions: Deno type-check passes.
 - iPhone app: TypeScript passes, a full iOS Metro bundle builds, and expo-doctor passes 21/21.
 
@@ -23,6 +28,9 @@ three weeks:
 | A live Anthropic key: tune prompts on 10 real business cards | M2-2 AC, M3-3 AC |
 | A Shopify store and Meta ad account | M5-3 AC, M5-4 AC |
 | **The field test (Oct 18–20)** | the whole capture path |
+
+Added after v1: quote comparison across booths, the Follow-up Center, the trip dashboard, the
+extraction eval (`pnpm eval:extract`) and the demo data seeder (`scripts/seed-demo.mjs`).
 
 Known gaps to watch during the field test:
 - Swipe gestures in Nightly Review are buttons for now.

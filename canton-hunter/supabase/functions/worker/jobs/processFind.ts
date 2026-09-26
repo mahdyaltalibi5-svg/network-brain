@@ -4,7 +4,7 @@ import { loadConfig } from "../../_shared/config.ts";
 import { db, must, type Row } from "../../_shared/db.ts";
 import { downloadBase64 } from "../../_shared/storage.ts";
 
-const SYSTEM = `You organize product finds for a 3-person team at the Canton Fair in Guangzhou, China.
+export const EXTRACT_SYSTEM = `You organize product finds for a 3-person team at the Canton Fair in Guangzhou, China.
 They are sourcing products to sell to US consumers online (Shopify + Meta/TikTok ads), with a focus on
 small, light, giftable products that can be air-freighted before Christmas.
 
@@ -23,6 +23,17 @@ Rules:
 - demo_score_1_5: 5 = the value is obvious and fun in a 5-second phone video; 1 = boring on camera.
 - hunt_item_match_title: the exact title from the hunt list if this product clearly matches one, else null.
 - confidence: include entries for any field you are unsure about (value 0-1), especially card fields.`;
+
+/** The text part of the extraction request (shared with scripts/eval-extract.ts). */
+export function contextText(c: { hall?: string | null; booth?: string | null; qr?: string | null; transcript?: string | null; hunt?: string[] }): string {
+  return [
+    `HALL: ${c.hall ?? "unknown"}`,
+    `BOOTH (typed): ${c.booth ?? "none"}`,
+    `WECHAT QR PAYLOAD: ${c.qr ?? "none"}`,
+    `VOICE NOTE TRANSCRIPT: ${c.transcript?.trim() || "none"}`,
+    `HUNT LIST: ${c.hunt?.join(" | ") || "none"}`,
+  ].join("\n");
+}
 
 export async function processFind(payload: { find_id: string }): Promise<Row> {
   const sb = db();
@@ -50,15 +61,9 @@ export async function processFind(payload: { find_id: string }): Promise<Row> {
     const s = must(await sb.from("suppliers").select("*").eq("id", find.supplier_id).single(), "supplier") as Row;
     content.push(text(`KNOWN SUPPLIER (same booth as previous capture): ${JSON.stringify({ name_en: s.name_en, name_cn: s.name_cn, booth_code: s.booth_code, phones: s.phones })}`));
   }
-  content.push(text([
-    `HALL: ${find.hall ?? "unknown"}`,
-    `BOOTH (typed): ${find.booth_code ?? "none"}`,
-    `WECHAT QR PAYLOAD: ${find.qr_payload ?? "none"}`,
-    `VOICE NOTE TRANSCRIPT: ${find.transcript?.trim() || "none"}`,
-    `HUNT LIST: ${hunt.map((h) => h.title).join(" | ") || "none"}`,
-  ].join("\n")));
+  content.push(text(contextText({ hall: find.hall, booth: find.booth_code, qr: find.qr_payload, transcript: find.transcript, hunt: hunt.map((h) => h.title) })));
 
-  const { data: x, usage } = await extract({ system: SYSTEM, content, schema: FindExtraction, effort: "low" });
+  const { data: x, usage } = await extract({ system: EXTRACT_SYSTEM, content, schema: FindExtraction, effort: "low" });
   const cfg = await loadConfig();
 
   // ---- supplier ----

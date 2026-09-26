@@ -120,7 +120,22 @@ cd apps/mobile && npx eas-cli@latest update --channel production --message "fix 
 The phones pick up the update the next time the app restarts. Adding native modules needs a new
 build (step 5).
 
-## 6. Before you fly (checklist)
+## 6. Try it with demo data, and measure the AI
+
+```bash
+# 12 realistic finds from 6 suppliers (including the same lamp at 2 booths); remove later with --wipe
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node scripts/seed-demo.mjs
+
+# how accurately the AI reads voice notes (price, MOQ, lead time, answers, compliance); aim for 90%+
+ANTHROPIC_API_KEY=... pnpm eval:extract
+```
+Add 10 real Chinese business-card photos to `evals/extract/photos/` (see evals/extract/README.md).
+Card reading is the part most worth measuring before the trip.
+
+Set your details in More → Settings → `company`. Follow-up messages use your name, email and the
+US address where samples should be shipped.
+
+## 7. Before you fly (checklist)
 
 - [ ] The field test in BUILD_PLAN.md passed on all 3 phones.
 - [ ] Hunt list generated: More → Hunt list → Generate.

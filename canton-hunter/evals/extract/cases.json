@@ -1,0 +1,22 @@
+[
+  { "id": "spoken-usd", "transcript": "LED sunset lamp, two ten FOB, MOQ five hundred, they can do our logo, lead time about three weeks", "hall": "11.2",
+    "expect": { "fob_price": 2.1, "currency": "USD", "moq": 500, "lead_time_days": 21, "oem_logo": true } },
+  { "id": "rmb", "transcript": "silicone baby bib, fifteen RMB each, minimum one thousand pieces, samples are free", "hall": "17.1",
+    "expect": { "fob_price": 15, "currency": "CNY", "moq": 1000, "sample_cost": 0 } },
+  { "id": "yuan-and-no-logo", "transcript": "phone stand, eight yuan, MOQ 300, no custom logo, they are a trading company", "hall": "9.1",
+    "expect": { "fob_price": 8, "currency": "CNY", "moq": 300, "oem_logo": false, "is_factory": false } },
+  { "id": "decimal-dollars", "transcript": "mini projector 23 dollars 50 cents, MOQ 100, lead time 15 days, they already sell to Amazon sellers", "hall": "1.1",
+    "expect": { "fob_price": 23.5, "currency": "USD", "moq": 100, "lead_time_days": 15, "sells_to_us_sellers": true } },
+  { "id": "nothing-said", "transcript": "", "hall": "12.1",
+    "expect": { "fob_price": null, "moq": null, "lead_time_days": null, "oem_logo": null } },
+  { "id": "booth-in-voice", "transcript": "booth eleven point two C twenty, heated eye mask, 3.80, MOQ 2000, CE and FCC certified, factory", "hall": "11.2",
+    "expect": { "fob_price": 3.8, "moq": 2000, "is_factory": true, "booth_contains": "C20", "certs_include": ["FCC"] } },
+  { "id": "kids-toy-compliance", "transcript": "wooden puzzle toy for toddlers, 1.20, MOQ 1000", "hall": "17.2",
+    "expect": { "fob_price": 1.2, "moq": 1000, "compliance_not": "none", "compliance_flag_contains": "CPC" } },
+  { "id": "battery", "transcript": "rechargeable lithium hand warmer, 4 dollars, MOQ 500, weeks lead time maybe four weeks", "hall": "3.1",
+    "expect": { "fob_price": 4, "moq": 500, "lead_time_days": 28, "compliance_not": "none" } },
+  { "id": "k-units", "transcript": "cat toy wand, 60 cents, MOQ 3k, custom packaging ok", "hall": "15.3",
+    "expect": { "fob_price": 0.6, "moq": 3000, "packaging_custom": true } },
+  { "id": "range-price", "transcript": "yoga mat, price 3.50 at MOQ 500 and 3.10 at 2000", "hall": "13.1",
+    "expect": { "fob_price": 3.5, "moq": 500 } }
+]
