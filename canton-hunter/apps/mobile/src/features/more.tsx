@@ -284,7 +284,7 @@ export function SettingsScreen() {
         const row = config.find((c) => c.key === k);
         const value = row?.value ?? CONFIG_DEFAULTS[k]!.value;
         return (
-          <Section key={k} title={k} right={row?.verified_at ? <Badge label={`verified ${row.verified_at}`} color="#1d5c43" /> : <Badge label="UNVERIFIED" color={C.warn} />}>
+          <Section key={k} title={k} right={row?.verified_at ? <Badge label={`verified ${row.verified_at}`} color={C.goodBg} /> : <Badge label="UNVERIFIED" color={C.warn} />}>
             <T dim size={13}>{row?.note ?? CONFIG_DEFAULTS[k]!.note}</T>
             <Field multiline defaultValue={JSON.stringify(value, null, 2)} key={`${k}-${row?.updated_at}`} style={{ fontFamily: "Menlo", fontSize: 12 }} onEndEditing={(e) => saveJson(k, e.nativeEvent.text)} />
             <Button title="✓ Mark verified" kind="secondary" onPress={() => markVerified(k, value)} />

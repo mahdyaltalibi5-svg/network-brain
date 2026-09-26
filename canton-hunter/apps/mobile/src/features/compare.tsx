@@ -46,10 +46,10 @@ export function CompareSection({ f }: { f: Row }) {
             <T bold size={14} numberOfLines={1}>{supplier?.name_en ?? supplier?.name_cn ?? findTitle(m)}</T>
             <T dim size={12}>{[supplier?.hall && `Hall ${supplier.hall}`, m.booth_code ?? supplier?.booth_code, supplier && (supplier.is_factory_override ?? supplier.is_factory_ai) === true ? "factory" : null].filter(Boolean).join(" · ")}</T>
             <HRow gap={6} style={{ marginTop: 4 }}>
-              <Badge label={fobUsd != null ? `$${fobUsd.toFixed(2)}` : "no price"} color={best && m.id === best.m.id ? "#1d5c43" : C.card2} />
+              <Badge label={fobUsd != null ? `$${fobUsd.toFixed(2)}` : "no price"} color={best && m.id === best.m.id ? C.goodBg : C.card2} />
               <Badge label={`MOQ ${m.moq ?? "?"}`} />
               {m.lead_time_days ? <Badge label={`${m.lead_time_days}d`} /> : null}
-              {s.cost ? <Badge label={`${s.cost.margin_multiple.toFixed(1)}×`} color={bestMargin && m.id === bestMargin.m.id ? "#1d5c43" : C.card2} /> : null}
+              {s.cost ? <Badge label={`${s.cost.margin_multiple.toFixed(1)}×`} color={bestMargin && m.id === bestMargin.m.id ? C.goodBg : C.card2} /> : null}
               {m.oem_logo ? <Badge label="logo ✓" /> : null}
             </HRow>
           </View>

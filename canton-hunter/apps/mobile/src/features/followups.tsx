@@ -58,7 +58,7 @@ function FollowupCard({ fu }: { fu: Row }) {
     <Card style={fu.status === "sent" ? { borderColor: C.blue } : fu.status === "replied" ? { borderColor: C.good } : undefined}>
       <HRow style={{ justifyContent: "space-between" }}>
         <T bold style={{ flex: 1 }}>{s.name_en ?? s.name_cn ?? "Supplier"}</T>
-        <Badge label={`${fu.purpose} · ${fu.status}`} color={fu.status === "draft" ? C.warn : fu.status === "replied" ? "#1d5c43" : C.card2} />
+        <Badge label={`${fu.purpose} · ${fu.status}`} color={fu.status === "draft" ? C.warn : fu.status === "replied" ? C.goodBg : C.card2} />
       </HRow>
       <T dim size={12}>{[s.contact_name, s.booth_code, s.wechat_id && `WeChat ${s.wechat_id}`, email].filter(Boolean).join(" · ")}</T>
       <T dim size={12} numberOfLines={2}>{finds.map(findTitle).join(", ")}</T>

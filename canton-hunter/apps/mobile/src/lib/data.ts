@@ -27,7 +27,7 @@ export function configFrom(rows: Row[]): AppConfig {
 export const useConfig = () => configFrom(useTable("config"));
 export const getConfig = () => configFrom(all("config"));
 
-export const PERSON_COLORS = ["#FF6B35", "#3DDC97", "#4EA8DE", "#F7B801", "#C77DFF"];
+export const PERSON_COLORS = ["#F59E0B", "#34D399", "#F472B6", "#38BDF8", "#A78BFA"];
 export function usePeople(): Map<string, { name: string; color: string }> {
   const profiles = useTable("profiles");
   return new Map(profiles.map((p, i) => [p.id, { name: p.name || "?", color: p.color || PERSON_COLORS[i % PERSON_COLORS.length]! }]));

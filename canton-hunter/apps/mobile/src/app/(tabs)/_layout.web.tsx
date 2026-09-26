@@ -18,9 +18,9 @@ export default function WebTabs() {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg, alignItems: "center" }}>
       <View style={{ flex: 1, width: "100%", maxWidth: 520, borderLeftWidth: 1, borderRightWidth: 1, borderColor: C.line }}>
-        <View style={{ backgroundColor: "#3a2a00", paddingVertical: 6, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <T size={12} style={{ flex: 1, color: C.warn }}>DEMO · fake data saved in this browser only · camera, voice & AI are simulated</T>
-          <Pressable onPress={() => { if (globalThis.confirm("Reset the demo data?")) resetDemo(); }}><T size={12} bold style={{ color: C.warn }}>Reset</T></Pressable>
+        <View style={{ backgroundColor: C.bannerBg, paddingVertical: 6, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <T size={12} style={{ flex: 1, color: "#C7D2FE" }}>DEMO · fake data saved in this browser only · camera, voice & AI are simulated</T>
+          <Pressable onPress={() => { if (globalThis.confirm("Reset the demo data?")) resetDemo(); }}><T size={12} bold style={{ color: C.text }}>Reset</T></Pressable>
         </View>
         <Tabs>
           <TabSlot style={{ flex: 1 }} />

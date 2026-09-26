@@ -44,7 +44,7 @@ export function LaunchScreen({ id }: { id: string }) {
     <Screen>
       <T size={22} bold>{f ? findTitle(f) : "Launch"}</T>
       <Row style={{ marginVertical: 10 }}>
-        {STEPS.map((s) => <Badge key={s} label={s.replace("_", " ")} color={s === l.status ? C.accent : STEPS.indexOf(s) < STEPS.indexOf(l.status) ? "#1d5c43" : C.card2} />)}
+        {STEPS.map((s) => <Badge key={s} label={s.replace("_", " ")} color={s === l.status ? C.accent : STEPS.indexOf(s) < STEPS.indexOf(l.status) ? C.goodBg : C.card2} />)}
         {["paused", "killed", "error"].includes(l.status) ? <Badge label={l.status} color={C.bad} /> : null}
       </Row>
       {l.last_error ? <Card style={{ borderColor: C.bad }}><T style={{ color: C.bad }}>{l.last_error}</T></Card> : null}
@@ -83,7 +83,7 @@ export function LaunchScreen({ id }: { id: string }) {
                 <T style={{ marginTop: 4 }}>{a.body}</T>
                 <T dim size={13} style={{ marginTop: 4 }}>CTA: {a.cta}</T>
                 {a.shot_list.map((s, k) => <T key={k} size={13}>• {s}</T>)}
-                {a.uses_existing_footage ? <Badge label="fair footage works" color="#1d5c43" /> : null}
+                {a.uses_existing_footage ? <Badge label="fair footage works" color={C.goodBg} /> : null}
                 <Button title="Copy" kind="ghost" onPress={() => { void Clipboard.setStringAsync(`${a.hook}\n\n${a.body}\n\n${a.cta}\n\nShots:\n${a.shot_list.join("\n")}`); }} style={{ marginTop: 6 }} />
               </Card>
             ))}

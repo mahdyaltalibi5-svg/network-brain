@@ -49,9 +49,9 @@ P.forEach((p, i) => {
 export function seedDemo(): void {
   const base = { deleted_at: null, created_at: hoursAgo(40), updated_at: hoursAgo(40) };
   applyServerRows("profiles", [
-    { id: DEMO_ME, name: "Mahdy", color: "#FF6B35", ...base },
-    { id: UNCLE, name: "Uncle", color: "#3DDC97", ...base },
-    { id: SHABAB, name: "Shabab", color: "#4EA8DE", ...base },
+    { id: DEMO_ME, name: "Mahdy", color: "#F59E0B", ...base },
+    { id: UNCLE, name: "Uncle", color: "#34D399", ...base },
+    { id: SHABAB, name: "Shabab", color: "#F472B6", ...base },
   ]);
   applyServerRows("config", Object.entries(CONFIG_DEFAULTS).map(([key, d], i) => ({ id: id("c", i), key, value: d.value, note: d.note, verified_at: null, ...base })));
 

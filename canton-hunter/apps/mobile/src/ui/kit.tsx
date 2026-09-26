@@ -8,17 +8,21 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const C = {
-  bg: "#0B0B10",
-  card: "#16161F",
-  card2: "#1F1F2B",
-  line: "#2A2A38",
-  text: "#F4F4F8",
-  dim: "#9A9AAE",
-  accent: "#FF6B35",
-  good: "#3DDC97",
-  warn: "#F7B801",
-  bad: "#FF4D6D",
-  blue: "#4EA8DE",
+  // Midnight & Electric Blue
+  bg: "#0A0E1A",
+  card: "#121829",
+  card2: "#1B2338",
+  line: "#28324A",
+  text: "#F1F4FA",
+  dim: "#93A0BA",
+  accent: "#4F7CFF",
+  good: "#34D399",
+  warn: "#FBBF24",
+  bad: "#F87171",
+  blue: "#8B5CF6", // secondary highlight (stage tags, "same booth"): violet so it never competes with the accent
+  goodBg: "#123D30",
+  badBg: "#4A1D26",
+  bannerBg: "#1E2A55",
 };
 
 export function Screen({ children, scroll = true, pad = true, style }: { children: ReactNode; scroll?: boolean; pad?: boolean; style?: StyleProp<ViewStyle> }) {

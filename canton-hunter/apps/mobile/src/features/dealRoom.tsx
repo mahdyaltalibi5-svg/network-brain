@@ -63,7 +63,7 @@ export function DealRoomScreen() {
               <FindCard key={f.id} f={f} person={people.get(f.captured_by)} score={s} right={
                 <View style={{ alignItems: "flex-end", gap: 4 }}>
                   <T bold size={18}>#{i + 1}</T>
-                  {s?.margin_multiple != null ? <Badge label={`${Number(s.margin_multiple).toFixed(1)}×`} color={s.margin_multiple >= 3 ? "#1d5c43" : "#5c1d2b"} /> : null}
+                  {s?.margin_multiple != null ? <Badge label={`${Number(s.margin_multiple).toFixed(1)}×`} color={s.margin_multiple >= 3 ? C.goodBg : C.badBg} /> : null}
                   {s?.arrive_by ? <T size={12} dim>🎄 {String(s.arrive_by).slice(5)}</T> : null}
                   <T size={12}>{voteDots(f.id)}</T>
                 </View>

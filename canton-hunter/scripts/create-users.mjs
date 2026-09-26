@@ -8,7 +8,7 @@ const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) throw new Error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
 const sb = createClient(url, key, { auth: { persistSession: false } });
-const colors = ["#FF6B35", "#3DDC97", "#4EA8DE", "#F7B801", "#C77DFF"];
+const colors = ["#F59E0B", "#34D399", "#F472B6", "#38BDF8", "#A78BFA"];
 
 for (const [i, arg] of process.argv.slice(2).entries()) {
   const [name, email, password] = arg.split(":");
