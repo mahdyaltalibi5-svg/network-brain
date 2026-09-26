@@ -15,6 +15,8 @@ import { all, batch, insert, kvGet, kvSet, myId } from "@/lib/store";
 import { syncSoon } from "@/lib/sync";
 import { copyFile, keepFile, registerFile, resizeSoon, runUploads } from "@/lib/upload";
 import { useVoiceNote } from "@/lib/voice";
+import { DEMO } from "@/lib/demo/boot";
+import { cardImage, productImage } from "@/lib/demo/images";
 import { Button, C, Chip, Row, T } from "@/ui/kit";
 
 interface Shot { id: string; uri: string; mime: string }
@@ -54,6 +56,7 @@ export function CaptureScreen() {
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<{ findId: string; n: number } | null>(null);
+  const [fakeCam, setFakeCam] = useState(false); // web demo without a camera
   const voice = useVoiceNote();
   const addingProduct = useRef(false);
   const last = kvGet<LastBooth>("lastBooth");
@@ -68,21 +71,25 @@ export function CaptureScreen() {
     if (voice.text && voice.text !== draft.transcript) setDraft((d) => ({ ...d, transcript: voice.text }));
   }, [voice.text]);
 
-  if (!camPerm) return <View style={styles.fill} />;
-  if (!camPerm.granted) {
+  if (!camPerm && !fakeCam) return <View style={styles.fill} />;
+  if (!camPerm?.granted && !fakeCam) {
     return (
-      <View style={[styles.fill, styles.center, { padding: 24 }]}>
-        <T size={20} bold style={{ marginBottom: 12 }}>Camera access needed</T>
+      <View style={[styles.fill, styles.center, { padding: 24, gap: 12 }]}>
+        <T size={20} bold>Camera access needed</T>
         <Button title="Allow camera" onPress={requestCam} big />
+        {DEMO ? <Button title="Try it with demo photos" kind="secondary" onPress={() => { setFakeCam(true); setReady(true); }} /> : null}
       </View>
     );
   }
 
   async function shoot() {
-    if (!cam.current || !ready || busy) return;
+    if ((!cam.current && !fakeCam) || !ready || busy) return;
     setBusy(true);
     try {
-      const pic = await cam.current.takePictureAsync({ quality: 0.85 });
+      const pic = fakeCam
+        ? { uri: step === "card" ? cardImage("Demo Trading Co., Ltd.", "演示贸易有限公司", "Ms. Wang", "+86 131 0000 1111", hall ? `${hall}B07` : "10.1B07")
+            : productImage(["🎁", "🧸", "🕯️", "🎧", "🪴"][draft.products.length % 5]!, "Your new find", 140 + draft.products.length * 40) }
+        : await cam.current!.takePictureAsync({ quality: 0.85 });
       if (!pic?.uri) return;
       const id = uuidv7();
       const uri = keepFile(pic.uri, id, "image/jpeg");
@@ -200,7 +207,7 @@ export function CaptureScreen() {
 
   return (
     <View style={styles.fill}>
-      <CameraView
+      {fakeCam ? <View style={[StyleSheet.absoluteFill, styles.center, { backgroundColor: "#111" }]}><T dim>Demo camera: tap the shutter</T></View> : <CameraView
         ref={cam}
         style={StyleSheet.absoluteFill}
         active={focused}
@@ -209,7 +216,7 @@ export function CaptureScreen() {
         onCameraReady={() => setReady(true)}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
         onBarcodeScanned={step !== "product" ? onQr : undefined}
-      />
+      />}
 
       {/* top bar */}
       <View style={[styles.top, { paddingTop: insets.top + 6 }]}>

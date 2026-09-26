@@ -1,4 +1,5 @@
 import "react-native-get-random-values";
+import "@/lib/demo/boot";
 import { DarkTheme, Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";

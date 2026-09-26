@@ -1,29 +1,11 @@
-import { File, Paths } from "expo-file-system";
 import * as Clipboard from "expo-clipboard";
-import { Asset, requestPermissionsAsync } from "expo-media-library";
 import { useMemo, useState } from "react";
 import { Alert, Linking } from "react-native";
-import { findTitle, remoteUrl } from "@/lib/data";
+import { findTitle } from "@/lib/data";
+import { saveToPhotos } from "@/lib/saveMedia";
 import { all, patch, useTable } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
-import { localUri } from "@/lib/upload";
 import { Button, C, Card, Chip, Empty, Field, Row, Screen, Section, T } from "@/ui/kit";
-
-async function saveToPhotos(mediaId: string, storagePath: string | null) {
-  const perm = await requestPermissionsAsync(true);
-  if (perm.status !== "granted") { Alert.alert("Allow Photos access to save clips"); return; }
-  let uri = localUri(mediaId);
-  if (!uri) {
-    if (!storagePath) throw new Error("Clip hasn't uploaded yet");
-    const url = await remoteUrl(storagePath);
-    if (!url) throw new Error("Couldn't get a download link");
-    const dest = new File(Paths.cache, `${mediaId}.mov`);
-    if (!dest.exists) await File.downloadFileAsync(url, dest);
-    uri = dest.uri;
-  }
-  await Asset.create(uri);
-  Alert.alert("Saved to Photos", "Edit in CapCut, then post.");
-}
 
 export function ContentScreen() {
   const items = useTable("content_items");

@@ -7,13 +7,13 @@
  * All rows are also held in memory so screens render instantly; writes are synchronous transactions.
  */
 import { uuidv7, type SyncedTable } from "@canton/core";
-import * as SQLite from "expo-sqlite";
 import { useSyncExternalStore } from "react";
+import { memoryDb, sqlite } from "./db";
 
 // deno-lint-ignore no-explicit-any
 export type Row = Record<string, any> & { id: string };
 
-export const sqlite = SQLite.openDatabaseSync("canton.db");
+export { sqlite };
 
 sqlite.execSync(`
   PRAGMA journal_mode = WAL;
@@ -78,8 +78,8 @@ export function useTable(t: SyncedTable): Row[] {
 }
 
 export function useRow(t: SyncedTable, id: string | null | undefined): Row | undefined {
-  useTable(t);
-  return get(t, id);
+  const rows = useTable(t);
+  return id ? rows.find((r) => r.id === id) : undefined;
 }
 
 // ---------------- current user ----------------
@@ -162,20 +162,29 @@ export function kvSet(k: string, v: unknown) {
 }
 
 // ---------------- search ----------------
-function indexFind(f: Row) {
+function findText(f: Row): string {
   const s = f.supplier_id ? tableMap("suppliers").get(f.supplier_id) : undefined;
-  const body = [
+  return [
     f.title_override, f.title_ai, f.description_override, f.description_ai, f.category_override, f.category_ai,
     (f.tags_ai ?? []).join(" "), f.transcript, f.hall, f.booth_code, s?.name_en, s?.name_cn, s?.contact_name,
   ].filter(Boolean).join(" ");
+}
+
+function indexFind(f: Row) {
+  if (memoryDb) return;
   sqlite.runSync("DELETE FROM finds_fts WHERE id = ?", f.id);
-  if (!f.deleted_at) sqlite.runSync("INSERT INTO finds_fts (id, body) VALUES (?, ?)", f.id, body);
+  if (!f.deleted_at) sqlite.runSync("INSERT INTO finds_fts (id, body) VALUES (?, ?)", f.id, findText(f));
 }
 
 /** Offline full-text search over finds. Returns ids, best first. */
 export function searchFinds(q: string): string[] {
   const terms = q.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
   if (!terms.length) return [];
+  if (memoryDb) {
+    return all("finds")
+      .map((f) => { const t = findText(f).toLowerCase(); return { id: f.id, hits: terms.filter((w) => t.includes(w)).length }; })
+      .filter((x) => x.hits === terms.length).map((x) => x.id);
+  }
   const match = terms.map((t) => `"${t}"*`).join(" ");
   try {
     return sqlite.getAllSync<{ id: string }>("SELECT id FROM finds_fts WHERE finds_fts MATCH ? ORDER BY rank LIMIT 200", match).map((r) => r.id);

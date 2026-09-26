@@ -7,7 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "cantonhunter",
     "userInterfaceStyle": "dark",
-    "runtimeVersion": { "policy": "appVersion" },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.cantonhunter.app",
@@ -22,10 +24,37 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-splash-screen", { "backgroundColor": "#0B0B10", "image": "./assets/images/splash-icon.png", "imageWidth": 76 }],
-      ["expo-camera", { "cameraPermission": "Take photos and videos of products and business cards at the fair.", "microphonePermission": "Record product videos and voice notes.", "recordAudioAndroid": true, "barcodeScannerEnabled": true }],
-      ["expo-speech-recognition", { "microphonePermission": "Record product videos and voice notes.", "speechRecognitionPermission": "Turn your voice notes into text, on the device." }],
-      ["expo-media-library", { "savePhotosPermission": "Save content clips to your Photos so you can post them.", "isAccessMediaLocationEnabled": false }],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0B0B10",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Take photos and videos of products and business cards at the fair.",
+          "microphonePermission": "Record product videos and voice notes.",
+          "recordAudioAndroid": true,
+          "barcodeScannerEnabled": true
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Record product videos and voice notes.",
+          "speechRecognitionPermission": "Turn your voice notes into text, on the device."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "Save content clips to your Photos so you can post them.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
       "expo-sqlite",
       "expo-background-task",
       "expo-notifications"
@@ -33,8 +62,18 @@
     "extra": {
       "supabaseUrl": "https://YOUR-PROJECT.supabase.co",
       "supabaseAnonKey": "YOUR-ANON-KEY",
-      "eas": { "projectId": "" }
+      "eas": {
+        "projectId": ""
+      }
     },
-    "experiments": { "typedRoutes": true, "reactCompiler": true }
+    "experiments": {
+      "typedRoutes": true
+    },
+    "web": {
+      "output": "single",
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png",
+      "name": "Canton Hunter (demo)"
+    }
   }
 }
