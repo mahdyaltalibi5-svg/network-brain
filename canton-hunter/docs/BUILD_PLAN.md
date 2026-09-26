@@ -32,6 +32,21 @@ three weeks:
 Added after v1: quote comparison across booths, the Follow-up Center, the trip dashboard, the
 extraction eval (`pnpm eval:extract`) and the demo data seeder (`scripts/seed-demo.mjs`).
 
+A code review found 7 more bugs, all fixed with regression tests:
+- a rescoring loop
+- a content pack insert failure
+- duplicate cost/vetting rows
+- jobs retrying forever
+- a failed pause hiding live ads
+- the outbox getting blocked
+- sign-out leaving files behind
+
+It also caught the React Compiler reading stale values from the live store, so the compiler is
+turned off.
+
+**Web demo:** a clickable version of the app runs on Vercel with fake data, for reviewing the UX
+before the TestFlight build exists.
+
 Known gaps to watch during the field test:
 - Swipe gestures in Nightly Review are buttons for now.
 - Photos taken on a teammate's phone show only after that phone uploads them.
