@@ -42,9 +42,10 @@ const TABLE_ORDER = new Map<string, number>(SYNCED_TABLES.map((t, i) => [t, i]))
 interface OutboxRow { seq: number; tbl: string; row_id: string; patch: string; attempts: number }
 
 async function pushOnce(): Promise<boolean> {
-  const entries = sqlite.getAllSync<OutboxRow>("SELECT seq, tbl, row_id, patch, attempts FROM outbox ORDER BY seq LIMIT 300");
+  // fresh changes first so a few bad rows can never block the queue; 20+ rejections = parked (see More → Sync)
+  const entries = sqlite.getAllSync<OutboxRow>("SELECT seq, tbl, row_id, patch, attempts FROM outbox WHERE attempts < 20 ORDER BY attempts > 0, seq LIMIT 300");
   if (!entries.length) return false;
-  const maxSeq = entries[entries.length - 1]!.seq;
+  const maxSeq = Math.max(...entries.map((e) => e.seq));
   // group per table, merge patches per row, parents first (finds before media, etc.)
   const byTable = new Map<string, Patch[]>();
   for (const e of entries) {

@@ -26,7 +26,7 @@ export async function scoreFind(payload: { find_id: string }): Promise<Row> {
 
   if (r.cost) {
     must(await sb.from("cost_calcs").upsert({
-      id: calc?.id ?? crypto.randomUUID(),
+      id: calc?.id ?? find.id, // one row per find; id = find id so phones and server never create two
       find_id: find.id,
       inputs: calc?.inputs ?? {},
       outputs: { ...r.cost, input: r.costInput },

@@ -89,15 +89,17 @@ export async function contentPack(payload: { date?: string }): Promise<Row> {
     effort: "medium",
   });
 
-  // replace unposted items for the day
-  await sb.from("content_items").update({ deleted_at: nowIso() }).eq("date", date).eq("posted", false).is("deleted_at", null);
   const valid = new Set(picked.map((p) => p.id));
   const rows: Row[] = data.clips.filter((c) => valid.has(c.media_id)).map((c) => ({
     date, media_id: c.media_id, kind: "clip", hooks: c.hooks, caption: c.caption, hashtags: c.hashtags,
-    on_screen_text: c.on_screen_text, post_order: Math.round(c.post_order),
+    on_screen_text: c.on_screen_text, post_order: Math.round(c.post_order), script: null,
   }));
-  rows.push({ date, kind: "recap", script: data.day_recap_script, post_order: 99 });
-  must(await sb.from("content_items").insert(rows), "insert content");
+  // every row carries every column (bulk insert would send NULL for missing keys)
+  rows.push({ date, media_id: null, kind: "recap", hooks: [], caption: null, hashtags: [], on_screen_text: null, script: data.day_recap_script, post_order: 99 });
+  const inserted = must(await sb.from("content_items").insert(rows).select("id"), "insert content") as Row[];
+  // only now replace the day's older unposted items
+  await sb.from("content_items").update({ deleted_at: nowIso() }).eq("date", date).eq("posted", false).is("deleted_at", null)
+    .not("id", "in", `(${inserted.map((r) => r.id).join(",")})`);
   await pushTeam({ title: "🎬 Content pack ready", body: `${rows.length - 1} clips + a day recap for ${date}`, data: { type: "content" } });
   return { clips: rows.length - 1, usage };
 }

@@ -20,12 +20,16 @@ async function setLaunch(id: string, patch: Row) {
   must(await db().from("launches").update(patch).eq("id", id), "update launch");
 }
 
-/** Mark a launch errored with a readable message, then rethrow so the job records it too. */
-async function guard<T>(launchId: string, fn: () => Promise<T>): Promise<T> {
+/**
+ * Record a readable error on the launch, then rethrow so the job records it too.
+ * keepStatus: don't change status (e.g. a failed pause must not hide that ads are still running).
+ */
+async function guard<T>(launchId: string, fn: () => Promise<T>, opts: { keepStatus?: boolean } = {}): Promise<T> {
   try {
     return await fn();
   } catch (e) {
-    await setLaunch(launchId, { status: "error", last_error: String((e as Error).message ?? e).slice(0, 1000) });
+    const msg = String((e as Error).message ?? e).slice(0, 1000);
+    await setLaunch(launchId, opts.keepStatus ? { last_error: `Action failed, ads may still be running: ${msg}` } : { status: "error", last_error: msg });
     throw e;
   }
 }
@@ -173,13 +177,14 @@ export async function launchPause(payload: { launch_id: string; by: string; kill
       must(await sb.from("finds").update({ stage: "killed", killed_reason: "Ad test killed" }).eq("id", launch.find_id), "kill find");
     }
     return { ok: true };
-  });
+  }, { keepStatus: true });
 }
 
 /** Daily: pull Meta + Shopify numbers, evaluate kill rules, notify. Never pauses or scales on its own. */
 export async function metricsPull(payload: { launch_id?: string }): Promise<Row> {
   const sb = db();
-  let q = sb.from("launches").select("*").is("deleted_at", null).in("status", ["live", "paused", "built"]);
+  // include "error" launches: a failed pause can leave ads running, and they must stay monitored
+  let q = sb.from("launches").select("*").is("deleted_at", null).in("status", ["live", "paused", "built", "error"]);
   if (payload.launch_id) q = q.eq("id", payload.launch_id);
   const launches = must(await q, "launches") as Row[];
   const today = new Date().toISOString().slice(0, 10);
@@ -220,7 +225,7 @@ export async function metricsPull(payload: { launch_id?: string }): Promise<Row>
         launch_id: l.id, date: today, waitlist_signups: signups, preorders, revenue_cents: revenue,
         recommendation: ev.recommendation, reasons: ev.reasons, updated_at: nowIso(),
       }, { onConflict: "launch_id,date" }), "today metrics");
-      if (l.status === "live" && ev.recommendation !== "keep" && prev[0]?.recommendation !== ev.recommendation) {
+      if ((l.status === "live" || l.meta_status === "active") && ev.recommendation !== "keep" && prev[0]?.recommendation !== ev.recommendation) {
         const f = (await sb.from("finds").select("title_ai,title_override").eq("id", l.find_id).single()).data as Row;
         await pushTeam({
           title: ev.recommendation === "kill" ? `🛑 Recommend KILL: ${title(f)}` : `📈 Recommend SCALE: ${title(f)}`,

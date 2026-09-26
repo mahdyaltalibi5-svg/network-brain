@@ -95,12 +95,12 @@ export function FindDetail({ id }: { id: string }) {
   function setVet(key: string, done: boolean) {
     const checklist = { ...(vetting?.checklist ?? {}), [key]: { done, by: me, at: new Date().toISOString() } };
     if (vetting) patch("vetting", vetting.id, { checklist });
-    else insert("vetting", { find_id: f!.id, checklist, override_reason: null, completed_at: null });
+    else insert("vetting", { id: f!.id, find_id: f!.id, checklist, override_reason: null, completed_at: null });
   }
 
   function saveScenario() {
     if (calc) patch("cost_calcs", calc.id, { inputs: scenario });
-    else insert("cost_calcs", { find_id: f!.id, inputs: scenario });
+    else insert("cost_calcs", { id: f!.id, find_id: f!.id, inputs: scenario });
     syncSoon();
     Alert.alert("Saved", "The team will see this scenario and the score will update.");
   }
@@ -290,7 +290,7 @@ export function FindDetail({ id }: { id: string }) {
               </HRow>
             ))}
             <EditField key={`ovr-${vetting?.override_reason}`} label="Override reason (logged, shown in red)" value={vetting?.override_reason}
-              onSave={(v) => vetting ? patch("vetting", vetting.id, { override_reason: v || null }) : insert("vetting", { find_id: f.id, checklist: {}, override_reason: v || null })} />
+              onSave={(v) => vetting ? patch("vetting", vetting.id, { override_reason: v || null }) : insert("vetting", { id: f.id, find_id: f.id, checklist: {}, override_reason: v || null })} />
           </Card>
         </Section>
       ) : null}

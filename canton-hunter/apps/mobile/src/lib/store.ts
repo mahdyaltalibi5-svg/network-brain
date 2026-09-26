@@ -186,7 +186,7 @@ export function searchFinds(q: string): string[] {
 
 // ---------------- sign out ----------------
 export function wipeLocal() {
-  sqlite.execSync("DELETE FROM rows; DELETE FROM outbox; DELETE FROM kv; DELETE FROM finds_fts;");
+  sqlite.execSync("DELETE FROM rows; DELETE FROM outbox; DELETE FROM kv; DELETE FROM finds_fts; DELETE FROM files;");
   for (const t of [...cache.keys()]) {
     cache.set(t, new Map());
     emit(t);

@@ -139,4 +139,24 @@ select count(*) = 0 as outsider_blind from public.finds \gset
 \if :outsider_blind \else \echo 'FAIL outsider sees finds' \q \endif
 reset role;
 
+-- review fix: an unchanged cost_calcs upsert must not requeue scoring
+delete from public.jobs where type = 'score_find';
+insert into public.cost_calcs (id, find_id, inputs) values ('11111111-1111-7111-8111-111111111111', '11111111-1111-7111-8111-111111111111', '{}');
+delete from public.jobs where type = 'score_find';
+update public.cost_calcs set inputs = '{}', outputs = '{"x":1}' where find_id = '11111111-1111-7111-8111-111111111111';
+select count(*) = 0 as no_loop from public.jobs where type = 'score_find' \gset
+\if :no_loop \else \echo 'FAIL cost_calcs rescore loop' \q \endif
+update public.cost_calcs set inputs = '{"mode":"sea"}' where find_id = '11111111-1111-7111-8111-111111111111';
+select count(*) = 1 as rescore_on_change from public.jobs where type = 'score_find' \gset
+\if :rescore_on_change \else \echo 'FAIL cost_calcs change should rescore' \q \endif
+
+-- review fix: jobs out of attempts are never claimed; stale ones become errors
+insert into public.jobs (type, payload, attempts, max_attempts) values ('noop', '{}', 3, 3);
+select count(*) = 0 as not_claimed from public.claim_jobs(50) where type = 'noop' \gset
+\if :not_claimed \else \echo 'FAIL claimed exhausted job' \q \endif
+update public.jobs set status = 'running', locked_at = now() - interval '11 minutes' where type = 'noop';
+select public.requeue_stale_jobs();
+select status = 'error' as stale_error from public.jobs where type = 'noop' \gset
+\if :stale_error \else \echo 'FAIL stale exhausted job not errored' \q \endif
+
 \echo 'ALL DB TESTS PASSED'
