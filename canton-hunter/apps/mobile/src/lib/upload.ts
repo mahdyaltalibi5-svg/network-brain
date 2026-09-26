@@ -46,9 +46,22 @@ export function uploadStats(): { pending: number; failed: number } {
 
 interface FileRow { media_id: string; uri: string; mime: string; kind: string; state: string; resized: number; attempts: number }
 
-/** Shrink photos to 1600px JPEG (~300 KB) in place. */
-async function ensureResized(f: FileRow): Promise<FileRow> {
-  if (f.resized || !f.mime.startsWith("image/")) return f;
+const resizing = new Map<string, Promise<FileRow>>();
+
+/** Shrink photos to 1600px JPEG (~300 KB) in place. Concurrent calls for one file share the same work. */
+function ensureResized(f: FileRow): Promise<FileRow> {
+  if (f.resized || !f.mime.startsWith("image/")) return Promise.resolve(f);
+  let p = resizing.get(f.media_id);
+  if (!p) {
+    p = doResize(f).finally(() => resizing.delete(f.media_id));
+    resizing.set(f.media_id, p);
+  }
+  return p;
+}
+
+async function doResize(f: FileRow): Promise<FileRow> {
+  const fresh = sqlite.getFirstSync<FileRow>("SELECT * FROM files WHERE media_id = ?", f.media_id);
+  if (fresh?.resized) return fresh;
   const ctx = ImageManipulator.manipulate(f.uri);
   ctx.resize({ width: 1600 });
   const img = await ctx.renderAsync();
@@ -77,7 +90,8 @@ export async function runUploads(): Promise<void> {
   running = true;
   try {
     const queue = sqlite.getAllSync<FileRow>(
-      "SELECT * FROM files WHERE state != 'uploaded' AND attempts < 50 ORDER BY CASE kind WHEN 'product_photo' THEN 0 WHEN 'card_photo' THEN 1 ELSE 2 END, rowid");
+      // oldest capture first so each find becomes complete (and gets processed) ASAP; videos last
+      "SELECT * FROM files WHERE state != 'uploaded' AND attempts < 50 ORDER BY CASE kind WHEN 'video' THEN 1 ELSE 0 END, rowid");
     const worker = async () => {
       for (let f = queue.shift(); f; f = queue.shift()) await uploadOne(f);
     };

@@ -3,7 +3,7 @@ import { env, envOpt } from "./env.ts";
 /**
  * Meta Marketing API (our own ad account, system-user token).
  * Env: META_SYSTEM_USER_TOKEN, META_AD_ACCOUNT_ID (digits, no "act_"), META_PAGE_ID, optional META_PIXEL_ID,
- * optional META_INSTAGRAM_ACTOR_ID, META_API_VERSION.
+ * optional META_INSTAGRAM_USER_ID, META_API_VERSION.
  * EVERYTHING is created PAUSED. Only setStatus(..., "ACTIVE") spends money, and it is only called from the
  * launch_activate job, which only exists after a human taps "Go live".
  */
@@ -11,7 +11,7 @@ export function metaConfigured(): boolean {
   return !!(envOpt("META_SYSTEM_USER_TOKEN") && envOpt("META_AD_ACCOUNT_ID") && envOpt("META_PAGE_ID"));
 }
 
-const base = () => `https://graph.facebook.com/${envOpt("META_API_VERSION") ?? "v24.0"}`;
+const base = () => `https://graph.facebook.com/${envOpt("META_API_VERSION") ?? "v26.0"}`;
 const act = () => `act_${env("META_AD_ACCOUNT_ID").replace(/^act_/, "")}`;
 
 // deno-lint-ignore no-explicit-any
@@ -76,11 +76,11 @@ export async function buildPausedCampaign(b: CampaignBuild): Promise<{ campaignI
   });
   const adIds: string[] = [];
   const cta = { type: b.mode === "preorder" ? "SHOP_NOW" : "SIGN_UP", value: { link: b.link } };
-  const ig = envOpt("META_INSTAGRAM_ACTOR_ID");
+  const ig = envOpt("META_INSTAGRAM_USER_ID");
   for (const [i, c] of b.creatives.entries()) {
     const object_story_spec = c.videoId
-      ? { page_id: env("META_PAGE_ID"), instagram_actor_id: ig, video_data: { video_id: c.videoId, image_url: c.thumbnailUrl, message: c.primaryText, title: c.headline, call_to_action: cta } }
-      : { page_id: env("META_PAGE_ID"), instagram_actor_id: ig, link_data: { link: b.link, message: c.primaryText, name: c.headline, image_hash: c.imageHash, call_to_action: cta } };
+      ? { page_id: env("META_PAGE_ID"), instagram_user_id: ig, video_data: { video_id: c.videoId, image_url: c.thumbnailUrl, message: c.primaryText, title: c.headline, call_to_action: cta } }
+      : { page_id: env("META_PAGE_ID"), instagram_user_id: ig, link_data: { link: b.link, message: c.primaryText, name: c.headline, image_hash: c.imageHash, call_to_action: cta } };
     const creative = await call("POST", `${act()}/adcreatives`, { name: `${b.name} · creative ${i + 1}`, object_story_spec });
     const ad = await call("POST", `${act()}/ads`, { name: `${b.name} · ad ${i + 1}`, adset_id: adset.id, creative: { creative_id: creative.id }, status: "PAUSED" });
     adIds.push(ad.id);

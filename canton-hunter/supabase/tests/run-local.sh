@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # Spin up a throwaway Postgres, apply migrations + seed on top of auth stubs, run behavior tests.
 set -euo pipefail
-# initdb refuses to run as root: re-run from a copy owned by the postgres user.
+# initdb refuses to run as root: re-run as the postgres user (it only needs to read the repo).
 if [ "$(id -u)" = "0" ]; then
-  copy="$(mktemp -d)"; cp -r "$(cd "$(dirname "$0")/.." && pwd)"/. "$copy"; chown -R postgres "$copy"; chmod 755 "$copy"
-  runuser -u postgres -- bash "$copy/tests/run-local.sh" "$@"; rc=$?; rm -rf "$copy"; exit $rc
+  exec runuser -u postgres -- bash "$(cd "$(dirname "$0")" && pwd)/run-local.sh" "$@"
 fi
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$here/.."
@@ -23,3 +22,5 @@ out="$(psql -q -f "$here/db_test.sql" 2>&1 || true)"
 if [ "${DEBUG:-}" = "1" ]; then echo "$out"; psql -c "select type,status,payload from public.jobs"; fi
 echo "$out" | grep -E "FAIL|PASSED" || { echo "$out" | tail -20; exit 1; }
 echo "$out" | grep -q "ALL DB TESTS PASSED"
+# end-to-end multi-phone sync simulation (needs node + the pg package from the workspace)
+NODE_PATH="${NODE_PATH:-}" node --experimental-strip-types --no-warnings "$here/sync_sim.mjs"

@@ -10,5 +10,8 @@
     "sync:core": "bash scripts/sync-core.sh",
     "test:db": "bash supabase/tests/run-local.sh",
     "check:functions": "cd supabase/functions && deno check worker/index.ts api/index.ts"
+  },
+  "devDependencies": {
+    "pg": "^8.23.0"
   }
 }
