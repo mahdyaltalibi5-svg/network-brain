@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "zod": "npm:zod@^4.1.0",
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@^0.128.0",
+    "@anthropic-ai/sdk/": "npm:/@anthropic-ai/sdk@^0.128.0/",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.57.0",
+    "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "@core": "./_shared/core/index.ts"
+  },
+  "compilerOptions": { "strict": true, "lib": ["deno.window", "deno.unstable"] }
+}

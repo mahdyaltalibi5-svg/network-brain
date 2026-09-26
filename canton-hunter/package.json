@@ -6,6 +6,9 @@
   "scripts": {
     "test": "pnpm -C packages/core test",
     "typecheck": "pnpm -r typecheck",
-    "gen:seed": "node --experimental-strip-types scripts/gen-seed-config.ts"
+    "gen:seed": "node --experimental-strip-types scripts/gen-seed-config.ts",
+    "sync:core": "bash scripts/sync-core.sh",
+    "test:db": "bash supabase/tests/run-local.sh",
+    "check:functions": "cd supabase/functions && deno check worker/index.ts api/index.ts"
   }
 }
