@@ -185,7 +185,7 @@ export function CaptureScreen() {
     insert("pings", { find_id: findId, from_user: myId(), hall: f?.hall ?? hall, booth_code: f?.booth_code ?? null, message: "Come look at this", sent_at: new Date().toISOString() });
     syncSoon(0);
     setToast(null);
-    Alert.alert("Pinged the team 👀");
+    Alert.alert("Team notified");
   }
 
   function pickHall() {
@@ -203,11 +203,11 @@ export function CaptureScreen() {
     ]);
   }
 
-  const stepLabel = step === "product" ? "1 · Product photo" : step === "card" ? "2 · Business card (QR scans itself)" : "3 · Video / voice, then rate it";
+  const stepLabel = step === "product" ? "Photograph the product" : step === "card" ? "Photograph the business card" : "Add a note, then rate it";
 
   return (
     <View style={styles.fill}>
-      {fakeCam ? <View style={[StyleSheet.absoluteFill, styles.center, { backgroundColor: "#111" }]}><T dim>Demo camera: tap the shutter</T></View> : <CameraView
+      {fakeCam ? <View style={[StyleSheet.absoluteFill, styles.center, { backgroundColor: "#111" }]}><T style={{ color: "rgba(255,255,255,0.5)" }}>Demo camera — tap the shutter</T></View> : <CameraView
         ref={cam}
         style={StyleSheet.absoluteFill}
         active={focused}
@@ -221,20 +221,19 @@ export function CaptureScreen() {
       {/* top bar */}
       <View style={[styles.top, { paddingTop: insets.top + 6 }]}>
         <Row>
-          <Chip label={`📍 Hall ${hall ?? "?"}`} onPress={pickHall} />
-          {last ? <Chip label="Same booth" active={draft.sameBooth} onPress={() => setDraft((d) => ({ ...d, sameBooth: !d.sameBooth }))} color={C.blue} /> : null}
-          <Chip label="🇨🇳 Ask" onPress={() => router.push("/phrasebook")} />
+          <Chip label={`Hall ${hall ?? "—"}`} onPress={pickHall} />
+          {last ? <Chip label="Same booth" active={draft.sameBooth} onPress={() => setDraft((d) => ({ ...d, sameBooth: !d.sameBooth }))} /> : null}
+          <Chip label="Questions" onPress={() => router.push("/phrasebook")} />
         </Row>
         <T bold size={15} style={styles.stepLabel}>{stepLabel}</T>
         <Row>
-          <Chip label={`📦 ${draft.products.length}`} />
-          <Chip label={`🪪 ${draft.sameBooth ? "same" : draft.cards.length}`} />
-          <Chip label={draft.qr ? "QR ✓" : "QR –"} active={!!draft.qr} color={C.good} />
-          <Chip label={draft.video ? "🎥 ✓" : "🎥 –"} active={!!draft.video} color={C.good} />
-          {draft.products.length ? <Chip label="✕" onPress={discard} /> : null}
+          <T size={13} style={styles.progress}>
+            {[`${draft.products.length} photo${draft.products.length === 1 ? "" : "s"}`, draft.sameBooth ? "same card" : `${draft.cards.length} card`, draft.qr ? "QR" : null, draft.video ? "video" : null].filter(Boolean).join("  ·  ")}
+          </T>
+          {draft.products.length ? <Chip label="Discard" onPress={discard} /> : null}
         </Row>
         {draft.transcript || voice.text ? <T style={styles.transcript} numberOfLines={3}>“{voice.text || draft.transcript}”</T> : null}
-        {voice.error ? <T style={{ color: C.bad }}>{voice.error}</T> : null}
+        {voice.error ? <T style={{ color: "#FCA5A5" }}>{voice.error}</T> : null}
       </View>
 
       {/* bottom controls */}
@@ -242,21 +241,20 @@ export function CaptureScreen() {
         {step === "extras" ? (
           <>
             <Row style={{ justifyContent: "center", marginBottom: 14 }} gap={12}>
-              <Pressable onPressIn={() => void voice.start()} onPressOut={() => voice.stop()} style={[styles.round, voice.recording && { backgroundColor: C.bad }]}>
-                <T size={28}>🎙️</T><T size={11} bold>{voice.recording ? "Listening" : "Hold"}</T>
+              <Pressable onPressIn={() => void voice.start()} onPressOut={() => voice.stop()} style={[styles.round, voice.recording && { backgroundColor: "#B42318" }]}>
+                <T size={14} bold style={styles.roundText}>{voice.recording ? "Listening" : "Hold to talk"}</T>
               </Pressable>
-              <Pressable onPress={toggleVideo} style={[styles.round, recording && { backgroundColor: C.bad }, mode === "video" && !recording && { borderColor: C.bad, borderWidth: 3 }]}>
-                <T size={28}>🎥</T><T size={11} bold>{recording ? "Stop" : mode === "video" ? "Record" : "Video"}</T>
+              <Pressable onPress={toggleVideo} style={[styles.round, recording && { backgroundColor: "#B42318" }, mode === "video" && !recording && { borderColor: "#fff", borderWidth: 2 }]}>
+                <T size={14} bold style={styles.roundText}>{recording ? "Stop" : mode === "video" ? "Record" : "Video"}</T>
               </Pressable>
               <Pressable onPress={() => { addingProduct.current = true; void shoot(); }} style={styles.round}>
-                <T size={28}>📷</T><T size={11} bold>+Photo</T>
+                <T size={14} bold style={styles.roundText}>Add photo</T>
               </Pressable>
             </Row>
-            <Row style={{ justifyContent: "center" }} gap={10}>
+            <Row style={{ justifyContent: "center", paddingHorizontal: 16, flexWrap: "nowrap" }} gap={10}>
               {(["fire", "good", "meh"] as const).map((g) => (
-                <Pressable key={g} onPress={() => save(g)} style={styles.gut}>
-                  <T size={34}>{g === "fire" ? "🔥" : g === "good" ? "👍" : "🤷"}</T>
-                  <T size={12} bold>{g === "fire" ? "Winner?" : g === "good" ? "Good" : "Meh"}</T>
+                <Pressable key={g} onPress={() => save(g)} style={[styles.gut, g === "fire" && { backgroundColor: "#fff" }]}>
+                  <T size={16} bold style={{ color: g === "fire" ? "#1A1917" : "#fff" }}>{g === "fire" ? "Winner" : g === "good" ? "Good" : "Meh"}</T>
                 </Pressable>
               ))}
             </Row>
@@ -267,7 +265,7 @@ export function CaptureScreen() {
               <View style={styles.shutterInner} />
             </Pressable>
             {step === "card" ? (
-              <Button title="No card, skip" kind="ghost" onPress={() => setDraft((d) => ({ ...d, skipCard: true }))} style={{ marginTop: 12 }} />
+              <Pressable onPress={() => setDraft((d) => ({ ...d, skipCard: true }))} style={{ marginTop: 14, padding: 6 }}><T size={15} style={{ color: "rgba(255,255,255,0.8)" }}>No card — skip</T></Pressable>
             ) : null}
           </View>
         )}
@@ -275,9 +273,9 @@ export function CaptureScreen() {
 
       {toast ? (
         <View style={[styles.toast, { top: insets.top + 120 }]}>
-          <T bold>Saved ✓  #{toast.n} today</T>
+          <T bold>Saved. {toast.n} today.</T>
           <Row>
-            <Button title="👀 Come look" kind="secondary" onPress={() => ping(toast.findId)} />
+            <Button title="Ask team to look" kind="secondary" onPress={() => ping(toast.findId)} />
             <Button title="Open" kind="ghost" onPress={() => { setToast(null); router.push(`/find/${toast.findId}`); }} />
           </Row>
         </View>
@@ -289,13 +287,15 @@ export function CaptureScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: "#000" },
   center: { alignItems: "center", justifyContent: "center" },
-  top: { position: "absolute", left: 0, right: 0, top: 0, paddingHorizontal: 12, gap: 8, backgroundColor: "rgba(0,0,0,0.35)", paddingBottom: 10 },
-  stepLabel: { color: "#fff", textShadowColor: "#000", textShadowRadius: 4 },
+  top: { position: "absolute", left: 0, right: 0, top: 0, paddingHorizontal: 16, gap: 10, backgroundColor: "rgba(0,0,0,0.45)", paddingBottom: 12 },
+  stepLabel: { color: "#fff", fontSize: 17 },
+  progress: { color: "rgba(255,255,255,0.75)" },
   transcript: { color: "#fff", fontStyle: "italic" },
-  bottom: { position: "absolute", left: 0, right: 0, bottom: 0, paddingTop: 16, backgroundColor: "rgba(0,0,0,0.35)" },
-  shutter: { width: 84, height: 84, borderRadius: 42, borderWidth: 5, borderColor: "#fff", alignItems: "center", justifyContent: "center" },
-  shutterInner: { width: 64, height: 64, borderRadius: 32, backgroundColor: "#fff" },
-  round: { width: 78, height: 78, borderRadius: 39, backgroundColor: "rgba(30,30,40,0.85)", alignItems: "center", justifyContent: "center" },
-  gut: { width: 104, height: 84, borderRadius: 20, backgroundColor: "rgba(30,30,40,0.9)", alignItems: "center", justifyContent: "center" },
-  toast: { position: "absolute", left: 16, right: 16, backgroundColor: C.card, borderRadius: 16, padding: 14, gap: 10, borderWidth: 1, borderColor: C.good },
+  bottom: { position: "absolute", left: 0, right: 0, bottom: 0, paddingTop: 18, backgroundColor: "rgba(0,0,0,0.45)" },
+  shutter: { width: 78, height: 78, borderRadius: 39, borderWidth: 4, borderColor: "#fff", alignItems: "center", justifyContent: "center" },
+  shutterInner: { width: 62, height: 62, borderRadius: 31, backgroundColor: "#fff" },
+  round: { minWidth: 104, height: 48, paddingHorizontal: 14, borderRadius: 24, backgroundColor: "rgba(255,255,255,0.16)", alignItems: "center", justifyContent: "center" },
+  roundText: { color: "#fff" },
+  gut: { flex: 1, maxWidth: 120, height: 54, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.16)", alignItems: "center", justifyContent: "center" },
+  toast: { position: "absolute", left: 16, right: 16, backgroundColor: "#fff", borderRadius: 16, padding: 16, gap: 12 },
 });

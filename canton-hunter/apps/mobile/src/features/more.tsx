@@ -2,7 +2,7 @@ import { CONFIG_DEFAULTS, QUICK_PHRASES, SUPPLIER_QUESTIONS } from "@canton/core
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, Share, View } from "react-native";
+import { Alert, Pressable, Share, StyleSheet, View } from "react-native";
 import { fairDay, findTitle, formatMoney, usePeople } from "@/lib/data";
 import { all, insert, kvGet, kvSet, myId, patch, softDelete, sqlite, useTable, wipeLocal, type Row } from "@/lib/store";
 import { api, supabase } from "@/lib/supabase";
@@ -18,26 +18,31 @@ export function MoreScreen() {
   const drafts = useTable("followups").filter((f) => f.status === "draft").length;
   const followNote = drafts ? `${drafts} to send` : undefined;
   const links: [string, string, string?][] = [
-    ["🇨🇳 Supplier questions", "/phrasebook"],
-    ["🔤 Quick translate", "/translate"],
-    ["✉️ Follow-ups", "/followups", followNote],
-    ["📊 Trip dashboard", "/dashboard"],
-    ["🎯 Hunt list", "/hunt"],
-    ["🗺️ Hall plan", "/halls"],
-    ["🧳 Samples & packing", "/samples"],
-    ["🏭 Suppliers", "/suppliers", dupes.length ? `${dupes.length} possible duplicates` : undefined],
-    ["⚙️ Settings & verify", "/settings", unverified ? `${unverified} unverified` : undefined],
-    ["🔄 Sync", "/sync", sync.lastError ? "error" : `${sync.pendingChanges + sync.pendingUploads} waiting`],
+    ["Supplier questions", "/phrasebook"],
+    ["Translate", "/translate"],
+    ["Follow-ups", "/followups", followNote],
+    ["Trip dashboard", "/dashboard"],
+    ["Hunt list", "/hunt"],
+    ["Hall plan", "/halls"],
+    ["Samples & packing", "/samples"],
+    ["Suppliers", "/suppliers", dupes.length ? `${dupes.length} possible duplicates` : undefined],
+    ["Settings", "/settings", unverified ? `${unverified} unverified` : undefined],
+    ["Sync", "/sync", sync.lastError ? "error" : sync.pendingChanges + sync.pendingUploads ? `${sync.pendingChanges + sync.pendingUploads} waiting` : undefined],
   ];
   return (
     <Screen>
-      <T size={26} bold style={{ marginBottom: 12 }}>More</T>
-      {links.map(([label, href, note]) => (
-        <Card key={href} onPress={() => router.push(href as never)} style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <T size={17}>{label}</T>
-          {note ? <Badge label={note} color={note.includes("error") || note.includes("unverified") || note.includes("duplicates") || note.includes("to send") ? C.warn : C.card2} /> : null}
-        </Card>
-      ))}
+      <T size={30} bold style={{ marginBottom: 16, fontWeight: "700" }}>More</T>
+      <View style={{ backgroundColor: C.card, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, overflow: "hidden" }}>
+        {links.map(([label, href, note], i) => (
+          <Pressable key={href} onPress={() => router.push(href as never)}
+            style={({ pressed }) => [{ flexDirection: "row", alignItems: "center", paddingVertical: 15, paddingHorizontal: 16, gap: 10 },
+              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line }, pressed && { backgroundColor: "#FAFAF9" }]}>
+            <T size={16} style={{ flex: 1 }}>{label}</T>
+            {note ? <T size={14} style={{ color: note.includes("error") || note.includes("unverified") || note.includes("duplicates") || note.includes("to send") ? C.warn : C.dim }}>{note}</T> : null}
+            <T size={18} dim>›</T>
+          </Pressable>
+        ))}
+      </View>
       <Button title="Sign out" kind="ghost" style={{ marginTop: 20 }} onPress={() => Alert.alert("Sign out?", sync.pendingChanges + sync.pendingUploads > 0 ? "You have unsynced data on this phone! Sync first." : "Local data will be cleared.", [
         { text: "Cancel", style: "cancel" },
         { text: "Sign out", style: "destructive", onPress: async () => { await supabase.auth.signOut(); wipeLocal(); } },
@@ -122,8 +127,8 @@ export function HuntScreen() {
   }
   return (
     <Screen>
-      <T dim>What we're hunting for. Finds that match get a 🎯 badge.</T>
-      <Button title="✨ Generate from trends (AI)" onPress={generate} busy={busy} style={{ marginVertical: 10 }} />
+      <T dim>What we're hunting for. Finds that match are marked on the feed.</T>
+      <Button title="Generate from trends" onPress={generate} busy={busy} style={{ marginVertical: 10 }} />
       <HRow>
         <View style={{ flex: 1 }}><Field placeholder="Add an item…" value={title} onChangeText={setTitle} /></View>
         <Button title="Add" style={{ marginBottom: 10 }} onPress={() => { if (title.trim()) { insert("hunt_items", { title: title.trim(), priority: 3, source_urls: [] }); setTitle(""); } }} />
@@ -135,7 +140,7 @@ export function HuntScreen() {
           <Card key={h.id}>
             <HRow style={{ justifyContent: "space-between" }}>
               <T bold style={{ flex: 1 }}>P{h.priority} · {h.title}</T>
-              {matched ? <Badge label={`🎯 ${matched}`} color={C.good} /> : null}
+              {matched ? <Badge label={`${matched} found`} color={C.good} /> : null}
             </HRow>
             {h.why ? <T dim size={13}>{h.why}</T> : null}
             {h.target_fob_cents || h.target_retail_cents ? <T size={13}>Target FOB {formatMoney(h.target_fob_cents)} → retail {formatMoney(h.target_retail_cents)}</T> : null}
@@ -287,7 +292,7 @@ export function SettingsScreen() {
           <Section key={k} title={k} right={row?.verified_at ? <Badge label={`verified ${row.verified_at}`} color={C.goodBg} /> : <Badge label="UNVERIFIED" color={C.warn} />}>
             <T dim size={13}>{row?.note ?? CONFIG_DEFAULTS[k]!.note}</T>
             <Field multiline defaultValue={JSON.stringify(value, null, 2)} key={`${k}-${row?.updated_at}`} style={{ fontFamily: "Menlo", fontSize: 12 }} onEndEditing={(e) => saveJson(k, e.nativeEvent.text)} />
-            <Button title="✓ Mark verified" kind="secondary" onPress={() => markVerified(k, value)} />
+            <Button title="Mark verified" kind="secondary" onPress={() => markVerified(k, value)} />
           </Section>
         );
       })}

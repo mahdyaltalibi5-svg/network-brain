@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { fairDay, usePeople } from "@/lib/data";
 import { myId, useTable, type Row } from "@/lib/store";
 import { FindCard } from "@/ui/findCard";
-import { Badge, Button, C, Chip, Empty, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { Button, C, Chip, Empty, Row as HRow, Screen, Section, T } from "@/ui/kit";
 
 type Tab = "ranked" | "pipeline";
 
@@ -37,13 +37,12 @@ export function DealRoomScreen() {
     return m;
   }, [finds]);
 
-  const voteDots = (id: string) => votes.filter((v) => v.find_id === id).map((v) => (v.value === 2 ? "🔥" : v.value === 1 ? "👍" : v.value === -1 ? "✕" : "·")).join("");
-
+  
   return (
     <Screen>
       <HRow style={{ justifyContent: "space-between" }}>
-        <T size={26} bold>Deal Room</T>
-        <Button title={`Nightly review${toReview ? ` (${toReview})` : ""}`} onPress={() => router.push("/review")} kind={toReview ? "primary" : "secondary"} />
+        <T size={30} bold style={{ fontWeight: "700" }}>Deal Room</T>
+        <Button title={toReview ? `Review ${toReview}` : "Review"} onPress={() => router.push("/review")} kind={toReview ? "primary" : "secondary"} />
       </HRow>
       <HRow style={{ marginVertical: 12 }}>
         <Chip label="Ranked" active={tab === "ranked"} onPress={() => setTab("ranked")} />
@@ -54,18 +53,17 @@ export function DealRoomScreen() {
           <HRow style={{ marginBottom: 10 }}>
             <Chip label="All days" active={!day} onPress={() => setDay(null)} />
             {days.slice(0, 7).map((d) => <Chip key={d} label={d.slice(5)} active={day === d} onPress={() => setDay(d)} />)}
-            <Chip label={showGated ? "Showing failed gates" : "Hide failed gates"} active={showGated} onPress={() => setShowGated(!showGated)} color={C.bad} />
+            <Chip label="Include failed" active={showGated} onPress={() => setShowGated(!showGated)} />
           </HRow>
           {ranked.length === 0 ? <Empty text="Nothing scored yet." /> : null}
           {ranked.map((f, i) => {
             const s = scoreBy.get(f.id);
             return (
               <FindCard key={f.id} f={f} person={people.get(f.captured_by)} score={s} right={
-                <View style={{ alignItems: "flex-end", gap: 4 }}>
-                  <T bold size={18}>#{i + 1}</T>
-                  {s?.margin_multiple != null ? <Badge label={`${Number(s.margin_multiple).toFixed(1)}×`} color={s.margin_multiple >= 3 ? C.goodBg : C.badBg} /> : null}
-                  {s?.arrive_by ? <T size={12} dim>🎄 {String(s.arrive_by).slice(5)}</T> : null}
-                  <T size={12}>{voteDots(f.id)}</T>
+                <View style={{ alignItems: "flex-end", gap: 2, minWidth: 56 }}>
+                  <T size={11} dim>#{i + 1}</T>
+                  <T size={20} bold style={{ color: s?.gates_failed?.length ? C.bad : C.text }}>{s ? Math.round(s.total) : "—"}</T>
+                  {s?.margin_multiple != null ? <T size={12} style={{ color: s.margin_multiple >= 3 ? C.good : C.bad }}>{Number(s.margin_multiple).toFixed(1)}× margin</T> : null}
                 </View>
               } />
             );

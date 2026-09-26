@@ -28,11 +28,11 @@ export function ContentScreen() {
   return (
     <Screen>
       <Row style={{ justifyContent: "space-between" }}>
-        <T size={26} bold>Content</T>
+        <T size={30} bold style={{ fontWeight: "700" }}>Content</T>
         <Button title="Make today's pack" onPress={generate} busy={busy} kind="secondary" />
       </Row>
       <T dim style={{ marginTop: 6 }}>Made nightly at 10pm China time from the day's best videos. Post by hand: save → CapCut → TikTok.</T>
-      {byDate.length === 0 ? <Empty text="No content yet. Record 🎥 videos while capturing." /> : null}
+      {byDate.length === 0 ? <Empty text="No content yet. Record videos while capturing." /> : null}
       {byDate.map(([date, list]) => (
         <Section key={date} title={date}>
           {list.map((i) => {
@@ -42,7 +42,7 @@ export function ContentScreen() {
             if (i.kind === "recap") {
               return (
                 <Card key={i.id}>
-                  <T bold>🎙️ Day recap script</T>
+                  <T bold>Day recap script</T>
                   <T selectable style={{ marginTop: 6 }}>{i.script}</T>
                   <Button title="Copy script" kind="secondary" onPress={() => { void Clipboard.setStringAsync(i.script ?? ""); }} style={{ marginTop: 8 }} />
                 </Card>
@@ -51,16 +51,16 @@ export function ContentScreen() {
             return (
               <Card key={i.id} style={i.posted ? { opacity: 0.55 } : undefined}>
                 <T bold>#{i.post_order} · {f ? findTitle(f) : "Clip"}</T>
-                {(i.hooks ?? []).map((h: string, k: number) => <T key={k} style={{ marginTop: 4 }}>🪝 {h}</T>)}
+                {(i.hooks ?? []).map((h: string, k: number) => <T key={k} style={{ marginTop: 4 }}>“{h}”</T>)}
                 {i.on_screen_text ? <T dim size={13} style={{ marginTop: 6 }}>On screen: {i.on_screen_text}</T> : null}
                 <T selectable size={14} style={{ marginTop: 6, color: C.dim }}>{caption}</T>
                 <Row style={{ marginTop: 10 }}>
-                  <Button title="⬇︎ Save video" kind="secondary" onPress={() => m && saveToPhotos(m.id, m.storage_path).catch((e) => Alert.alert("Couldn't save", String(e.message ?? e)))} />
+                  <Button title="Save video" kind="secondary" onPress={() => m && saveToPhotos(m.id, m.storage_path).catch((e) => Alert.alert("Couldn't save", String(e.message ?? e)))} />
                   <Button title="Copy caption" kind="secondary" onPress={() => { void Clipboard.setStringAsync(caption); }} />
                   <Button title="TikTok" kind="ghost" onPress={() => Linking.openURL("snssdk1233://").catch(() => Linking.openURL("https://www.tiktok.com/upload"))} />
                 </Row>
                 <Row style={{ marginTop: 8 }}>
-                  <Chip label={i.posted ? "Posted ✓" : "Mark posted"} active={i.posted} color={C.good} onPress={() => patch("content_items", i.id, { posted: !i.posted })} />
+                  <Chip label={i.posted ? "Posted" : "Mark posted"} active={i.posted} color={C.good} onPress={() => patch("content_items", i.id, { posted: !i.posted })} />
                 </Row>
                 {i.posted ? <Field placeholder="Post URL" defaultValue={i.posted_url ?? ""} onEndEditing={(e) => patch("content_items", i.id, { posted_url: e.nativeEvent.text || null })} /> : null}
               </Card>

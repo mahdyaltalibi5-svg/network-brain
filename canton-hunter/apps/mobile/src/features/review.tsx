@@ -44,7 +44,7 @@ export function ReviewScreen() {
   if (!f) {
     return (
       <Screen>
-        <T size={22} bold>All caught up 🎉</T>
+        <T size={22} bold>All caught up</T>
         <T dim style={{ marginVertical: 12 }}>Finds with 2+ “must test” votes move to Shortlisted automatically.</T>
         <Button title="Back to Deal Room" onPress={() => router.back()} />
       </Screen>
@@ -59,17 +59,17 @@ export function ReviewScreen() {
       <T size={22} bold style={{ marginTop: 12 }}>{findTitle(f)}</T>
       <T dim numberOfLines={3}>{findDescription(f)}</T>
       <HRow style={{ marginTop: 8 }}>
-        {s ? <Badge label={`★ ${Math.round(s.total)}`} color={C.accent} /> : null}
+        {s ? <Badge label={`Score ${Math.round(s.total)}`} /> : null}
         {s?.margin_multiple ? <Badge label={`${Number(s.margin_multiple).toFixed(1)}× margin`} /> : null}
         {f.fob_price_cents != null ? <Badge label={`${formatMoney(f.fob_price_cents, f.fob_currency ?? "USD")} · MOQ ${f.moq ?? "?"}`} /> : null}
         <Badge label={`by ${people.get(f.captured_by)?.name ?? "?"}`} />
-        {others.map((v) => <Badge key={v.id} label={`${people.get(v.user_id)?.name}: ${v.value === 2 ? "🔥" : v.value === 1 ? "👍" : "✕"}`} />)}
+        {others.map((v) => <Badge key={v.id} label={`${people.get(v.user_id)?.name}: ${v.value === 2 ? "must test" : v.value === 1 ? "like" : "pass"}`} />)}
       </HRow>
       {f.transcript ? <T size={14} style={{ marginTop: 8, fontStyle: "italic" }} numberOfLines={3}>“{f.transcript}”</T> : null}
       <HRow style={{ marginTop: 18, justifyContent: "space-between" }} gap={8}>
-        <Button title="✕ Pass" kind="danger" big style={{ flex: 1 }} onPress={() => vote(-1)} />
-        <Button title="👍 Like" kind="secondary" big style={{ flex: 1 }} onPress={() => vote(1)} />
-        <Button title="🔥 Test" big style={{ flex: 1 }} onPress={() => vote(2)} />
+        <Button title="Pass" kind="secondary" big style={{ flex: 1 }} onPress={() => vote(-1)} />
+        <Button title="Like" kind="secondary" big style={{ flex: 1 }} onPress={() => vote(1)} />
+        <Button title="Must test" big style={{ flex: 1 }} onPress={() => vote(2)} />
       </HRow>
       <HRow style={{ marginTop: 10 }}>
         <Button title="Skip" kind="ghost" onPress={() => setSkipped(new Set([...skipped, f.id]))} />

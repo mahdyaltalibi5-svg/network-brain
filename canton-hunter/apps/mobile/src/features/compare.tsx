@@ -34,8 +34,8 @@ export function CompareSection({ f }: { f: Row }) {
   return (
     <Section title={`Same product at ${members.length} booths`}>
       {best && priced.length > 1 ? (
-        <Card style={{ borderColor: C.good }}>
-          <T size={14}>💡 Lowest quote: <T bold>{formatMoney(Math.round(best.fobUsd! * 100))}</T> at {best.supplier?.name_en ?? best.supplier?.booth_code ?? "a booth"} (MOQ {best.m.moq ?? "?"}).
+        <Card >
+          <T size={14}>Lowest quote: <T bold>{formatMoney(Math.round(best.fobUsd! * 100))}</T> at {best.supplier?.name_en ?? best.supplier?.booth_code ?? "a booth"} (MOQ {best.m.moq ?? "?"}).
             {best.m.id !== f.id && f.fob_price_cents != null ? " Use it to negotiate." : ""}</T>
         </Card>
       ) : null}
@@ -50,7 +50,7 @@ export function CompareSection({ f }: { f: Row }) {
               <Badge label={`MOQ ${m.moq ?? "?"}`} />
               {m.lead_time_days ? <Badge label={`${m.lead_time_days}d`} /> : null}
               {s.cost ? <Badge label={`${s.cost.margin_multiple.toFixed(1)}×`} color={bestMargin && m.id === bestMargin.m.id ? C.goodBg : C.card2} /> : null}
-              {m.oem_logo ? <Badge label="logo ✓" /> : null}
+              {m.oem_logo ? <Badge label="logo" /> : null}
             </HRow>
           </View>
         </Card>

@@ -43,10 +43,11 @@ export function LaunchScreen({ id }: { id: string }) {
   return (
     <Screen>
       <T size={22} bold>{f ? findTitle(f) : "Launch"}</T>
-      <Row style={{ marginVertical: 10 }}>
-        {STEPS.map((s) => <Badge key={s} label={s.replace("_", " ")} color={s === l.status ? C.accent : STEPS.indexOf(s) < STEPS.indexOf(l.status) ? C.goodBg : C.card2} />)}
-        {["paused", "killed", "error"].includes(l.status) ? <Badge label={l.status} color={C.bad} /> : null}
-      </Row>
+      <T dim size={14} style={{ marginTop: 4, marginBottom: 12 }}>
+        {["paused", "killed", "error"].includes(l.status)
+          ? `Status: ${l.status}`
+          : `Step ${Math.max(1, STEPS.indexOf(l.status) + 1)} of ${STEPS.length} · ${l.status.replace("_", " ")}`}
+      </T>
       {l.last_error ? <Card style={{ borderColor: C.bad }}><T style={{ color: C.bad }}>{l.last_error}</T></Card> : null}
 
       {!plan ? (
@@ -79,7 +80,7 @@ export function LaunchScreen({ id }: { id: string }) {
           <Section title="Ad scripts (shoot these)">
             {plan.ad_scripts.map((a, i) => (
               <Card key={i}>
-                <T bold>🪝 {a.hook}</T>
+                <T bold>“{a.hook}”</T>
                 <T style={{ marginTop: 4 }}>{a.body}</T>
                 <T dim size={13} style={{ marginTop: 4 }}>CTA: {a.cta}</T>
                 {a.shot_list.map((s, k) => <T key={k} size={13}>• {s}</T>)}
@@ -105,7 +106,7 @@ export function LaunchScreen({ id }: { id: string }) {
           <Section title="Next step">
             {l.status === "plan_ready" || l.status === "planning" ? (
               <>
-                <Button title="✓ Approve plan" onPress={() => run("approve")} busy={busy === "approve"} big />
+                <Button title="Approve plan" onPress={() => run("approve")} busy={busy === "approve"} big />
                 <Button title="Regenerate plan" kind="ghost" onPress={() => run("plan")} style={{ marginTop: 8 }} />
               </>
             ) : null}
@@ -115,12 +116,12 @@ export function LaunchScreen({ id }: { id: string }) {
             {l.status === "building" ? <T dim>Building the Shopify page and Meta campaign… you'll get a notification.</T> : null}
             {l.landing_url ? <Button title="Open landing page" kind="secondary" onPress={() => Linking.openURL(l.landing_url)} style={{ marginTop: 8 }} /> : null}
             {l.meta_campaign_id && l.meta_status !== "active" && l.status !== "killed" ? (
-              <Button title="🚀 Go live ($10/day)" kind="danger" onPress={goLive} busy={busy === "activate"} big style={{ marginTop: 8 }} />
+              <Button title="Go live · $10/day" kind="danger" onPress={goLive} busy={busy === "activate"} big style={{ marginTop: 8 }} />
             ) : null}
             {l.meta_status === "active" ? (
               <Row style={{ marginTop: 8 }}>
-                <Button title="⏸ Pause ads" kind="secondary" onPress={() => run("pause")} busy={busy === "pause"} />
-                <Button title="🛑 Kill test" kind="danger" onPress={() => Alert.alert("Kill this test?", "Pauses ads and marks the product killed.", [{ text: "Cancel", style: "cancel" }, { text: "Kill", style: "destructive", onPress: () => void run("kill") }])} />
+                <Button title="Pause ads" kind="secondary" onPress={() => run("pause")} busy={busy === "pause"} />
+                <Button title="Kill test" kind="danger" onPress={() => Alert.alert("Kill this test?", "Pauses ads and marks the product killed.", [{ text: "Cancel", style: "cancel" }, { text: "Kill", style: "destructive", onPress: () => void run("kill") }])} />
               </Row>
             ) : null}
           </Section>
@@ -131,7 +132,7 @@ export function LaunchScreen({ id }: { id: string }) {
         <Section title="Results">
           {latest?.recommendation ? (
             <Card style={{ borderColor: latest.recommendation === "kill" ? C.bad : latest.recommendation === "scale" ? C.good : C.line }}>
-              <T bold size={18}>{latest.recommendation === "kill" ? "🛑 Recommend: kill" : latest.recommendation === "scale" ? "📈 Recommend: scale" : "⏳ Keep testing"}</T>
+              <T bold size={18}>{latest.recommendation === "kill" ? "Recommendation: kill" : latest.recommendation === "scale" ? "Recommendation: scale" : "Recommendation: keep testing"}</T>
               {(latest.reasons ?? []).map((r: string) => <T key={r} dim size={13}>{r}</T>)}
             </Card>
           ) : null}

@@ -55,14 +55,14 @@ function FollowupCard({ fu }: { fu: Row }) {
   }
 
   return (
-    <Card style={fu.status === "sent" ? { borderColor: C.blue } : fu.status === "replied" ? { borderColor: C.good } : undefined}>
+    <Card>
       <HRow style={{ justifyContent: "space-between" }}>
         <T bold style={{ flex: 1 }}>{s.name_en ?? s.name_cn ?? "Supplier"}</T>
         <Badge label={`${fu.purpose} · ${fu.status}`} color={fu.status === "draft" ? C.warn : fu.status === "replied" ? C.goodBg : C.card2} />
       </HRow>
       <T dim size={12}>{[s.contact_name, s.booth_code, s.wechat_id && `WeChat ${s.wechat_id}`, email].filter(Boolean).join(" · ")}</T>
       <T dim size={12} numberOfLines={2}>{finds.map(findTitle).join(", ")}</T>
-      {fu.status === "drafting" ? <T style={{ marginTop: 8 }}>✍️ Drafting… (about 20 seconds)</T> : null}
+      {fu.status === "drafting" ? <T style={{ marginTop: 8 }}>Drafting… (about 20 seconds)</T> : null}
       {fu.body_zh ? (
         <View style={{ marginTop: 8, backgroundColor: C.card2, borderRadius: 12, padding: 10 }}>
           <T selectable size={15}>{showEn ? fu.body_en : fu.body_zh}</T>
@@ -77,7 +77,7 @@ function FollowupCard({ fu }: { fu: Row }) {
         </HRow>
       ) : null}
       <HRow style={{ marginTop: 8 }}>
-        {fu.status === "draft" ? <Button title="✓ Mark sent" kind="good" onPress={markSent} /> : null}
+        {fu.status === "draft" ? <Button title="Mark sent" kind="good" onPress={markSent} /> : null}
         <Button title="Redraft" kind="ghost" onPress={() => requestDraft(fu.supplier_id, fu.purpose, fu)} />
         {finds[0] ? <Button title="Open find" kind="ghost" onPress={() => router.push(`/find/${finds[0]!.id}`)} /> : null}
       </HRow>
@@ -124,7 +124,7 @@ export function FollowupsScreen() {
       <T dim>Suppliers with shortlisted products get a bilingual message. Copy the 中文, paste in WeChat, mark sent.</T>
       {needs.length ? (
         <Section title={`Needs a follow-up (${needs.length})`}>
-          <Button title={`✍️ Draft all ${needs.length}`} onPress={draftAll} busy={busy} big />
+          <Button title={`Draft all ${needs.length}`} onPress={draftAll} busy={busy} big />
           {needs.map((sid) => {
             const s = all("suppliers").find((x) => x.id === sid);
             return (
@@ -139,7 +139,7 @@ export function FollowupsScreen() {
       <Section title="Ready to send">{byStatus(["drafting", "draft"]).map((fu) => <FollowupCard key={fu.id} fu={fu} />)}</Section>
       <Section title="Waiting for reply">{byStatus(["sent"]).map((fu) => <FollowupCard key={fu.id} fu={fu} />)}</Section>
       <Section title="Replied">{byStatus(["replied"]).map((fu) => <FollowupCard key={fu.id} fu={fu} />)}</Section>
-      {!followups.length && !needs.length ? <Empty text="Shortlist some finds first (Nightly Review → 🔥 Test)." /> : null}
+      {!followups.length && !needs.length ? <Empty text="Shortlist some finds first (Nightly Review, then Test)." /> : null}
     </Screen>
   );
 }

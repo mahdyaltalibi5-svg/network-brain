@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
 import "@/lib/demo/boot";
-import { DarkTheme, Stack, ThemeProvider } from "expo-router";
+import { DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import { C, Screen, T } from "@/ui/kit";
 
 SplashScreen.preventAutoHideAsync();
 
-const theme = { ...DarkTheme, colors: { ...DarkTheme.colors, background: C.bg, card: C.bg, primary: C.accent, text: C.text, border: C.line } };
+const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: C.bg, card: C.bg, primary: C.accent, text: C.text, border: C.line } };
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -42,13 +42,13 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: C.bg }}>
       <ThemeProvider value={theme}>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         {!configured ? (
           <Screen><T size={20} bold>Not configured</T><T dim>Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY (see docs/SETUP.md).</T></Screen>
         ) : !session ? (
           <Login />
         ) : (
-          <Stack screenOptions={{ headerStyle: { backgroundColor: C.bg }, headerTintColor: C.text, contentStyle: { backgroundColor: C.bg }, headerBackTitle: "Back" }}>
+          <Stack screenOptions={{ headerStyle: { backgroundColor: C.bg }, headerTintColor: C.text, headerShadowVisible: false, contentStyle: { backgroundColor: C.bg }, headerBackTitle: "Back" }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="find/[id]" options={{ title: "Find" }} />
             <Stack.Screen name="launch/[id]" options={{ title: "Launch" }} />

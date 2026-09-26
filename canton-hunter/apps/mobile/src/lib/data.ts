@@ -36,7 +36,7 @@ export function usePeople(): Map<string, { name: string; color: string }> {
 export const findTitle = (f: Row) => eff(f.title_override, f.title_ai) ?? (f.processing_state === "error" ? "Couldn't process" : "Processing…");
 export const findDescription = (f: Row) => eff(f.description_override, f.description_ai) ?? "";
 export const findCategory = (f: Row) => eff(f.category_override, f.category_ai) ?? "";
-export const GUT_EMOJI: Record<string, string> = { fire: "🔥", good: "👍", meh: "🤷" };
+export const GUT_EMOJI: Record<string, string> = { fire: "Winner", good: "Good", meh: "Meh" };
 
 export function formatMoney(cents: number | null | undefined, currency = "USD"): string {
   if (cents == null) return "—";

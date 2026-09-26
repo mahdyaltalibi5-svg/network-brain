@@ -6,7 +6,7 @@ export default function TabsLayout() {
   const sync = useSyncStatus();
   const pending = sync.pendingChanges + sync.pendingUploads;
   return (
-    <NativeTabs backgroundColor={C.bg} tintColor={C.accent}>
+    <NativeTabs backgroundColor={C.card} tintColor={C.text}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Capture</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="camera.fill" md="photo_camera" />

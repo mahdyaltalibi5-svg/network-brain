@@ -63,17 +63,17 @@ export function FeedScreen() {
         ListHeaderComponent={
           <View>
             <Row style={{ justifyContent: "space-between", marginBottom: 8 }}>
-              <T size={26} bold>Feed</T>
-              <T dim size={12}>{sync.online ? "online" : "offline"} · {sync.pendingChanges + sync.pendingUploads} waiting</T>
+              <T size={30} bold style={{ fontWeight: "700" }}>Feed</T>
+              <T dim size={13}>{sync.online ? "" : "Offline · "}{sync.pendingChanges + sync.pendingUploads ? `${sync.pendingChanges + sync.pendingUploads} to sync` : "Synced"}</T>
             </Row>
             <Row style={{ marginBottom: 6 }}>
               <View style={{ flex: 1 }}><Field placeholder="Search finds, suppliers, booths…" value={q} onChangeText={setQ} clearButtonMode="always" /></View>
-              <Button title="📷" kind="secondary" onPress={searchByPhoto} style={{ marginBottom: 10 }} />
+              <Button title="Photo" kind="secondary" onPress={searchByPhoto} style={{ marginBottom: 12 }} />
             </Row>
             {!q ? (
               <Row style={{ marginBottom: 12 }}>
                 {(["today", "mine", "fire", "all"] as Filter[]).map((k) => (
-                  <Chip key={k} label={{ today: "Today", mine: "Mine", fire: "🔥 only", all: "All" }[k]} active={filter === k} onPress={() => setFilter(k)} />
+                  <Chip key={k} label={{ today: "Today", mine: "Mine", fire: "Winners", all: "All" }[k]} active={filter === k} onPress={() => setFilter(k)} />
                 ))}
                 <T dim size={13}>{list.length}</T>
               </Row>

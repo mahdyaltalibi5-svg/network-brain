@@ -122,7 +122,7 @@ export function FindDetail({ id }: { id: string }) {
   function ping() {
     insert("pings", { find_id: f!.id, from_user: me, hall: f!.hall, booth_code: f!.booth_code, message: "Come look at this", sent_at: new Date().toISOString() });
     syncSoon(0);
-    Alert.alert("Pinged the team 👀");
+    Alert.alert("Team notified");
   }
 
   const compliance = eff(f.compliance_override, f.compliance_ai) as { risk: string; flags: string[] } | null;
@@ -138,9 +138,9 @@ export function FindDetail({ id }: { id: string }) {
       </ScrollView>
       <HRow style={{ marginTop: 10 }}>
         {f.gut ? <Badge label={GUT_EMOJI[f.gut]!} /> : null}
-        {hasVideo ? <Badge label="🎥 video" /> : null}
-        {score ? <Badge label={`★ ${Math.round(score.total)}`} color={score.gates_failed?.length ? C.bad : C.accent} /> : null}
-        {f.hunt_item_id ? <Badge label="🎯 on hunt list" color={C.blue} /> : null}
+        {hasVideo ? <Badge label="video" /> : null}
+        {score ? <Badge label={`Score ${Math.round(score.total)}`} color={score.gates_failed?.length ? C.bad : undefined} /> : null}
+        {f.hunt_item_id ? <Badge label="on hunt list" /> : null}
         <T dim size={13}>{people.get(f.captured_by)?.name} · {new Date(f.captured_at).toLocaleString()}</T>
       </HRow>
 
@@ -150,21 +150,21 @@ export function FindDetail({ id }: { id: string }) {
 
       <Section title="Team vote">
         <HRow>
-          {[{ v: -1, l: "✕ Pass" }, { v: 1, l: "👍 Like" }, { v: 2, l: "🔥 Must test" }].map((o) => (
+          {[{ v: -1, l: "Pass" }, { v: 1, l: "Like" }, { v: 2, l: "Must test" }].map((o) => (
             <Chip key={o.v} label={o.l} active={myVote?.value === o.v} onPress={() => vote(o.v)} color={o.v === -1 ? C.bad : o.v === 2 ? C.accent : C.good} />
           ))}
         </HRow>
         <HRow style={{ marginTop: 8 }}>
-          {votes.map((v) => <Badge key={v.id} label={`${people.get(v.user_id)?.name ?? "?"}: ${v.value === 2 ? "🔥" : v.value === 1 ? "👍" : v.value === -1 ? "✕" : "·"}`} />)}
+          {votes.map((v) => <Badge key={v.id} label={`${people.get(v.user_id)?.name ?? "?"}: ${v.value === 2 ? "must test" : v.value === 1 ? "like" : v.value === -1 ? "pass" : "—"}`} />)}
         </HRow>
       </Section>
 
       <Section title="Actions">
         <HRow>
-          <Button title="👀 Come look" kind="secondary" onPress={ping} />
-          <Button title="🔎 Research now" kind="secondary" onPress={() => requestJob("research_find")} />
-          {f.processing_state === "error" ? <Button title="↻ Retry AI" kind="secondary" onPress={() => requestJob("process_find")} /> : null}
-          <Button title={launch ? "🚀 Open launch" : "🚀 Launch this"} onPress={startLaunch} />
+          <Button title="Ask team to look" kind="secondary" onPress={ping} />
+          <Button title="Research now" kind="secondary" onPress={() => requestJob("research_find")} />
+          {f.processing_state === "error" ? <Button title="Retry AI" kind="secondary" onPress={() => requestJob("process_find")} /> : null}
+          <Button title={launch ? "Open launch" : "Launch this"} onPress={startLaunch} />
         </HRow>
       </Section>
 
@@ -175,7 +175,7 @@ export function FindDetail({ id }: { id: string }) {
         {f.killed_reason ? <T dim style={{ marginTop: 6 }}>Killed: {f.killed_reason}</T> : null}
       </Section>
 
-      {lowConf.length ? <Card style={{ borderColor: C.warn, marginTop: 16 }}><T size={14}>⚠️ Double-check: {lowConf.join(", ")}</T></Card> : null}
+      {lowConf.length ? <Card style={{ marginTop: 16 }}><T size={14} style={{ color: C.warn }}>Double-check: {lowConf.join(", ")}</T></Card> : null}
 
       <Section title="Deal terms">
         <HRow gap={8}>
@@ -219,7 +219,7 @@ export function FindDetail({ id }: { id: string }) {
             <KV k="After ads (est. CPA)" v={`$${cost.margin_after_ads_usd.toFixed(2)}`} />
             <KV k="Break-even ROAS" v={cost.breakeven_roas ? `${cost.breakeven_roas.toFixed(2)}` : "—"} />
             <KV k="Arrives by" v={`${cost.arrive_by_earliest} – ${cost.arrive_by}`} />
-            {cost.warnings.map((w) => <T key={w} size={12} style={{ color: C.warn, marginTop: 4 }}>⚠️ {w}</T>)}
+            {cost.warnings.map((w) => <T key={w} size={12} style={{ color: C.warn, marginTop: 4 }}>{w}</T>)}
             <Button title="Save scenario for the team" kind="secondary" onPress={saveScenario} style={{ marginTop: 10 }} />
           </Card>
         ) : <T dim>Add a FOB price to see the real margin.</T>}
@@ -227,7 +227,7 @@ export function FindDetail({ id }: { id: string }) {
 
       {live ? (
         <Section title={`Score ${Math.round(live.score.total)} (base ${Math.round(live.score.base)} + heat ${live.score.heat_bonus})`}>
-          {live.score.gates_failed.map((g) => <T key={g} style={{ color: C.bad }}>⛔ {g}</T>)}
+          {live.score.gates_failed.map((g) => <T key={g} style={{ color: C.bad }}>{g}</T>)}
           <Card>{live.score.breakdown.map((b) => <KV key={b.key} k={`${b.label} ×${b.weight}`} v={`${b.score}${b.unknown ? " (unknown)" : ""}`} />)}</Card>
         </Section>
       ) : null}
@@ -240,7 +240,7 @@ export function FindDetail({ id }: { id: string }) {
             <KV k="Competition" v={research.competition} />
             <KV k="IP risk" v={<T bold style={{ color: research.ip_risk === "high" ? C.bad : research.ip_risk === "med" ? C.warn : C.good }}>{research.ip_risk}</T>} />
             <T dim size={13} style={{ marginTop: 6 }}>{research.report.trend_notes}</T>
-            {research.report.cheaper_source_found ? <T size={13} style={{ color: C.warn, marginTop: 6 }}>💸 {research.report.cheaper_source_notes}</T> : null}
+            {research.report.cheaper_source_found ? <T size={13} style={{ color: C.warn, marginTop: 6 }}>{research.report.cheaper_source_notes}</T> : null}
             {(research.sources ?? []).slice(0, 8).map((s: Row, i: number) => (
               <T key={i} size={13} style={{ color: C.blue, marginTop: 6 }} numberOfLines={1}>
                 <T size={13} style={{ color: C.blue }} >{`${s.platform}: ${s.price_usd != null ? `$${s.price_usd} · ` : ""}${s.title}`}</T>
@@ -248,7 +248,7 @@ export function FindDetail({ id }: { id: string }) {
             ))}
             <HRow style={{ marginTop: 8 }}>{(research.sources ?? []).slice(0, 4).map((s: Row, i: number) => <Button key={i} title={`Open ${i + 1}`} kind="ghost" onPress={() => Linking.openURL(s.url)} />)}</HRow>
           </Card>
-        ) : <T dim>Runs overnight for 🔥/👍 finds, or tap Research now.</T>}
+        ) : <T dim>Runs overnight for Winner and Good finds, or tap Research now.</T>}
       </Section>
 
       <Section title="Supplier">
@@ -265,7 +265,7 @@ export function FindDetail({ id }: { id: string }) {
             <KV k="Factory?" v={eff(supplier.is_factory_override, supplier.is_factory_ai) == null ? "unknown" : eff(supplier.is_factory_override, supplier.is_factory_ai) ? "factory" : "trading co."} />
             {supplier.website ? <KV k="Website" v={supplier.website} onPress={() => Linking.openURL(supplier.website.startsWith("http") ? supplier.website : `https://${supplier.website}`)} /> : null}
             <HRow style={{ marginTop: 10 }}>
-              <Button title="✍️ Draft follow-up" kind="secondary" onPress={() => { void requestDraft(supplier.id, "quote"); router.push("/followups"); }} />
+              <Button title="Draft follow-up" kind="secondary" onPress={() => { void requestDraft(supplier.id, "quote"); router.push("/followups"); }} />
             </HRow>
           </Card>
         ) : <T dim>{f.processing_state === "done" ? "No business card on this find." : "Reading the business card…"}</T>}

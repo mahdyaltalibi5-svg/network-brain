@@ -1,15 +1,15 @@
 /** Trip dashboard: how the hunt is going. Stat tiles + single-hue bars with direct labels (one series each, no legend). */
 import { router } from "expo-router";
 import { useMemo } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { fairDay, findTitle, usePeople } from "@/lib/data";
 import { useTable, type Row } from "@/lib/store";
 import { C, Card, Row as HRow, Screen, Section, T } from "@/ui/kit";
 
 function Tile({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
-    <View style={{ flexBasis: "47%", flexGrow: 1, backgroundColor: C.card, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: C.line }}>
-      <T dim size={12} style={{ textTransform: "uppercase", letterSpacing: 0.8 }}>{label}</T>
+    <View style={{ flexBasis: "47%", flexGrow: 1, backgroundColor: C.card, borderRadius: 14, padding: 16, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line }}>
+      <T dim size={13}>{label}</T>
       <T bold size={30}>{value}</T>
       {sub ? <T dim size={12}>{sub}</T> : null}
     </View>
@@ -28,7 +28,7 @@ function Bars({ rows, dot }: { rows: { label: string; value: number; color?: str
             <T size={13} numberOfLines={1} style={{ flexShrink: 1 }}>{r.label}</T>
           </View>
           <View style={{ flex: 1, height: 12, justifyContent: "center" }}>
-            <View style={{ width: `${Math.max(2, (r.value / max) * 100)}%`, height: 10, backgroundColor: C.accent, borderTopRightRadius: 4, borderBottomRightRadius: 4 }} />
+            <View style={{ width: `${Math.max(2, (r.value / max) * 100)}%`, height: 8, backgroundColor: C.text, opacity: 0.85, borderTopRightRadius: 3, borderBottomRightRadius: 3 }} />
           </View>
           <T size={13} bold style={{ width: 36, textAlign: "right" }}>{r.value}</T>
         </View>
@@ -86,7 +86,7 @@ export function DashboardScreen() {
     <Screen>
       <HRow gap={10}>
         <Tile label="Finds" value={finds.length} sub={`${d.today} today · ${d.products} distinct products`} />
-        <Tile label="🔥 Winners?" value={d.fire} sub={`${d.processed} processed by AI`} />
+        <Tile label="Winners" value={d.fire} sub={`${d.processed} processed by AI`} />
         <Tile label="Suppliers" value={suppliers.filter((s) => !s.merged_into_id).length} sub={`${d.sent} followed up · ${d.replied} replied`} />
         <Tile label="Money out" value={`$${Math.round((d.samplesPaid + d.adSpend) / 100)}`} sub={`samples $${Math.round(d.samplesPaid / 100)} · ads $${Math.round(d.adSpend / 100)} · ${d.live} live`} />
       </HRow>
