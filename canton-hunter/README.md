@@ -13,3 +13,13 @@ test page plus a paused $10/day Meta campaign.
 | `docs/` | ARCHITECTURE, BUILD_PLAN, SETUP, VERIFY, PRE_TRIP, BACKLOG |
 
 Start with **docs/SETUP.md**.
+
+## Web demo
+
+`vercel.json` builds `apps/mobile` for the web as a **demo**:
+- Fake data lives in the browser (localStorage).
+- The camera, voice and AI are simulated.
+- The real core logic still runs: landed cost, scoring, kill rules, grouping.
+
+Web-only files (`*.web.ts`) replace the phone-only modules, so the iPhone build is unchanged.
+Build locally with `pnpm -C apps/mobile exec expo export --platform web`.
