@@ -8,7 +8,7 @@ import { all, insert, kvGet, kvSet, myId, patch, softDelete, sqlite, useTable, w
 import { api, supabase } from "@/lib/supabase";
 import { refreshCounts, syncNow, useSyncStatus } from "@/lib/sync";
 import { runUploads, uploadStats } from "@/lib/upload";
-import { Badge, Button, C, Card, Chip, Empty, Field, KV, PageHeader, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { Badge, Button, C, Card, Chip, Empty, Field, KV, isWeb, PageHeader, Row as HRow, Screen, Section, T } from "@/ui/kit";
 
 export function ToolsScreen() {
   const sync = useSyncStatus();
@@ -17,21 +17,28 @@ export function ToolsScreen() {
   const unverified = config.filter((c) => !c.verified_at).length;
   const drafts = useTable("followups").filter((f) => f.status === "draft").length;
   const followNote = drafts ? `${drafts} to send` : undefined;
-  const links: [string, string, string?][] = [
-    ["Supplier questions", "/phrasebook"],
-    ["Translate", "/translate"],
+  // Phone: only what you need standing at a booth. Computer: everything (Manage).
+  const links: [string, string, string?][] = isWeb ? [
     ["Follow-ups", "/followups", followNote],
-    ["Trip stats", "/dashboard"],
+    ["Suppliers", "/suppliers", dupes.length ? `${dupes.length} possible duplicates` : undefined],
+    ["Samples & packing", "/samples"],
     ["Hunt list", "/hunt"],
     ["Hall plan", "/halls"],
-    ["Samples & packing", "/samples"],
-    ["Suppliers", "/suppliers", dupes.length ? `${dupes.length} possible duplicates` : undefined],
+    ["Trip stats", "/dashboard"],
+    ["Supplier questions", "/phrasebook"],
+    ["Translate", "/translate"],
     ["Settings", "/settings", unverified ? `${unverified} unverified` : undefined],
     ["Sync", "/sync", sync.lastError ? "error" : sync.pendingChanges + sync.pendingUploads ? `${sync.pendingChanges + sync.pendingUploads} waiting` : undefined],
+  ] : [
+    ["Supplier questions", "/phrasebook"],
+    ["Translate", "/translate"],
+    ["Hall plan", "/halls"],
+    ["Sync", "/sync", sync.lastError ? "error" : sync.pendingChanges + sync.pendingUploads ? `${sync.pendingChanges + sync.pendingUploads} waiting` : undefined],
   ];
+
   return (
     <Screen>
-      <PageHeader title="Tools" back="Journal" subtitle="Everything else you need at the fair and after." />
+      <PageHeader title={isWeb ? "Manage" : "Tools"} back={isWeb ? undefined : "Journal"} subtitle={isWeb ? "Suppliers, follow-ups, samples, stats and settings." : "Quick help at the booth."} />
       <View style={{ backgroundColor: C.card, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, overflow: "hidden" }}>
         {links.map(([label, href, note], i) => (
           <Pressable key={href} onPress={() => router.push(href as never)}
@@ -63,7 +70,7 @@ export function PhrasebookScreen() {
   }
   return (
     <Screen narrow>
-      <PageHeader title="Supplier questions" back="Tools" subtitle="Tap one to show it full-screen. Works offline." />
+      <PageHeader title="Supplier questions" back={isWeb ? "Manage" : "Tools"} subtitle="Tap one to show it full-screen. Works offline." />
       {[...SUPPLIER_QUESTIONS, ...QUICK_PHRASES].map((p) => (
         <Card key={p.key} onPress={() => setBig(p.zh)}>
           <T size={20} bold>{p.zh}</T>
@@ -96,7 +103,7 @@ export function TranslateScreen() {
   }
   return (
     <Screen narrow>
-      <PageHeader title="Translate" back="Tools" />
+      <PageHeader title="Translate" back={isWeb ? "Manage" : "Tools"} />
       <HRow style={{ marginBottom: 10 }}>
         <Chip label="English → 中文" active={to === "zh"} onPress={() => setTo("zh")} />
         <Chip label="中文 → English" active={to === "en"} onPress={() => setTo("en")} />
@@ -128,7 +135,7 @@ export function HuntScreen() {
   }
   return (
     <Screen narrow>
-      <PageHeader title="Hunt list" back="Tools" />
+      <PageHeader title="Hunt list" back={isWeb ? "Manage" : "Tools"} />
       <T dim>What we're hunting for. Finds that match are marked on the feed.</T>
       <Button title="Generate from trends" onPress={generate} busy={busy} style={{ marginVertical: 10 }} />
       <HRow>
@@ -163,7 +170,7 @@ export function HallsScreen() {
   const [date, setDate] = useState(fairDay(new Date().toISOString()));
   return (
     <Screen narrow>
-      <PageHeader title="Hall plan" back="Tools" />
+      <PageHeader title="Hall plan" back={isWeb ? "Manage" : "Tools"} />
       <T dim>Split the halls so nobody logs the same booth twice. Your hall becomes the default on Capture.</T>
       <Field label="Date" value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
       {[...people.entries()].map(([pid, p]) => {
@@ -200,7 +207,7 @@ export function SamplesScreen() {
   const total = (rows: Row[], k: string) => rows.reduce((a, r) => a + (r[k] ?? 0), 0);
   return (
     <Screen narrow>
-      <PageHeader title="Samples & packing" back="Tools" />
+      <PageHeader title="Samples & packing" back={isWeb ? "Manage" : "Tools"} />
       <T dim>Packing list by person and bag. Declared values are for customs.</T>
       {byBag.length === 0 ? <Empty text="No samples yet. Add them from a find." /> : null}
       {byBag.map(([bag, rows]) => (
@@ -236,7 +243,7 @@ export function SuppliersScreen() {
   const list = suppliers.filter((s) => !q || `${s.name_en} ${s.name_cn} ${s.booth_code} ${s.contact_name}`.toLowerCase().includes(q.toLowerCase()));
   return (
     <Screen narrow>
-      <PageHeader title="Suppliers" back="Tools" />
+      <PageHeader title="Suppliers" back={isWeb ? "Manage" : "Tools"} />
       {dupes.map((d) => {
         const a = all("suppliers").find((s) => s.id === d.supplier_a);
         const b = all("suppliers").find((s) => s.id === d.supplier_b);
@@ -289,7 +296,7 @@ export function SettingsScreen() {
   }
   return (
     <Screen narrow>
-      <PageHeader title="Settings" back="Tools" />
+      <PageHeader title="Settings" back={isWeb ? "Manage" : "Tools"} />
       <T dim>These numbers drive margins and scores. They are placeholders until someone checks them (see docs/VERIFY.md) and taps Verified.</T>
       {Object.keys(CONFIG_DEFAULTS).map((k) => {
         const row = config.find((c) => c.key === k);
@@ -320,7 +327,7 @@ export function SyncScreen() {
   }
   return (
     <Screen narrow>
-      <PageHeader title="Sync" back="Tools" />
+      <PageHeader title="Sync" back={isWeb ? "Manage" : "Tools"} />
       <Card>
         <KV k="Connection" v={s.online ? "online" : "offline"} />
         <KV k="Last sync" v={s.lastSyncAt ? new Date(s.lastSyncAt).toLocaleTimeString() : "never"} />

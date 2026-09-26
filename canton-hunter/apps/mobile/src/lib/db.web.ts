@@ -4,7 +4,7 @@
  * web demo never syncs. Search falls back to in-memory matching (see store.searchFinds).
  */
 type Rows = Record<string, Record<string, string>>;
-const KEY = "canton-demo-db-v1";
+const KEY = "canton-demo-db-v2";
 
 function load(): { rows: Rows; kv: Record<string, string> } {
   try {

@@ -107,6 +107,7 @@ function putRowSync(t: string, row: Row) {
   tableMap(t).set(row.id, row);
   if (t === "finds") indexFind(row);
   if (t === "suppliers") for (const f of all("finds")) if (f.supplier_id === row.id) indexFind(f);
+  if (t === "entry_notes") { const f = tableMap("finds").get(row.find_id); if (f) indexFind(f); }
 }
 
 /** Insert a new row (client-generated id). Queues the full row for push. */
@@ -166,7 +167,8 @@ function findText(f: Row): string {
   const s = f.supplier_id ? tableMap("suppliers").get(f.supplier_id) : undefined;
   return [
     f.title_override, f.title_ai, f.description_override, f.description_ai, f.category_override, f.category_ai,
-    (f.tags_ai ?? []).join(" "), f.transcript, f.hall, f.booth_code, s?.name_en, s?.name_cn, s?.contact_name,
+    (f.tags_ai ?? []).join(" "), (f.tags_user ?? []).join(" "), f.transcript, f.hall, f.booth_code, s?.name_en, s?.name_cn, s?.contact_name,
+    ...[...tableMap("entry_notes").values()].filter((n) => n.find_id === f.id && !n.deleted_at).map((n) => n.body),
   ].filter(Boolean).join(" ");
 }
 

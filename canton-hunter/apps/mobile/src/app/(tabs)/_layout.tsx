@@ -1,18 +1,5 @@
-import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { C } from "@/ui/kit";
-
-/** Phone: two tabs. Journal (log everything) and Build (turn a winner into a store + ads). Tools live in the Journal header. */
+import { Slot } from "expo-router";
+/** Phone: the Journal is the whole app (no tab bar). Build and Manage are on the computer. */
 export default function TabsLayout() {
-  return (
-    <NativeTabs backgroundColor={C.card} tintColor={C.text}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Journal</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="book.closed" md="menu_book" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="build">
-        <NativeTabs.Trigger.Label>Build</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="hammer" md="construction" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
+  return <Slot />;
 }

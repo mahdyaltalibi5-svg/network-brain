@@ -84,7 +84,7 @@ export function DashboardScreen() {
 
   return (
     <Screen>
-      <PageHeader title="Trip stats" back="Tools" />
+      <PageHeader title="Trip stats" back="Manage" />
       <HRow gap={10}>
         <Tile label="Finds" value={finds.length} sub={`${d.today} today · ${d.products} distinct products`} />
         <Tile label="Winners" value={d.fire} sub={`${d.processed} processed by AI`} />

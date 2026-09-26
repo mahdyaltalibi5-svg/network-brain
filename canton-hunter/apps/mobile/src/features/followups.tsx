@@ -121,7 +121,7 @@ export function FollowupsScreen() {
 
   return (
     <Screen>
-      <PageHeader title="Follow-ups" back="Tools" />
+      <PageHeader title="Follow-ups" back="Manage" />
       <T dim>Suppliers with shortlisted products get a bilingual message. Copy the 中文, paste in WeChat, mark sent.</T>
       {needs.length ? (
         <Section title={`Needs a follow-up (${needs.length})`}>

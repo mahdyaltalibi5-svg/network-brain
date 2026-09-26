@@ -82,7 +82,9 @@ export function seedDemo(): void {
       compliance_ai: { risk: comp, flags: comp === "hard" ? (/Kids|Baby/.test(cat) ? ["CPC (children's product, kids under 12)"] : ["Heating element / electrical safety"]) : comp === "easy" ? ["FCC (electronics)"] : [] },
       compliance_override: null, hts_guess_ai: /light/i.test(cat) ? "9405.49" : null, hunt_item_id: i === 0 ? id("h", 0) : i === 5 ? id("h", 1) : null,
       processing_state: "done", stage, killed_reason: null, ai_confidence: i === 3 ? [{ field: "supplier.phones", value: 0.4 }] : [],
-      product_key_ai: key, product_group_id: groups.get(key), deleted_at: null, created_at: hoursAgo(ago), updated_at: hoursAgo(ago),
+      product_key_ai: key, product_group_id: groups.get(key), starred: [0, 4, 5, 10].includes(i),
+      tags_user: ([["gift", "q4"], ["call-back"], [], ["needs-cert"], ["gift", "needs-cert"], ["factory", "sample-requested"], [], ["gift"], [], [], ["q4"], ["call-back"]][i] ?? []) as string[],
+      deleted_at: null, created_at: hoursAgo(ago), updated_at: hoursAgo(ago),
     });
     const pm = id("m", i * 2), cm = id("m", i * 2 + 1);
     void emoji; void hue;
@@ -105,6 +107,12 @@ export function seedDemo(): void {
     });
   });
   applyServerRows("finds", finds);
+  applyServerRows("entry_notes", [
+    { id: id("n", 0), find_id: id("f", 0), body: "Lily says 1.95 if we do 2,000 pcs. Custom box +$0.15.", created_by: SHABAB, created_at: hoursAgo(26), updated_at: hoursAgo(26), deleted_at: null },
+    { id: id("n", 1), find_id: id("f", 0), body: "Brightway has the same lamp with a remote for 2.65. Worth comparing samples.", created_by: DEMO_ME, created_at: hoursAgo(24), updated_at: hoursAgo(24), deleted_at: null },
+    { id: id("n", 2), find_id: id("f", 5), body: "Sample is in my backpack. Works great on long-haired cats.", created_by: UNCLE, created_at: hoursAgo(18), updated_at: hoursAgo(18), deleted_at: null },
+    { id: id("n", 3), find_id: id("f", 4), body: "Needs CPC testing for under-12. Ask if they already have a test report.", created_by: DEMO_ME, created_at: hoursAgo(20), updated_at: hoursAgo(20), deleted_at: null },
+  ]);
   applyServerRows("media", media);
   applyServerRows("research", research);
   applyServerRows("votes", votes);

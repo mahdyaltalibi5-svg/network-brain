@@ -8,8 +8,10 @@ import { findCategory, findDescription, findTitle, formatMoney, GUT_EMOJI, media
 import { all, insert, myId, patch, softDelete, useRow, useTable, type Row } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { syncSoon } from "@/lib/sync";
-import { Badge, Button, C, Card, Chip, Field, KV, PageHeader, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { Badge, Button, C, Card, Chip, Field, KV, isWeb, PageHeader, Row as HRow, Screen, Section, T } from "@/ui/kit";
 import { CompareSection } from "./compare";
+import { NotesThread, setTags, TagEditor } from "./entryExtras";
+import { Star } from "./journal";
 import { requestDraft } from "./followups";
 
 const copy = (v: string) => { void Clipboard.setStringAsync(v); Alert.alert("Copied", v); };
@@ -134,7 +136,7 @@ export function FindDetail({ id }: { id: string }) {
 
   return (
     <Screen narrow>
-      <PageHeader title={findTitle(f)} back="Journal"
+      <PageHeader title={findTitle(f)} back="Journal" right={<Star f={f} size={26} />}
         subtitle={[people.get(f.captured_by)?.name, new Date(f.captured_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }), f.gut ? GUT_EMOJI[f.gut] : null, f.booth_code].filter(Boolean).join(" · ")} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
         {photos.map((m) => <Photo key={m.id} m={m} />)}
@@ -142,7 +144,7 @@ export function FindDetail({ id }: { id: string }) {
       {f.processing_state === "pending" || f.processing_state === "processing" ? <T dim size={14} style={{ marginTop: 12 }}>The AI is reading the photos and business card…</T> : null}
 
       <HRow style={{ marginTop: 20 }}>
-        <Button title="Build this product" onPress={() => router.push(`/build/${f.id}`)} />
+        {isWeb ? <Button title="Build this product" onPress={() => router.push(`/build/${f.id}`)} /> : null}
         <Button title="Ask team to look" kind="secondary" onPress={ping} />
         <Button title="Research" kind="secondary" onPress={() => requestJob("research_find")} />
         {f.processing_state === "error" ? <Button title="Retry AI" kind="secondary" onPress={() => requestJob("process_find")} /> : null}
@@ -151,6 +153,17 @@ export function FindDetail({ id }: { id: string }) {
       <Section title="Name">
         <EditField key={`t-${f.title_ai}`} label="" value={findTitle(f)} onSave={(v) => set({ title_override: v || null })} />
       </Section>
+
+      <Section title="Rating & tags">
+        <HRow style={{ marginBottom: 12 }}>
+          {([["fire", "Winner"], ["good", "Good"], ["meh", "Meh"]] as const).map(([k, l]) => (
+            <Chip key={k} label={l} active={f.gut === k} onPress={() => set({ gut: f.gut === k ? null : k })} />
+          ))}
+        </HRow>
+        <TagEditor value={f.tags_user ?? []} onChange={(tags) => setTags(f, tags)} />
+      </Section>
+
+      <NotesThread f={f} />
 
       {lowConf.length ? <Card style={{ marginTop: 16 }}><T size={14} style={{ color: C.warn }}>Double-check: {lowConf.join(", ")}</T></Card> : null}
 

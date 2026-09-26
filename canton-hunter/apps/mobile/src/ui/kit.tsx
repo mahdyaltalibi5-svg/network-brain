@@ -70,7 +70,7 @@ export function PageHeader({ title, subtitle, back, right }: { title: string; su
 export function Fab({ onPress, label = "+" }: { onPress: () => void; label?: string }) {
   const insets = useSafeAreaInsets();
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [{ position: "absolute", right: 20, bottom: insets.bottom + 84, width: 60, height: 60, borderRadius: 30,
+    <Pressable onPress={onPress} style={({ pressed }) => [{ position: "absolute", right: 20, bottom: insets.bottom + 24, width: 60, height: 60, borderRadius: 30,
       backgroundColor: C.text, alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.18, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }, pressed && { opacity: 0.85 }]}>
       <T size={30} style={{ color: C.onAccent, marginTop: -3 }}>{label}</T>
     </Pressable>

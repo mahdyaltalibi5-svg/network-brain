@@ -126,6 +126,8 @@ export const Find = z.object({
   ai_confidence: z.array(z.object({ field: z.string(), value: z.number() })).nullable(),
   product_key_ai: z.string().nullable(),
   product_group_id: z.string().uuid().nullable(),
+  starred: z.boolean(),
+  tags_user: z.array(z.string()),
 });
 export type Find = z.infer<typeof Find>;
 
@@ -175,6 +177,7 @@ export const SYNCED_TABLES = [
   "launches",
   "launch_metrics",
   "followups",
+  "entry_notes",
 ] as const;
 export type SyncedTable = (typeof SYNCED_TABLES)[number];
 
@@ -195,6 +198,7 @@ export const CLIENT_WRITABLE_TABLES: readonly SyncedTable[] = [
   "content_items",
   "launches",
   "followups",
+  "entry_notes",
 ];
 
 // ---------- AI output schemas (used with structured outputs) ----------

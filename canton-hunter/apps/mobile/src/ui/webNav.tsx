@@ -4,12 +4,14 @@ import { Pressable, View } from "react-native";
 import { resetDemo } from "@/lib/demo/boot";
 import { Button, C, MAX_WIDTH, T, useWide } from "./kit";
 
-const LINKS: [string, string][] = [["Journal", "/"], ["Build", "/build"], ["Tools", "/tools"]];
+const LINKS: [string, string][] = [["Journal", "/"], ["Build", "/build"], ["Manage", "/tools"]];
 
 export function WebNav() {
   const path = usePathname();
   const { wide } = useWide();
-  const active = (href: string) => (href === "/" ? path === "/" || path.startsWith("/find") || path === "/new" : path.startsWith(href));
+  const MANAGE = ["/tools", "/followups", "/suppliers", "/samples", "/hunt", "/halls", "/dashboard", "/phrasebook", "/translate", "/settings", "/sync"];
+  const active = (href: string) => (href === "/" ? path === "/" || path.startsWith("/find") || path === "/new"
+    : href === "/tools" ? MANAGE.some((m) => path.startsWith(m)) : path.startsWith(href));
   return (
     <View style={{ backgroundColor: C.card, borderBottomWidth: 1, borderBottomColor: C.line }}>
       <View style={{ width: "100%", maxWidth: MAX_WIDTH, alignSelf: "center", paddingHorizontal: 20, flexDirection: "row", alignItems: "center", gap: wide ? 24 : 8, height: 60 }}>

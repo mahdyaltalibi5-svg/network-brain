@@ -11,7 +11,8 @@ import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } fr
 import { batch, insert, kvGet, kvSet, myId } from "@/lib/store";
 import { syncSoon } from "@/lib/sync";
 import { pickPhoto, takePhoto, type PickedPhoto } from "@/lib/photoPicker";
-import { keepFile, registerFile, resizeSoon, runUploads } from "@/lib/upload";
+import { copyFile, keepFile, registerFile, resizeSoon, runUploads } from "@/lib/upload";
+import { TagEditor } from "./entryExtras";
 import { Button, C, Chip, Field, PageHeader, Row, Screen, T } from "@/ui/kit";
 
 interface Shot { id: string; uri: string; mime: string }
@@ -27,8 +28,10 @@ interface Form {
   supplier: string;
   notes: string;
   rating: "fire" | "good" | "meh" | null;
+  tags: string[];
 }
-const EMPTY: Form = { products: [], cards: [], name: "", price: "", currency: "USD", moq: "", lead: "", booth: "", supplier: "", notes: "", rating: null };
+interface LastBooth { booth: string; supplier: string; cards: Shot[]; currency: "USD" | "CNY" }
+const EMPTY: Form = { products: [], cards: [], name: "", price: "", currency: "USD", moq: "", lead: "", booth: "", supplier: "", notes: "", rating: null, tags: [] };
 const num = (s: string) => { const n = Number(s.replace(/[^\d.]/g, "")); return s.trim() === "" || !Number.isFinite(n) ? null : n; };
 
 function PhotoField({ label, hint, shots, onAdd, onRemove, max }: {
@@ -64,7 +67,9 @@ function PhotoField({ label, hint, shots, onAdd, onRemove, max }: {
 }
 
 export function NewEntryScreen() {
-  const [form, setFormState] = useState<Form>(() => kvGet<Form>("entryDraft") ?? EMPTY);
+  const [form, setFormState] = useState<Form>(() => ({ ...EMPTY, ...(kvGet<Form>("entryDraft") ?? {}) }));
+  const last = kvGet<LastBooth>("lastEntryBooth");
+  const [savedCount, setSavedCount] = useState(0);
   const set = (p: Partial<Form>) => setFormState((f) => { const n = { ...f, ...p }; kvSet("entryDraft", n); return n; });
 
   function addShot(kind: "products" | "cards", p: PickedPhoto) {
@@ -73,7 +78,7 @@ export function NewEntryScreen() {
     set({ [kind]: [...form[kind], { id, uri, mime: "image/jpeg" }] } as Partial<Form>);
   }
 
-  function save() {
+  function save(another = false) {
     if (!form.products.length) {
       Alert.alert("Add a product photo", "A photo is the only thing required. Everything else is optional.");
       return;
@@ -87,7 +92,7 @@ export function NewEntryScreen() {
         captured_by: me, captured_at: new Date().toISOString(), hall, booth_code: boothParsed?.booth ?? (form.booth.trim() || null),
         title_override: form.name.trim() || null, transcript: [form.supplier && `Supplier: ${form.supplier}`, form.notes].filter(Boolean).join("\n") || null,
         fob_price_cents: price == null ? null : Math.round(price * 100), fob_currency: price == null ? null : form.currency,
-        moq: num(form.moq), lead_time_days: num(form.lead), gut: form.rating,
+        moq: num(form.moq), lead_time_days: num(form.lead), gut: form.rating, tags_user: form.tags, starred: false,
         tags_ai: [], certifications: [], processing_state: "pending", stage: "found",
       });
       const add = (s: Shot, kind: string) => {
@@ -97,13 +102,32 @@ export function NewEntryScreen() {
       form.products.forEach((s) => add(s, "product_photo"));
       form.cards.forEach((s) => add(s, "card_photo"));
       if (hall) kvSet("hall", hall);
+      kvSet("lastEntryBooth", { booth: form.booth, supplier: form.supplier, cards: form.cards, currency: form.currency } satisfies LastBooth);
       kvSet("entryDraft", null);
     });
     [...form.products, ...form.cards].forEach((s) => resizeSoon(s.id));
     syncSoon(1500);
     setTimeout(() => void runUploads(), 2500);
+    if (another) {
+      // same booth: keep booth, supplier, card, currency; clear the product
+      const next: Form = { ...EMPTY, booth: form.booth, supplier: form.supplier, cards: copyCards(form.cards), currency: form.currency };
+      setFormState(next);
+      kvSet("entryDraft", next);
+      setSavedCount((n) => n + 1);
+      return;
+    }
     setFormState(EMPTY);
     if (router.canGoBack()) router.back(); else router.replace("/");
+  }
+
+  /** Cards are reused for the next entry: give them new media ids (each entry owns its own media rows). */
+  function copyCards(cards: Shot[]): Shot[] {
+    return cards.map((c) => { const id = uuidv7(); return { id, uri: copyFile(c.uri, id, c.mime), mime: c.mime }; });
+  }
+
+  function sameBoothAsLast() {
+    if (!last) return;
+    set({ booth: last.booth, supplier: last.supplier, cards: copyCards(last.cards), currency: last.currency });
   }
 
   function discard() {
@@ -116,6 +140,13 @@ export function NewEntryScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1, backgroundColor: C.bg }}>
       <Screen narrow>
         <PageHeader title="New entry" back="Journal" subtitle="Only the product photo is required. The AI reads the business card and fills in the rest." />
+        {savedCount ? <View style={st.saved}><T size={14}>Saved {savedCount} from this booth. Add the next product.</T></View> : null}
+        {last && !form.cards.length && !form.booth ? (
+          <Pressable onPress={sameBoothAsLast} style={st.same}>
+            <T size={15} bold>Same booth as last entry</T>
+            <T size={13} dim>{[last.booth, last.supplier, last.cards.length ? "card photo" : null].filter(Boolean).join(" · ") || "Reuse booth and card"}</T>
+          </Pressable>
+        ) : null}
 
         <PhotoField label="Product photos" hint="Up to 4. Show it clearly, packaging too if you can." max={4}
           shots={form.products} onAdd={(p) => addShot("products", p)} onRemove={(id) => set({ products: form.products.filter((x) => x.id !== id) })} />
@@ -141,6 +172,9 @@ export function NewEntryScreen() {
         <Field label="Notes" multiline placeholder="Anything they said: logo, packaging, samples, factory or trader… (tap the mic on your keyboard to dictate)"
           value={form.notes} onChangeText={(v) => set({ notes: v })} />
 
+        <T size={13} dim style={{ marginBottom: 6 }}>Tags</T>
+        <View style={{ marginBottom: 16 }}><TagEditor value={form.tags} onChange={(tags) => set({ tags })} /></View>
+
         <T size={13} dim style={{ marginBottom: 6 }}>How good is it?</T>
         <Row style={{ marginBottom: 28 }}>
           {([["fire", "Winner"], ["good", "Good"], ["meh", "Meh"]] as const).map(([k, l]) => (
@@ -148,7 +182,8 @@ export function NewEntryScreen() {
           ))}
         </Row>
 
-        <Button title="Save entry" onPress={save} big />
+        <Button title="Save entry" onPress={() => save(false)} big />
+        <Button title="Save & add another from this booth" kind="secondary" onPress={() => save(true)} style={{ marginTop: 10 }} />
         <Button title="Discard" kind="ghost" onPress={discard} style={{ marginTop: 8 }} />
       </Screen>
     </KeyboardAvoidingView>
@@ -156,6 +191,8 @@ export function NewEntryScreen() {
 }
 
 const st = StyleSheet.create({
+  saved: { backgroundColor: C.goodBg, borderRadius: 12, padding: 12, marginBottom: 16 },
+  same: { backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 20, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, gap: 2 },
   thumb: { width: 92, height: 92, borderRadius: 12, backgroundColor: C.card2 },
   addTile: { width: 92, height: 92, borderRadius: 12, borderWidth: 1, borderStyle: "dashed", borderColor: "#C9C5C0", backgroundColor: C.card, alignItems: "center", justifyContent: "center" },
 });

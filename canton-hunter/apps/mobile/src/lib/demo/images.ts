@@ -7,10 +7,8 @@ export function productImage(_emoji: string, title: string, hue: number): string
   const l1 = words.slice(0, 3).join(" "), l2 = words.slice(3, 6).join(" ");
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
   <rect width="800" height="800" fill="hsl(${hue},12%,90%)"/>
-  <rect x="250" y="210" width="300" height="300" rx="36" fill="hsl(${hue},10%,82%)"/>
-  <text x="400" y="620" font-size="40" fill="hsl(${hue},8%,30%)" text-anchor="middle" font-family="-apple-system, Helvetica, Arial" font-weight="600">${esc(l1)}</text>
-  <text x="400" y="672" font-size="40" fill="hsl(${hue},8%,30%)" text-anchor="middle" font-family="-apple-system, Helvetica, Arial" font-weight="600">${esc(l2)}</text>
-  <text x="400" y="740" font-size="24" fill="hsl(${hue},6%,55%)" text-anchor="middle" font-family="-apple-system, Helvetica, Arial">Sample photo</text>
+  <rect x="280" y="250" width="240" height="240" rx="32" fill="hsl(${hue},10%,82%)"/>
+  <text x="400" y="560" font-size="24" fill="hsl(${hue},6%,55%)" text-anchor="middle" font-family="-apple-system, Helvetica, Arial">Sample photo</text>
 </svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
