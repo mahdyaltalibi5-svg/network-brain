@@ -132,3 +132,29 @@ export function findSupplierMatch(incoming: Omit<SupplierKeys, "id">, existing: 
   }
   return best ? { kind: "candidate", ...best } : { kind: "none" };
 }
+
+// ---------- same product at different booths ----------
+export const GROUP_THRESHOLD = 0.55;
+
+export function normalizeProductKey(k: string | null | undefined): string {
+  return (k ?? "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, " ").replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Pick the product group for a find: the group of the most similar existing key (>= threshold),
+ * else a brand-new group. Excludes the find itself.
+ */
+export function assignProductGroup(
+  key: string,
+  others: { id: string; product_key_ai: string | null; product_group_id: string | null }[],
+  newId: () => string,
+): { groupId: string; matchedFindId: string | null; score: number } {
+  const k = normalizeProductKey(key);
+  let best: { groupId: string; findId: string; score: number } | null = null;
+  for (const o of others) {
+    if (!o.product_key_ai || !o.product_group_id) continue;
+    const sc = similarity(k, normalizeProductKey(o.product_key_ai));
+    if (sc >= GROUP_THRESHOLD && (!best || sc > best.score)) best = { groupId: o.product_group_id, findId: o.id, score: sc };
+  }
+  return best ? { groupId: best.groupId, matchedFindId: best.findId, score: best.score } : { groupId: newId(), matchedFindId: null, score: 0 };
+}

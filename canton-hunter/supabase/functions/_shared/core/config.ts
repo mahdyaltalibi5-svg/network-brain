@@ -149,5 +149,9 @@ export const CONFIG_DEFAULTS: Record<string, { value: unknown; note: string }> =
   vetting_checklist: { value: DEFAULT_VETTING_CHECKLIST, note: "Must be complete before stage=ordered." },
   fair_phases: { value: FAIR_PHASES_PLACEHOLDER, note: "PLACEHOLDER pattern. Verify at cantonfair.org.cn." },
   meta_daily_budget_cents: { value: 1000, note: "$10/day per product test." },
+  company: {
+    value: { name: "Your Company LLC", buyer_names: "Mahdy, Shabab", ship_to: "Your address, Utah, USA", email: "you@example.com", wechat_id: "" },
+    note: "Used in supplier follow-up messages (sample shipping address, who we are).",
+  },
   tiktok_min_budgets: { value: { ad_group_daily_usd: 20, campaign_daily_usd: 50 }, note: "Last known; verify in TikTok Ads Manager." },
 };

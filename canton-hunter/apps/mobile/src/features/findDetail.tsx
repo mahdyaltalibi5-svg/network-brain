@@ -9,6 +9,8 @@ import { all, insert, myId, patch, softDelete, useRow, useTable, type Row } from
 import { supabase } from "@/lib/supabase";
 import { syncSoon } from "@/lib/sync";
 import { Badge, Button, C, Card, Chip, Field, KV, Row as HRow, Screen, Section, T } from "@/ui/kit";
+import { CompareSection } from "./compare";
+import { requestDraft } from "./followups";
 
 const copy = (v: string) => { void Clipboard.setStringAsync(v); Alert.alert("Copied", v); };
 
@@ -198,6 +200,8 @@ export function FindDetail({ id }: { id: string }) {
         <TriToggle label="Fragile" value={f.fragile} onChange={(v) => set({ fragile: v })} />
       </Section>
 
+      <CompareSection f={f} />
+
       <Section title="Landed cost (live)">
         <HRow>{(["air", "express", "sea"] as FreightMode[]).map((m) => <Chip key={m} label={m} active={(scenario.mode ?? "air") === m} onPress={() => setScenario({ ...scenario, mode: m })} />)}</HRow>
         <HRow gap={8} style={{ marginTop: 8 }}>
@@ -260,6 +264,9 @@ export function FindDetail({ id }: { id: string }) {
             <KV k="Booth" v={[supplier.hall && `Hall ${supplier.hall}`, supplier.booth_code].filter(Boolean).join(" · ") || "—"} />
             <KV k="Factory?" v={eff(supplier.is_factory_override, supplier.is_factory_ai) == null ? "unknown" : eff(supplier.is_factory_override, supplier.is_factory_ai) ? "factory" : "trading co."} />
             {supplier.website ? <KV k="Website" v={supplier.website} onPress={() => Linking.openURL(supplier.website.startsWith("http") ? supplier.website : `https://${supplier.website}`)} /> : null}
+            <HRow style={{ marginTop: 10 }}>
+              <Button title="✍️ Draft follow-up" kind="secondary" onPress={() => { void requestDraft(supplier.id, "quote"); router.push("/followups"); }} />
+            </HRow>
           </Card>
         ) : <T dim>{f.processing_state === "done" ? "No business card on this find." : "Reading the business card…"}</T>}
       </Section>

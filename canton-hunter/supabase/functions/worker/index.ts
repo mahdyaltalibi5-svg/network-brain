@@ -7,6 +7,7 @@ import { processFind } from "./jobs/processFind.ts";
 import { buildHuntList, researchFind } from "./jobs/research.ts";
 import { scoreFind } from "./jobs/scoreFind.ts";
 import { contentPack, exportBackup, morningDigest, sendPing } from "./jobs/team.ts";
+import { draftFollowups } from "./jobs/followups.ts";
 
 // deno-lint-ignore no-explicit-any
 type Handler = (payload: any) => Promise<Row>;
@@ -24,6 +25,7 @@ const HANDLERS: Record<string, Handler> = {
   launch_activate: launchActivate,
   launch_pause: launchPause,
   metrics_pull: metricsPull,
+  draft_followups: draftFollowups,
 };
 
 /** Stop claiming new work after this long; in-flight jobs finish. Keep under the Edge Function wall clock. */

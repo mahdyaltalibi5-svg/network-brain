@@ -102,7 +102,7 @@ export async function contentPack(payload: { date?: string }): Promise<Row> {
   return { clips: rows.length - 1, usage };
 }
 
-const EXPORT_TABLES = ["profiles", "config", "hunt_items", "hall_assignments", "suppliers", "finds", "media", "votes", "pings",
+const EXPORT_TABLES = ["profiles", "config", "hunt_items", "hall_assignments", "suppliers", "finds", "media", "votes", "pings", "followups",
   "research", "cost_calcs", "scores", "pipeline_events", "vetting", "samples", "content_items", "launches", "launch_metrics"];
 
 function toCsv(rows: Row[], cols: string[]): string {

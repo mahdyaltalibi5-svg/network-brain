@@ -51,3 +51,22 @@ describe("findSupplierMatch", () => {
     expect(findSupplierMatch({ name_en: "Totally Different Bags", name_cn: null, phones: [], emails: [], wechat_id: null, booth_code: null }, existing).kind).toBe("none");
   });
 });
+
+import { assignProductGroup, normalizeProductKey } from "../src/index.ts";
+describe("product groups", () => {
+  const others = [
+    { id: "f1", product_key_ai: "sunset projection lamp", product_group_id: "g1" },
+    { id: "f2", product_key_ai: "silicone baby bib", product_group_id: "g2" },
+    { id: "f3", product_key_ai: null, product_group_id: null },
+  ];
+  it("joins the most similar group", () => {
+    expect(assignProductGroup("Sunset Projector Lamp", others, () => "new")).toMatchObject({ groupId: "g1", matchedFindId: "f1" });
+    expect(assignProductGroup("sunset projection lamp", others, () => "new").score).toBe(1);
+  });
+  it("creates a new group when nothing is close", () => {
+    expect(assignProductGroup("dog chew toy", others, () => "new")).toEqual({ groupId: "new", matchedFindId: null, score: 0 });
+  });
+  it("normalizes", () => {
+    expect(normalizeProductKey("  LED  Lamp! ")).toBe("led lamp");
+  });
+});

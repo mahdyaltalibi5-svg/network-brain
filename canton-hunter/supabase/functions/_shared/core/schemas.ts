@@ -124,6 +124,8 @@ export const Find = z.object({
   stage: Stage,
   killed_reason: z.string().nullable(),
   ai_confidence: z.array(z.object({ field: z.string(), value: z.number() })).nullable(),
+  product_key_ai: z.string().nullable(),
+  product_group_id: z.string().uuid().nullable(),
 });
 export type Find = z.infer<typeof Find>;
 
@@ -172,6 +174,7 @@ export const SYNCED_TABLES = [
   "content_items",
   "launches",
   "launch_metrics",
+  "followups",
 ] as const;
 export type SyncedTable = (typeof SYNCED_TABLES)[number];
 
@@ -191,12 +194,14 @@ export const CLIENT_WRITABLE_TABLES: readonly SyncedTable[] = [
   "samples",
   "content_items",
   "launches",
+  "followups",
 ];
 
 // ---------- AI output schemas (used with structured outputs) ----------
 export const FindExtraction = z.object({
   product: z.object({
     title: z.string().describe("Short, specific US-market product name, max 60 chars"),
+    product_key: z.string().describe("Generic product type, 2-5 lowercase words, no brand/color/size, so the same product from different booths matches, e.g. 'sunset projection lamp'"),
     description: z.string().describe("2-3 sentences: what it is, what it does, materials"),
     category: z.string(),
     tags: z.array(z.string()),
@@ -335,3 +340,11 @@ export type HuntList = z.infer<typeof HuntList>;
 export const PhotoQuery = z.object({
   query: z.string().describe("3-8 search keywords describing the product in the photo"),
 });
+
+export const FollowupDraft = z.object({
+  subject: z.string().describe("Short subject (used for email)"),
+  body_zh: z.string().describe("Message in natural Simplified Chinese, WeChat style: short paragraphs, polite, specific"),
+  body_en: z.string().describe("The same message in English, for the team to read"),
+  asks: z.array(z.string()).describe("Each concrete thing we are asking for, in English"),
+});
+export type FollowupDraft = z.infer<typeof FollowupDraft>;

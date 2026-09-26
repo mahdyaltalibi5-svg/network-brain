@@ -28,6 +28,7 @@ export function listenForTaps(): () => void {
     else if (d.launch_id) router.push(`/launch/${d.launch_id}`);
     else if (d.type === "digest") router.push("/deals");
     else if (d.type === "content") router.push("/content");
+    else if (d.type === "followups") router.push("/followups");
   });
   return () => sub.remove();
 }

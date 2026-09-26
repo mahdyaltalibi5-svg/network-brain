@@ -60,6 +60,8 @@ export default function RootLayout() {
             <Stack.Screen name="suppliers" options={{ title: "Suppliers" }} />
             <Stack.Screen name="settings" options={{ title: "Settings & Verify" }} />
             <Stack.Screen name="sync" options={{ title: "Sync" }} />
+            <Stack.Screen name="followups" options={{ title: "Follow-ups" }} />
+            <Stack.Screen name="dashboard" options={{ title: "Trip Dashboard" }} />
           </Stack>
         )}
       </ThemeProvider>

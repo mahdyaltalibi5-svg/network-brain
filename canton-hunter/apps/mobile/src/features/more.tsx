@@ -15,9 +15,13 @@ export function MoreScreen() {
   const dupes = useTable("supplier_dupe_candidates").filter((d) => d.status === "open");
   const config = useTable("config");
   const unverified = config.filter((c) => !c.verified_at).length;
+  const drafts = useTable("followups").filter((f) => f.status === "draft").length;
+  const followNote = drafts ? `${drafts} to send` : undefined;
   const links: [string, string, string?][] = [
     ["🇨🇳 Supplier questions", "/phrasebook"],
     ["🔤 Quick translate", "/translate"],
+    ["✉️ Follow-ups", "/followups", followNote],
+    ["📊 Trip dashboard", "/dashboard"],
     ["🎯 Hunt list", "/hunt"],
     ["🗺️ Hall plan", "/halls"],
     ["🧳 Samples & packing", "/samples"],
@@ -31,7 +35,7 @@ export function MoreScreen() {
       {links.map(([label, href, note]) => (
         <Card key={href} onPress={() => router.push(href as never)} style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <T size={17}>{label}</T>
-          {note ? <Badge label={note} color={note.includes("error") || note.includes("unverified") || note.includes("duplicates") ? C.warn : C.card2} /> : null}
+          {note ? <Badge label={note} color={note.includes("error") || note.includes("unverified") || note.includes("duplicates") || note.includes("to send") ? C.warn : C.card2} /> : null}
         </Card>
       ))}
       <Button title="Sign out" kind="ghost" style={{ marginTop: 20 }} onPress={() => Alert.alert("Sign out?", sync.pendingChanges + sync.pendingUploads > 0 ? "You have unsynced data on this phone! Sync first." : "Local data will be cleared.", [

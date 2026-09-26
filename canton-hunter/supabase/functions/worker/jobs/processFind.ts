@@ -1,4 +1,4 @@
-import { FindExtraction, findSupplierMatch, normalizePhone, toUsd, parseBoothCode, type SupplierKeys } from "@core";
+import { assignProductGroup, FindExtraction, findSupplierMatch, normalizePhone, toUsd, parseBoothCode, type SupplierKeys } from "@core";
 import { extract, image, text, type Content } from "../../_shared/claude.ts";
 import { loadConfig } from "../../_shared/config.ts";
 import { db, must, type Row } from "../../_shared/db.ts";
@@ -108,6 +108,7 @@ export async function processFind(payload: { find_id: string }): Promise<Row> {
     compliance_ai: x.product.compliance,
     hts_guess_ai: x.product.hts_guess ?? (x.product.hts_chapter ? `${x.product.hts_chapter}` : null),
     ai_confidence: x.confidence,
+    product_key_ai: x.product.product_key,
     processing_state: "done",
   };
   const fillCols = {
@@ -127,6 +128,14 @@ export async function processFind(payload: { find_id: string }): Promise<Row> {
     hunt_item_id: huntMatch,
   };
   const patch: Row = { ...aiCols };
+  // Same product at another booth? Join its group so quotes can be compared side by side.
+  if (!find.product_group_id) {
+    const others = must(
+      await sb.from("finds").select("id,product_key_ai,product_group_id").neq("id", find.id).is("deleted_at", null).not("product_group_id", "is", null),
+      "group candidates",
+    ) as { id: string; product_key_ai: string | null; product_group_id: string | null }[];
+    patch.product_group_id = assignProductGroup(x.product.product_key, others, () => crypto.randomUUID()).groupId;
+  }
   for (const [k, v] of Object.entries(fillCols)) if (find[k] == null && v != null) patch[k] = v;
   if ((!find.certifications || find.certifications.length === 0) && x.answers.certifications.length) patch.certifications = x.answers.certifications;
   // NOTE: never touch updated_at here (it is the device's clock; see sync model in packages/core/src/sync.ts)

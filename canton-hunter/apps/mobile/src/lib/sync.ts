@@ -172,6 +172,7 @@ export function startSync(): () => void {
     .on("postgres_changes", { event: "*", schema: "public", table: "research" }, () => syncSoon())
     .on("postgres_changes", { event: "*", schema: "public", table: "votes" }, () => syncSoon())
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "pings" }, () => syncSoon())
+    .on("postgres_changes", { event: "*", schema: "public", table: "followups" }, () => syncSoon())
     .subscribe();
   BackgroundTask.registerTaskAsync(BG_TASK, { minimumInterval: 15 }).catch(() => {});
   refreshCounts();
