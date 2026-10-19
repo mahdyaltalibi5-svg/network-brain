@@ -3,6 +3,7 @@
  * content a search engine or AI crawler needs is in the raw HTML.
  * Writes a text snapshot to scripts/.snapshots/ so later phases can diff it.
  */
+import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { curl, sitemapPaths, withServer } from "./lib/server.mjs";
 
@@ -59,6 +60,13 @@ await withServer(async (base) => {
     if (canonical?.replace(/\/$/, "") !== expected) fail(path, `bad canonical ${canonical}`);
     for (const p of ["og:title", "og:description", "og:url", "og:type"]) if (!html.includes(`property="${p}"`)) fail(path, `missing ${p}`);
     if (!html.includes('name="twitter:card"')) fail(path, "missing twitter:card");
+    const ogImage = html.match(/<meta property="og:image" content="([^"]*)"/)?.[1];
+    if (!ogImage?.startsWith("https://summitcustomsuits.com/")) fail(path, `og:image missing or not absolute: ${ogImage}`);
+    else {
+      const img = new URL(ogImage);
+      const head = execFileSync("curl", ["-sS", "-o", "/dev/null", "-w", "%{http_code} %{content_type}", base + img.pathname + img.search]).toString();
+      if (head !== "200 image/png") fail(path, `og:image ${img.pathname} → ${head}`);
+    }
     if (!/<script type="application\/ld\+json">/.test(html)) fail(path, "missing JSON-LD");
     if (titles.has(title)) fail(path, `duplicate title with ${titles.get(title)}`); else titles.set(title, path);
     if (descs.has(desc)) fail(path, `duplicate description with ${descs.get(desc)}`); else descs.set(desc, path);

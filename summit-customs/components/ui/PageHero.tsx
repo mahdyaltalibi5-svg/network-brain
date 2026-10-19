@@ -37,27 +37,32 @@ export function PageHero({ eyebrow, title, summary, trail, children, compact = f
   );
 }
 
-/** Quiet procedural ridgeline behind inner-page heroes (pure SVG, decorative). */
+/**
+ * Quiet procedural ridgeline behind inner-page heroes (pure SVG, decorative).
+ * Anchored to the hero's top edge at full height (the drawing sits in the lower half of the
+ * viewBox): when web fonts swap in and the hero's height changes, the SVG's start position
+ * doesn't move, so it can't cause layout shift.
+ */
 export function RidgeBackdrop() {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 1440 320"
+      viewBox="0 0 1440 720"
       preserveAspectRatio="none"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] w-full opacity-[0.22]"
+      className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.22]"
     >
       <defs>
         <linearGradient id="ridge-fade" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#C9A45C" stopOpacity="0.5" />
+          <stop offset="0.55" stopColor="#C9A45C" stopOpacity="0.5" />
           <stop offset="1" stopColor="#C9A45C" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path
-        d="M0 260 L120 210 L190 228 L300 150 L360 182 L470 96 L540 140 L610 118 L720 40 L790 104 L860 86 L960 150 L1030 128 L1130 190 L1220 170 L1320 222 L1440 200 L1440 320 L0 320 Z"
+        d="M0 660 L120 610 L190 628 L300 550 L360 582 L470 496 L540 540 L610 518 L720 440 L790 504 L860 486 L960 550 L1030 528 L1130 590 L1220 570 L1320 622 L1440 600 L1440 720 L0 720 Z"
         fill="url(#ridge-fade)"
       />
       <path
-        d="M0 260 L120 210 L190 228 L300 150 L360 182 L470 96 L540 140 L610 118 L720 40 L790 104 L860 86 L960 150 L1030 128 L1130 190 L1220 170 L1320 222 L1440 200"
+        d="M0 660 L120 610 L190 628 L300 550 L360 582 L470 496 L540 540 L610 518 L720 440 L790 504 L860 486 L960 550 L1030 528 L1130 590 L1220 570 L1320 622 L1440 600"
         fill="none"
         stroke="#C9A45C"
         strokeWidth="1"

@@ -50,6 +50,13 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Site motion (Lenis, cursor, magnetic `[data-magnetic]`, route wipe): `components/motion/SiteMotion.tsx`. The click listener must stay in the capture phase (before next/link).
 - Never dim text with opacity. Use AA-safe colour tokens (stone/ivory-dim).
 
+## Performance rules (Phase 4)
+- Fonts are self-hosted subsets in `app/fonts/` with generated per-platform fallbacks (`app/fonts/fallbacks.css`). After copy adds new characters, run `npm run fonts`.
+- Inner pages use `content-visibility: auto` below the fold (globals.css). The homepage is excluded because ScrollTrigger needs real geometry.
+- Motion libraries load via `whenEngaged()` (`lib/when-engaged.ts`), never on page load.
+- Decorative absolutely positioned art must not be bottom-anchored to content-height containers (font swaps would shift it).
+- Lighthouse: `npm run lhci` (median of 5). Use `LH_METHOD=devtools node scripts/lh-quick.mjs /path 3` to catch real-network CLS.
+
 ## Content map
 - Facts: `content/business.ts` (`business`, `studio`, `founder`) · services: `content/services.ts` · FAQ: `content/faq.ts`
 - Journal: `content/journal/posts.ts` (meta) + `content/journal/bodies/*.tsx` (body), registered in `app/journal/[slug]/page.tsx`
@@ -59,6 +66,7 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - `npm run check:phase1`: lint + types + build + verify:html + verify:jsonld + screenshots
 - `npm run check:phase2`: Phase 1 checks + raw-HTML compare + Playwright intro tests + intro frame captures
 - `npm run check:phase3`: all of the above + site tests + section screenshots (`npm run sections -- <dir> [--static]`)
+- `npm run check:phase4`: Phase 3 + contrast + Lighthouse CI · `npm run contrast` · `npm run lhci`
 - `npm run intro:frames -- <dir> --tier=high --w=1440 --h=900 --times=0.5,2` · `npm run intro:fps -- --tier=mid`
 - `npm run dev` · `npm run build` · `npm start`
 - `npm run verify:html`: curl every route and assert content/JSON-LD without JS (`-- --compare` diffs against the Phase 1 snapshot)

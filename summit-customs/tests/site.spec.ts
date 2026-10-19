@@ -70,7 +70,10 @@ test("mobile menu works from the keyboard", async ({ browser }) => {
 test("route change plays the gold-thread wipe and lands on the new page", async ({ page }) => {
   await page.goto("/bespoke-suits");
   await page.waitForFunction(() => !!document.querySelector(".route-wipe"));
-  await page.waitForTimeout(1500); // motion runtime loads after idle
+  // motion runtime loads on first engagement: move the pointer, wait for it (the custom cursor marks it ready)
+  await page.mouse.move(300, 300);
+  await page.mouse.move(320, 310);
+  await page.waitForFunction(() => document.documentElement.classList.contains("has-cursor"));
   await page.locator("header nav[aria-label=Primary]").getByRole("link", { name: "Fabrics" }).click();
   await expect(page.locator(".route-wipe")).toBeVisible();
   await expect(page).toHaveURL(/\/fabrics$/);

@@ -20,7 +20,11 @@
     "intro:fps": "node scripts/fps.mjs",
     "check:phase2": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run intro:frames -- screenshots/intro",
     "sections": "node scripts/sections.mjs",
-    "check:phase3": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run shots -- screenshots/p3-pages && npm run sections -- screenshots/sections"
+    "check:phase3": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run shots -- screenshots/p3-pages && npm run sections -- screenshots/sections",
+    "lhci": "lhci autorun --config=lighthouserc.cjs",
+    "contrast": "node scripts/contrast.mjs",
+    "check:phase4": "npm run check:phase3 && npm run contrast && npm run lhci && node scripts/lh-summary.mjs",
+    "fonts": "node scripts/fetch-fonts.mjs && node scripts/gen-font-fallbacks.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -38,6 +42,8 @@
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.56.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",

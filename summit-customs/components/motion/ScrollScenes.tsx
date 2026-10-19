@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { scenes } from "@/lib/scenes";
+import { whenEngaged } from "@/lib/when-engaged";
 
 /**
  * Homepage scroll choreography. Pins the process section and steps through
@@ -19,12 +20,16 @@ export function ScrollScenes() {
   useEffect(() => {
     let dispose = () => {};
     let cancelled = false;
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ default: gsap }, { ScrollTrigger }]) => {
-      if (cancelled) return;
-      dispose = setup(gsap, ScrollTrigger);
-    });
+    // nothing scrolls before the visitor engages, so the scroll runtime loads then (or after 6 s)
+    const stopWaiting = whenEngaged(() =>
+      Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ default: gsap }, { ScrollTrigger }]) => {
+        if (cancelled) return;
+        dispose = setup(gsap, ScrollTrigger);
+      }),
+    );
     return () => {
       cancelled = true;
+      stopWaiting();
       dispose();
     };
   }, []);

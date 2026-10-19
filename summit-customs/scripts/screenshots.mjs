@@ -25,6 +25,8 @@ await withServer(async (base) => {
       page.on("pageerror", (e) => errors.push(e.message));
       await page.goto(base + path + (path === "/" ? "?intro=off" : ""), { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
+      // full-page captures don't scroll, so content-visibility:auto sections would stay unrendered
+      await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
       const name = path === "/" ? "home" : path.slice(1).replace(/\//g, "__");
       await page.screenshot({ path: `${out}/${w}/${name}.png`, fullPage: true });
       const overflow = await page.evaluate(() => {

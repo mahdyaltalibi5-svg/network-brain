@@ -1,6 +1,6 @@
 # Summit Customs — Build Plan
 
-Status: **Approved.** Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 next
+Status: **Complete.** Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅. Final scores are in `LAUNCH.md`.
 
 Site: summitcustomsuits.com · Bespoke suits & image consulting · Salt Lake City, UT
 Goal: a static, crawler-complete luxury site with a fully procedural 3D entrance ("The Ascent"), plus best-in-class SEO and GEO (visibility in AI search).
@@ -183,17 +183,19 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 
 ## PHASE 4 — Performance, SEO audit, launch prep
 
-- [ ] Lighthouse CI (mobile preset, 3 runs, median) on `/`, `/bespoke-suits`, `/custom-wedding-suits-salt-lake-city`, `/faq`, using the pre-installed Chromium
-- [ ] Targets: Performance ≥90, SEO 100, Accessibility ≥95, Best Practices 100; LCP <2.5s, CLS <0.05, INP <200ms (TBT used as the lab proxy for INP)
-- [ ] Iterate: bundle analysis, chunk splitting, font subsetting, shader warm-up off the critical path, image formats
-- [ ] Per-page OG images with `next/og` (void background, gold rule, display serif title)
-- [ ] Audit: sitemap, robots.txt, llms.txt, canonicals (absolute, no duplicates), hreflang not needed (en-US only)
-- [ ] WCAG 2.2 AA contrast script over every token pair used on the void/charcoal backgrounds. *Note: stone `#8A8579` on void is roughly 5.2:1, which passes for body text; gold on void is roughly 8:1. I'll verify the exact values in the script.*
-- [ ] `README.md`: run locally, edit copy (`content/`), swap the logo, tune intro timing (`three/timeline/ascent.ts`), deploy to Vercel
-- [ ] `LAUNCH.md` with the final scores; final `PLACEHOLDERS.md`
-- [ ] Commit: `Phase 4: performance, audit, launch docs`
+- [x] Lighthouse CI (mobile preset, 3 runs, median) on `/`, `/bespoke-suits`, `/custom-wedding-suits-salt-lake-city`, `/faq`, using the pre-installed Chromium
+- [x] Targets: Performance ≥90, SEO 100, Accessibility ≥95, Best Practices 100; LCP <2.5s, CLS <0.05, INP <200ms (TBT used as the lab proxy for INP)
+- [x] Iterate: bundle analysis, chunk splitting, font subsetting, shader warm-up off the critical path, image formats
+- [x] Per-page OG images with `next/og` (void background, gold rule, display serif title)
+- [x] Audit: sitemap, robots.txt, llms.txt, canonicals (absolute, no duplicates), hreflang not needed (en-US only)
+- [x] WCAG 2.2 AA contrast script over every token pair used on the void/charcoal backgrounds. *Note: stone `#8A8579` on void is roughly 5.2:1, which passes for body text; gold on void is roughly 8:1. I'll verify the exact values in the script.*
+- [x] `README.md`: run locally, edit copy (`content/`), swap the logo, tune intro timing (`three/timeline/ascent.ts`), deploy to Vercel
+- [x] `LAUNCH.md` with the final scores; final `PLACEHOLDERS.md`
+- [x] Commit: `Phase 4: performance, audit, launch docs`
 
 ---
+
+**Phase 4 result:** every Lighthouse target is met on the median of 5 runs (Performance 99, Accessibility, Best Practices and SEO 100, LCP 2.11–2.27 s, CLS 0, TBT 50–64 ms). Contrast passes, axe reports 0 violations, and all 14 Playwright tests pass. Details and caveats are in `LAUNCH.md`.
 
 ## Risks & mitigations
 - **The 3D bundle hurting mobile Performance/TBT:** it is loaded after `load` + idle, split into chunks, and the GPU tier is detected before the heavy chunk is fetched. If Lighthouse still drops below 90, the next lever is to start the intro on first user interaction or after a short delay on mobile. **I won't special-case Lighthouse user agents**; that would be gaming the score.

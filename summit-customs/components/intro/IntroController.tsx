@@ -43,7 +43,11 @@ export function IntroController() {
 
     (async () => {
       await idle();
-      const tier = await detectTier();
+      let off = false;
+      try {
+        off = sessionStorage.getItem("sc-3d-off") === "1" && !new URLSearchParams(location.search).has("tier");
+      } catch {}
+      const tier = off ? "low" : await detectTier();
       if (cancelled) return;
       if (tier === "low") {
         if (bootMode === "full" || bootMode === "micro") window.__startFallback?.();
@@ -72,6 +76,7 @@ export function IntroController() {
           tier={loaded.tier}
           mode={loaded.mode}
           onDone={() => setStatus("Opening animation finished.")}
+          onDegrade={() => setLoaded(null)}
         />
       )}
     </>

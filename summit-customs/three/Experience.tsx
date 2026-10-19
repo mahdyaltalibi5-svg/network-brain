@@ -17,7 +17,7 @@ import { loadParticleData } from "./targets/load";
 import { threadCurve } from "./targets/thread";
 import { buildAscent, buildMicro } from "./timeline/ascent";
 
-export type ExperienceProps = { tier: Tier; mode: IntroMode; onDone?: () => void };
+export type ExperienceProps = { tier: Tier; mode: IntroMode; onDone?: () => void; onDegrade?: () => void };
 
 const [JX, JY, JZ] = JACKET_ORIGIN;
 
@@ -25,7 +25,7 @@ const [JX, JY, JZ] = JACKET_ORIGIN;
  * One WebGL canvas for the homepage. It starts as the intro overlay, then
  * drops behind the page (z-index -1) and becomes the resting hero jacket.
  */
-export default function Experience({ tier, mode, onDone }: ExperienceProps) {
+export default function Experience({ tier, mode, onDone, onDegrade }: ExperienceProps) {
   const settings = TIER_SETTINGS[tier];
   const [data, setData] = useState<ParticleData | null>(null);
   const [layer, setLayer] = useState<"overlay" | "page">(mode === "none" ? "page" : "overlay");
@@ -68,6 +68,7 @@ export default function Experience({ tier, mode, onDone }: ExperienceProps) {
             mode={mode}
             wrap={wrap}
             onEntrance={() => setLayer("page")}
+            onDegrade={onDegrade}
             onDone={() => {
               setPlaying(false);
               onDone?.();
@@ -136,10 +137,11 @@ type DirectorProps = {
   wrap: React.RefObject<HTMLDivElement | null>;
   onEntrance: () => void;
   onDone: () => void;
+  onDegrade?: () => void;
 };
 
 /** Owns the master timeline, camera rig, input, audio and lifecycle. */
-function Director({ s, anchors, mode, wrap, onEntrance, onDone }: DirectorProps) {
+function Director({ s, anchors, mode, wrap, onEntrance, onDone, onDegrade }: DirectorProps) {
   const { camera, size, setFrameloop } = useThree();
   const cam = camera as PerspectiveCamera;
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -151,6 +153,11 @@ function Director({ s, anchors, mode, wrap, onEntrance, onDone }: DirectorProps)
   const fps = useRef<number[]>([]);
   const meter = useRef<HTMLDivElement | null>(null);
   const labels = useRef<HTMLElement[]>([]);
+  const degraded = useRef(false);
+  const [guardOff] = useState(() => {
+    const q = new URLSearchParams(location.search);
+    return q.has("tier") && q.get("guard") !== "on";
+  });
   useEffect(() => {
     labels.current = LABELLED.map((n) => document.querySelector<HTMLElement>(`[data-anatomy-label="${n}"]`)!);
   }, []);
@@ -302,6 +309,22 @@ function Director({ s, anchors, mode, wrap, onEntrance, onDone }: DirectorProps)
     }
     if (fps.current.length > 900) fps.current.shift();
     fps.current.push(dt);
+
+    // Frame-budget guard: if this device can't hold the scene (median frame > 90 ms during the
+    // intro, > 45 ms at rest), finish the intro and fall back to the static scenes for the session.
+    // Skipped when a tier is forced via ?tier= (testing).
+    if (!guardOff && !degraded.current && fps.current.length >= 60) {
+      const recent = fps.current.slice(-60).sort((a, b) => a - b);
+      const median = recent[30];
+      if (median > (s.rest > 0.99 ? 0.045 : 0.09)) {
+        degraded.current = true;
+        try {
+          sessionStorage.setItem("sc-3d-off", "1");
+        } catch {}
+        if (s.rest < 0.99) window.__introSkip?.();
+        setTimeout(() => onDegrade?.(), s.rest < 0.99 ? 900 : 0);
+      }
+    }
     if (meter.current && fps.current.length % 15 === 0) {
       const recent = fps.current.slice(-60);
       meter.current.textContent = `${(recent.length / recent.reduce((a, b) => a + b, 0)).toFixed(0)} fps · ${size.width}×${size.height}`;

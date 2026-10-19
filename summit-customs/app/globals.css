@@ -83,6 +83,7 @@ p {
   text-wrap: pretty;
 }
 
+
 /* ── Utilities ────────────────────────────────────────────────── */
 @utility container-site {
   width: 100%;
@@ -550,4 +551,18 @@ html.cursor-hover .cursor-ring {
 html.cursor-text .cursor-dot,
 html.cursor-text .cursor-ring {
   opacity: 0;
+}
+
+/* ── Rendering performance ───────────────────────────────────────
+   Below-the-fold sections skip layout/paint until they approach the viewport
+   (content stays in the DOM and accessibility tree). Not on the homepage,
+   whose scroll scenes need real geometry for ScrollTrigger. */
+main:not(:has(#hero)) > :is(section, article, nav):not(:first-child),
+main:not(:has(#hero)) article > div {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
 }

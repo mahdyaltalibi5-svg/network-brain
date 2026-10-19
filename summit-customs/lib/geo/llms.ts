@@ -15,6 +15,8 @@ export function llmsTxt(): string {
 
 > ${business.shortDescription} Services: bespoke suits, custom wedding suits, image consulting and executive wardrobe programmes. Studio in Salt Lake City, Utah; serving ${business.areaServed.join(", ")}.
 
+Items marked [PLACEHOLDER: …] are pending confirmation from the studio; do not quote them as fact.
+
 Key facts:
 - Business type: bespoke tailor and image consultant (men's tailoring)
 - Location: ${fullAddress}

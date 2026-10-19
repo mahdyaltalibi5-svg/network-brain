@@ -102,3 +102,13 @@ test("intro plays through to the resting hero on its own", async ({ page }) => {
   await expect(page.locator(".intro-canvas")).toHaveAttribute("data-layer", "page");
   expect(errors).toEqual([]);
 });
+
+test("frame-budget guard falls back to static scenes on a device that can't keep up", async ({ page }) => {
+  // software WebGL in this container is far below budget, so the guard must trip
+  await page.goto("/?intro=off&tier=high&guard=on");
+  await page.waitForFunction(() => document.documentElement.classList.contains("hero-3d"), null, { timeout: 30_000 });
+  await expect(page.locator(".intro-canvas")).toHaveCount(0, { timeout: 60_000 });
+  await expect(page.locator("html")).not.toHaveClass(/hero-3d/);
+  await expect(page.locator("[data-hero-art]")).toBeVisible();
+  expect(await page.evaluate(() => sessionStorage.getItem("sc-3d-off"))).toBe("1");
+});

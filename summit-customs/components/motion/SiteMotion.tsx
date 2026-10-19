@@ -2,17 +2,16 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { whenEngaged } from "@/lib/when-engaged";
 
 /**
  * Site-wide motion: Lenis smooth scroll, custom cursor, magnetic CTAs and the
- * gold-thread route wipe. Everything heavy is imported after idle; with
+ * gold-thread route wipe. Everything heavy is imported on first engagement; with
  * reduced motion only plain navigation remains. The cursor and magnetism need
  * a fine pointer with hover (never on touch).
  */
 type Gsap = typeof import("gsap").default;
 
-const idle = (fn: () => void) =>
-  "requestIdleCallback" in window ? requestIdleCallback(fn, { timeout: 1200 }) : setTimeout(fn, 300);
 
 export function SiteMotion() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export function SiteMotion() {
     const cleanups: (() => void)[] = [];
     let cancelled = false;
 
-    idle(async () => {
+    const stopWaiting = whenEngaged(async () => {
       if (reduce || cancelled) return;
       const { default: gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
@@ -153,6 +152,7 @@ export function SiteMotion() {
 
     return () => {
       cancelled = true;
+      stopWaiting();
       cleanups.forEach((c) => c());
     };
   }, [router]);
