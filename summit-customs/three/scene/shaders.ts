@@ -55,6 +55,10 @@ uniform float uMouseStrength;
 uniform float uAspect;
 uniform float uSummitY;
 uniform float uRest;      // 0 intro, 1 resting hero
+uniform float uProcess;   // scroll scenes (Phase 3), each 0–1
+uniform float uAnatomy;
+uniform float uFabric;
+uniform float uCamp;      // active process step, 1–5 (continuous)
 
 attribute vec3 aThread;
 attribute vec3 aMountain;
@@ -63,6 +67,10 @@ attribute vec3 aNMountain;
 attribute vec3 aNJacket;
 attribute vec4 aRandom;
 attribute float aPart;
+attribute vec3 aProcess;
+attribute vec3 aAnatomy;
+attribute vec3 aFabric;
+attribute vec3 aTags;     // x process tag (-1 terrain, -.5 ridge, 0 trail, 1–5 camp) · y anatomy layer · z fabric panel
 
 varying vec3 vColor;
 varying float vAlpha;
@@ -91,6 +99,34 @@ void main(){
   pos = mix(pos, aJacket, e2) + swirl;
   vec3 n = normalize(mix(aNMountain, aNJacket, e2));
 
+  // 4. scroll scenes: trail with camps → exploded layers → woven swatches
+  float pP = 0., pA = 0., pF = 0.;
+  if (uProcess > 0.) {
+    pP = ease(clamp((uProcess - aRandom.z * .3) / .7, 0., 1.));
+    vec3 drift = (pP > 0. && pP < 1.) ? curl(pos * .3 + vec3(0., uTime * .05, 0.)) * sin(pP * PI) * .35 : vec3(0.);
+    pos = mix(pos, aProcess, pP) + drift;
+    n = normalize(mix(n, vec3(0., 0., 1.), pP));
+  }
+  if (uAnatomy > 0.) {
+    pA = ease(clamp((uAnatomy - aTags.y * .05 - aRandom.z * .15) / .6, 0., 1.));
+    pos = mix(pos, aAnatomy, pA);
+  }
+  if (uFabric > 0.) {
+    pF = ease(clamp((uFabric - aRandom.z * .3) / .7, 0., 1.));
+    vec3 f = aFabric;
+    float ph = aTags.z * 1.7;
+    float w1 = sin(f.x * 2.6 + uTime * 1.4 + ph);
+    float w2 = sin(f.y * 3.3 - uTime * 1.05 + ph * .5);
+    f.z += w1 * .09 + w2 * .05;
+    vec3 nf = normalize(vec3(-cos(f.x * 2.6 + uTime * 1.4 + ph) * .234, -cos(f.y * 3.3 - uTime * 1.05 + ph * .5) * .165, 1.));
+    vec3 drift = (pF > 0. && pF < 1.) ? curl(pos * .3) * sin(pF * PI) * .3 : vec3(0.);
+    pos = mix(pos, f, pF) + drift;
+    n = normalize(mix(n, nf, pF));
+  }
+  float wPe = pP * (1. - pA) * (1. - pF);
+  float wAe = pA * (1. - pF);
+  float wFe = pF;
+
   // woven-fibre shimmer: each particle breathes along its normal
   pos += n * sin(uTime * 2.2 + aRandom.z * 6.2831) * .007;
 
@@ -112,7 +148,10 @@ void main(){
 
   float isLapel = step(1.5, aPart) * step(aPart, 2.5);
   float isButton = step(2.5, aPart);
-  float size = uSize * (.55 + aRandom.w * .9) * (1. + (isLapel * .5 + isButton * .3) * e2);
+  float camp = aTags.x >= .5 ? aTags.x : 0.;
+  float campGlow = camp > 0. ? exp(-abs(camp - uCamp) * 2.4) : 0.;
+  float size = uSize * (.55 + aRandom.w * .9) * (1. + (isLapel * .5 + isButton * .3) * e2 * (1. - wPe) * (1. - wFe))
+             * (1. + wPe * (step(.5, camp) * (.4 + campGlow * .9) - step(aTags.x, -.75) * .25));
   gl_PointSize = min(size * uPixelRatio / -mv.z, 9. * uPixelRatio);
 
   // colour: gold and ivory fibre, lit by a movable key light, cool rim on the range
@@ -130,7 +169,21 @@ void main(){
   vColor = base * diff * twinkle + cool * rim * .9;
   vColor = mix(vColor, vec3(.12, .14, .19), fogLow * .7);
   vColor *= 1. + (1. - e2) * (1. - uRest) * smoothstep(uSummitY * .45, uSummitY, aMountain.y) * .6;
-  vColor *= 1. + isLapel * e2 * 1.6 + isButton * e2 * .6;
+  vColor *= 1. + (isLapel * e2 * 1.6 + isButton * e2 * .6) * (1. - wPe) * (1. - wFe) * (1. - wAe * .4);
+
+  // scene colour: camps glow (the active one pulses), terrain recedes; layers read as different materials; swatches by panel
+  float pulse = .8 + .2 * sin(uTime * 3.);
+  float terrain = step(aTags.x, -.75);
+  float ridgeEdge = step(-.75, aTags.x) * step(aTags.x, -.25);
+  vec3 processCol = gold * (terrain * .28 + ridgeEdge * .7 + step(-.25, aTags.x) * (1. + step(.5, camp) * (.6 + campGlow * 3.2 * pulse)));
+  processCol = mix(processCol, ivory * .5, ridgeEdge * .5);
+  float L = aTags.y;
+  vec3 layerCol = L < .5 ? gold * .8 : L < 1.5 ? ivory * .45 : L < 2.5 ? vec3(.55, .5, .42) * .75 : L < 3.5 ? gold * 1.9 : L < 4.5 ? gold * 1.2 : ivory * 1.5;
+  vec3 panelCol = aTags.z < .5 ? ivory * .85 : aTags.z < 1.5 ? gold * 1.05 : vec3(.62, .58, .5) * .9;
+  vec3 sceneLit = .5 + .5 * vec3(max(dot(n, normalize(uLightDir)), 0.));
+  vColor = mix(vColor, processCol * twinkle, wPe);
+  vColor = mix(vColor, layerCol * diff * twinkle, wAe);
+  vColor = mix(vColor, panelCol * sceneLit * twinkle, wFe);
   float dist = length(mv.xyz);
   float nearFade = smoothstep(.25, 1.4, -mv.z);
   vAlpha = (.55 + .45 * aRandom.w) * exp(-dist * .028) * (1. - fogLow * .8) * (1. - smoothstep(.55, 1., uBurst)) * mix(nearFade, 1., uBurst);

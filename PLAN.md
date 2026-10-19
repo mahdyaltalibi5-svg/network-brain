@@ -1,6 +1,6 @@
 # Summit Customs — Build Plan
 
-Status: **Approved.** Phase 1 ✅ · Phase 2 ✅ · Phase 3 next
+Status: **Approved.** Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 next
 
 Site: summitcustomsuits.com · Bespoke suits & image consulting · Salt Lake City, UT
 Goal: a static, crawler-complete luxury site with a fully procedural 3D entrance ("The Ascent"), plus best-in-class SEO and GEO (visibility in AI search).
@@ -158,14 +158,14 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 
 ## PHASE 3 — Scroll experience + polish
 
-- [ ] The persistent particle jacket morphs via ScrollTrigger-scrubbed uniforms (new target attributes generated once, lazily):
+- [x] The persistent particle jacket morphs via ScrollTrigger-scrubbed uniforms (new target attributes generated once, lazily):
   - **Process:** particles regroup into a switchback mountain path with 5 glowing "camps" (one per step); the active camp syncs with the pinned step copy
   - **Anatomy:** exploded layers (canvas, lining, lapel, buttons, pockets), with labels as HTML elements projected from 3D anchor points (they stay real text, so they remain crawlable and accessible)
   - **Fabric:** particle swatches with a cloth-ripple vertex wave; HTML fabric cards (`[PLACEHOLDER: mills]`)
-- [ ] Lenis smooth scroll synced to the GSAP ticker; ScrollTrigger pinning (pinning disabled under reduced motion)
-- [ ] Magnetic CTA buttons; custom cursor (only with `pointer: fine`; hidden for touch and reduced motion)
-- [ ] Page transitions: gold thread wipe between routes (client overlay keyed on pathname; uses the View Transitions API when available)
-- [ ] Low-tier and reduced-motion users get static, designed SVG illustrations for every 3D scene
+- [x] Lenis smooth scroll synced to the GSAP ticker; ScrollTrigger pinning (pinning disabled under reduced motion)
+- [x] Magnetic CTA buttons; custom cursor (only with `pointer: fine`; hidden for touch and reduced motion)
+- [x] Page transitions: gold thread wipe between routes (client overlay keyed on pathname; uses the View Transitions API when available)
+- [x] Low-tier and reduced-motion users get static, designed SVG illustrations for every 3D scene
 
 ### Phase 3 checks
 1. Build passes
@@ -173,6 +173,11 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 3. Keyboard-only walkthrough test: tab order, visible focus, skip link, menu, FAQ, CTAs, intro skip
 4. Zero console errors or warnings across all routes (Playwright listener)
 5. Commit: `Phase 3: scroll-driven 3D scenes, transitions, polish`
+
+**Phase 3 result:** `npm run check:phase3` passes: lint, types, build, raw-HTML compare, JSON-LD, 12 Playwright tests (keyboard walkthrough, route wipe, zero console errors on all routes, static fallbacks, intro suite), page screenshots, and section screenshots at 390 and 1440 px.
+- The persistent particle system morphs jacket → trail with 5 camps (pinned, scrubbed) → exploded layers (3/4 view, HTML labels projected from 3D anchors) → woven swatches, then fades. On screens under 1024 px the 3D is hero-only (no free column beside the copy).
+- I added a Fabric section to the homepage between Anatomy and Image Consulting, because the brief's fabric scene needed a home.
+- Inactive process steps recede with AA-safe colours, never with opacity.
 
 ---
 

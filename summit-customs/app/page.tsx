@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   AnatomySection,
+  FabricSection,
   HomeFaqSection,
   HomeHero,
   ImageConsultingSection,
@@ -9,6 +10,7 @@ import {
   TestimonialsSection,
 } from "@/components/sections/home";
 import { IntroVeil } from "@/components/intro/IntroVeil";
+import { ScrollScenes } from "@/components/motion/ScrollScenes";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { homeFaqs } from "@/content/faq";
@@ -34,11 +36,13 @@ export default function HomePage() {
       <HomeHero />
       <ProcessSection />
       <AnatomySection />
+      <FabricSection />
       <ImageConsultingSection />
       <OccasionsSection />
       <TestimonialsSection />
       <HomeFaqSection />
       <CtaBand />
+      <ScrollScenes />
       <JsonLd data={graph(webPage("/", title, description), ...serviceList.map(service), faqPage(homeFaqs, "/"))} />
     </>
   );

@@ -46,6 +46,9 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Label outlines are generated: `node scripts/gen-label-paths.mjs` → `three/label/labelPaths.ts`.
 - Debug URL params: `?intro=force|off`, `?tier=high|mid|low`, `?t=<seconds>` (pause at a time), `?fps=1` (meter).
 - One canvas: the intro overlay (z 55) becomes the page background (z -1). `body` must stay transparent.
+- Scroll scenes: `components/motion/ScrollScenes.tsx` (pin + weights) → `lib/scenes.ts` store → damped in `three/Experience.tsx`. Targets in `three/targets/scenes.ts`. Static stand-ins in `components/sections/scene-art.tsx` (`data-static-3d`, hidden by `html.hero-3d`).
+- Site motion (Lenis, cursor, magnetic `[data-magnetic]`, route wipe): `components/motion/SiteMotion.tsx`. The click listener must stay in the capture phase (before next/link).
+- Never dim text with opacity. Use AA-safe colour tokens (stone/ivory-dim).
 
 ## Content map
 - Facts: `content/business.ts` (`business`, `studio`, `founder`) · services: `content/services.ts` · FAQ: `content/faq.ts`
@@ -55,6 +58,7 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 ## Commands (run in `summit-customs/`)
 - `npm run check:phase1`: lint + types + build + verify:html + verify:jsonld + screenshots
 - `npm run check:phase2`: Phase 1 checks + raw-HTML compare + Playwright intro tests + intro frame captures
+- `npm run check:phase3`: all of the above + site tests + section screenshots (`npm run sections -- <dir> [--static]`)
 - `npm run intro:frames -- <dir> --tier=high --w=1440 --h=900 --times=0.5,2` · `npm run intro:fps -- --tier=mid`
 - `npm run dev` · `npm run build` · `npm start`
 - `npm run verify:html`: curl every route and assert content/JSON-LD without JS (`-- --compare` diffs against the Phase 1 snapshot)

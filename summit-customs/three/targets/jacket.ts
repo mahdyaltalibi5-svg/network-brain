@@ -119,7 +119,7 @@ function clothMask() {
   return mask;
 }
 
-export type JacketSample = { positions: Float32Array; normals: Float32Array; part: Float32Array };
+export type JacketSample = { positions: Float32Array; normals: Float32Array; part: Float32Array; svg: Float32Array };
 
 /**
  * @param n total particles
@@ -128,7 +128,8 @@ export type JacketSample = { positions: Float32Array; normals: Float32Array; par
 export function sampleJacket(n: number, lapelCount: number, rng: Rng = mulberry32(11)): JacketSample {
   const positions = new Float32Array(n * 3);
   const normals = new Float32Array(n * 3);
-  const part = new Float32Array(n); // 0 cloth, 1 seam, 2 lapel, 3 button
+  const svg = new Float32Array(n * 2);
+  const part = new Float32Array(n); // 0 cloth, 1 seam/edge, 2 lapel, 3 button, 4 pocket
   let i = 0;
   const put = (sx: number, sy: number, kind: number, lift = 0, jitter = 0) => {
     const jx = sx + gauss(rng) * jitter;
@@ -137,6 +138,8 @@ export function sampleJacket(n: number, lapelCount: number, rng: Rng = mulberry3
     positions.set([x, y, z], i * 3);
     normals.set(normalAt(jx, jy), i * 3);
     part[i] = kind;
+    svg[i * 2] = jx;
+    svg[i * 2 + 1] = jy;
     i++;
   };
 
@@ -159,7 +162,8 @@ export function sampleJacket(n: number, lapelCount: number, rng: Rng = mulberry3
     while (r > lengths[s]) r -= lengths[s++];
     const st = strokes[Math.min(s, strokes.length - 1)];
     const { x, y } = st.p.getPointAtLength(rng() * st.p.getTotalLength());
-    put(x, y, st.part === "lapel" ? 2 : 1, st.part === "lapel" ? 0.04 : 0.015, 1.3);
+    const kind = st.part === "lapel" ? 2 : st.part === "pocket" ? 4 : 1;
+    put(x, y, kind, st.part === "lapel" ? 0.04 : 0.015, 1.3);
   }
 
   // 3. Buttons
@@ -179,7 +183,7 @@ export function sampleJacket(n: number, lapelCount: number, rng: Rng = mulberry3
     if (!m[Math.floor((sy - 40) / MASK_RES) * MASK_W + Math.floor((sx - 30) / MASK_RES)]) continue;
     put(sx, sy, 0, 0, 0);
   }
-  return { positions, normals, part };
+  return { positions, normals, part, svg };
 }
 
 /** The lapel edge as 3D points, for the gold pick-stitch line. */

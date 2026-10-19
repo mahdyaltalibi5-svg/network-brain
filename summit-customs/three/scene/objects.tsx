@@ -47,6 +47,10 @@ export function Particles({ data, s, sizeScale }: { data: ParticleData; s: Intro
     g.setAttribute("aNJacket", new BufferAttribute(data.nJacket, 3));
     g.setAttribute("aRandom", new BufferAttribute(data.random, 4));
     g.setAttribute("aPart", new BufferAttribute(data.part, 1));
+    g.setAttribute("aProcess", new BufferAttribute(data.process, 3));
+    g.setAttribute("aAnatomy", new BufferAttribute(data.anatomy, 3));
+    g.setAttribute("aFabric", new BufferAttribute(data.fabric, 3));
+    g.setAttribute("aTags", new BufferAttribute(data.tags, 3));
     return g;
   });
   const mat = useDisposable(
@@ -70,6 +74,10 @@ export function Particles({ data, s, sizeScale }: { data: ParticleData; s: Intro
           uAspect: { value: 1 },
           uSummitY: { value: SUMMIT.y },
           uRest: { value: 0 },
+          uProcess: { value: 0 },
+          uAnatomy: { value: 0 },
+          uFabric: { value: 0 },
+          uCamp: { value: 1 },
           uOpacity: { value: 0 },
         },
       }),
@@ -88,8 +96,12 @@ export function Particles({ data, s, sizeScale }: { data: ParticleData; s: Intro
     u.uMouseStrength.value = s.rest * pointer.active;
     u.uAspect.value = size.width / size.height;
     u.uRest.value = s.rest;
+    u.uProcess.value = s.process;
+    u.uAnatomy.value = s.anatomy;
+    u.uFabric.value = s.fabric;
+    u.uCamp.value = s.camp;
     // portrait: the resting jacket sits behind body copy, so it stays faint
-    u.uOpacity.value = s.particleOpacity * (size.width < size.height ? 1 - 0.6 * s.rest : 1);
+    u.uOpacity.value = s.particleOpacity * (size.width < size.height ? 1 - 0.72 * s.rest : 1);
   });
   return <points geometry={geo} material={mat} frustumCulled={false} />;
 }

@@ -9,6 +9,8 @@ import { PerspectiveCamera, Vector2, Vector3 } from "three";
 import { IntroAudio } from "./audio/sfx";
 import { JACKET_ORIGIN, TIER_SETTINGS, type IntroMode, type Tier } from "./config";
 import { Dust, FogPlane, NeedleTip, Particles, pointer, Sparks, StitchLine, Thread } from "./scene/objects";
+import { scenes } from "@/lib/scenes";
+import { LAYERS } from "./targets/scenes";
 import { createIntroState, type IntroState } from "./state";
 import type { ParticleData } from "./targets/build";
 import { loadParticleData } from "./targets/load";
@@ -41,6 +43,16 @@ export default function Experience({ tier, mode, onDone }: ExperienceProps) {
 
   return (
     <div ref={wrap} className="intro-canvas" data-layer={layer} aria-hidden="true" style={{ opacity: 0, visibility: "hidden" }}>
+      {/* anatomy labels: HTML positioned over projected 3D anchor points */}
+      <div className="anatomy-labels">
+        {LABELLED.map((name) => (
+          <span key={name} data-anatomy-label={name} className="anatomy-label">
+            <i />
+            <b />
+            {name}
+          </span>
+        ))}
+      </div>
       {data && (
         <Canvas
           dpr={settings.dpr}
@@ -52,6 +64,7 @@ export default function Experience({ tier, mode, onDone }: ExperienceProps) {
           <color attach="background" args={["#07080A"]} />
           <Director
             s={s}
+            anchors={data.anchors}
             mode={mode}
             wrap={wrap}
             onEntrance={() => setLayer("page")}
@@ -114,8 +127,11 @@ function Effects({ tier, playing, s }: { tier: Tier; playing: boolean; s: IntroS
   return <EffectComposer multisampling={0}>{bloomFx}</EffectComposer>;
 }
 
+const LABELLED = ["canvas", "lining", "lapel", "pockets", "buttons"] as const;
+
 type DirectorProps = {
   s: IntroState;
+  anchors: number[];
   mode: IntroMode;
   wrap: React.RefObject<HTMLDivElement | null>;
   onEntrance: () => void;
@@ -123,7 +139,7 @@ type DirectorProps = {
 };
 
 /** Owns the master timeline, camera rig, input, audio and lifecycle. */
-function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
+function Director({ s, anchors, mode, wrap, onEntrance, onDone }: DirectorProps) {
   const { camera, size, setFrameloop } = useThree();
   const cam = camera as PerspectiveCamera;
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -134,6 +150,10 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
   );
   const fps = useRef<number[]>([]);
   const meter = useRef<HTMLDivElement | null>(null);
+  const labels = useRef<HTMLElement[]>([]);
+  useEffect(() => {
+    labels.current = LABELLED.map((n) => document.querySelector<HTMLElement>(`[data-anatomy-label="${n}"]`)!);
+  }, []);
 
   // Build the timeline once
   useEffect(() => {
@@ -225,12 +245,10 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
     };
     document.addEventListener("visibilitychange", onVis);
 
-    // Resting hero: stop rendering once the hero is scrolled away
+    // After the 3D sections: stop rendering entirely once the particles are hidden
     const onScroll = () => {
-      if (!html.classList.contains("hero-3d")) return;
-      const k = window.scrollY / window.innerHeight;
-      s.particleOpacity = 1 - Math.min(1, Math.max(0, (k - 0.3) / 0.6));
-      setFrameloop(k > 1.1 || document.hidden ? "never" : "always");
+      if (!html.classList.contains("hero-3d") || document.hidden) return;
+      setFrameloop(scenes.hide > 0.999 && s.hide > 0.995 ? "never" : "always");
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -257,6 +275,7 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
       window.removeEventListener("deviceorientation", onTilt);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
+      html.classList.remove("hero-3d");
       meter.current?.remove();
       unsubStart();
       unsubEnd();
@@ -288,6 +307,21 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
       meter.current.textContent = `${(recent.length / recent.reduce((a, b) => a + b, 0)).toFixed(0)} fps · ${size.width}×${size.height}`;
     }
 
+    // ── scroll scenes: damp toward the shared store once the hero is resting
+    if (s.rest > 0.99) {
+      const k = 1 - Math.exp(-dt * 4.5);
+      s.process += (scenes.process - s.process) * k;
+      s.anatomy += (scenes.anatomy - s.anatomy) * k;
+      s.fabric += (scenes.fabric - s.fabric) * k;
+      s.camp += (scenes.camp - s.camp) * (1 - Math.exp(-dt * 6));
+      s.hide += (scenes.hide - s.hide) * k;
+      s.frameX += (scenes.frameX - s.frameX) * k;
+      s.frameY += (scenes.frameY - s.frameY) * k;
+      s.yaw += (scenes.yaw - s.yaw) * k;
+      s.zoom += (scenes.zoom - s.zoom) * k;
+      s.particleOpacity = 1 - s.hide;
+    }
+
     // ── camera rig: keyframed path, blended with chase cam and orbit cam
     const t = clock.elapsedTime;
     const { pos, tgt, tip, look } = tmp;
@@ -304,7 +338,7 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
     if (s.orbit.on > 0) {
       const o = s.orbit;
       const ce = Math.cos(o.el);
-      const r = o.r * (portrait ? 1 + 0.25 * (1 - s.restFrame) + 0.7 * s.restFrame : 1);
+      const r = o.r * (portrait ? 1 + 0.25 * (1 - s.restFrame) + 0.7 * s.restFrame : 1) * s.zoom;
       tip.set(JX + r * ce * Math.sin(o.az), JY + o.ty + r * Math.sin(o.el), JZ + r * ce * Math.cos(o.az));
       pos.lerp(tip, o.on);
       tgt.lerp(look.set(JX, JY + o.ty, JZ), o.on);
@@ -317,7 +351,7 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
     pos.y += sh * (Math.sin(t * 1.3 + 1) + 0.5 * Math.sin(t * 3.7)) + pointer.y * 0.22 * s.parallax;
     if (s.rest > 0) {
       // resting jacket turns gently toward the cursor
-      const yaw = pointer.x * 0.32 + Math.sin(t * 0.25) * 0.06;
+      const yaw = pointer.x * 0.32 * (1 - s.anatomy * 0.6) + Math.sin(t * 0.25) * 0.06 * (1 - s.fabric) + s.yaw;
       const r = Math.hypot(pos.x - JX, pos.z - JZ);
       const a = Math.atan2(pos.x - JX, pos.z - JZ) + yaw * s.rest;
       pos.x = JX + r * Math.sin(a);
@@ -328,14 +362,30 @@ function Director({ s, mode, wrap, onEntrance, onDone }: DirectorProps) {
     cam.lookAt(tgt);
 
     // framing: centred during the intro; offset into the hero's art slot at rest
-    const fx = portrait ? 0.7 : 0.74;
-    const fy = portrait ? 0.3 : 0.52;
+    const fx = portrait ? 0.7 : s.frameX;
+    const fy = portrait ? 0.3 : s.frameY;
     const k = s.restFrame;
     const offX = -(fx - 0.5) * size.width * k;
     const offY = (0.5 - fy) * size.height * k;
     if (k > 0) cam.setViewOffset(size.width, size.height, offX, offY, size.width, size.height);
     else if (cam.view) cam.clearViewOffset();
     cam.updateProjectionMatrix();
+
+    // anatomy labels follow their projected 3D anchors
+    const show = portrait ? 0 : Math.max(0, (s.anatomy - 0.55) / 0.45) * (1 - s.fabric) * (1 - s.hide);
+    labels.current.forEach((el, i) => {
+      if (!el) return;
+      if (show < 0.01) {
+        if (el.style.opacity !== "0") el.style.opacity = "0";
+        return;
+      }
+      const li = LAYERS.indexOf(LABELLED[i]);
+      tip.set(anchors[li * 3], anchors[li * 3 + 1], anchors[li * 3 + 2]).project(cam);
+      const x = (tip.x * 0.5 + 0.5) * size.width;
+      const y = (-tip.y * 0.5 + 0.5) * size.height;
+      el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      el.style.opacity = String(show);
+    });
   });
   return null;
 }

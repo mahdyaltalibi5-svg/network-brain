@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { anatomy } from "@/content/anatomy";
+import { fabrics } from "@/content/fabrics";
 import { homeFaqs } from "@/content/faq";
 import { occasions } from "@/content/occasions";
 import { processSteps } from "@/content/process";
@@ -9,6 +10,7 @@ import { FaqList } from "@/components/ui/FaqList";
 import { JacketArt } from "@/components/ui/JacketArt";
 import { Ph, rich } from "@/components/ui/Rich";
 import { Section } from "@/components/ui/Section";
+import { ExplodedJacketArt, ProcessTrailArt, WovenSwatchArt } from "./scene-art";
 
 export function HomeHero() {
   return (
@@ -77,16 +79,24 @@ export function ProcessSection() {
         </p>
       }
     >
-      <ol data-scene="process" className="grid gap-px border border-line-soft bg-line-soft md:grid-cols-5">
-        {processSteps.map((s) => (
-          <li key={s.slug} data-camp={s.n} className="flex flex-col bg-void p-7 md:min-h-[22rem]">
-            <span className="font-display text-5xl text-gold">{String(s.n).padStart(2, "0")}</span>
-            <h3 className="mt-8 font-display text-3xl text-ivory">{s.name}</h3>
-            <p className="mt-2 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-stone">{rich(s.duration)}</p>
-            <p className="mt-5 text-[0.97rem] text-ivory-dim">{rich(s.summary)}</p>
-          </li>
-        ))}
-      </ol>
+      {/* Desktop: this stage pins while the five camps light up in turn */}
+      <div data-process-stage className="grid gap-12 lg:min-h-[100svh] lg:grid-cols-12 lg:items-center lg:py-16">
+        <ol data-scene="process" className="border-t border-line-soft lg:col-span-5">
+          {processSteps.map((s) => (
+            <li key={s.slug} data-camp={s.n} className="grid grid-cols-[3.5rem_1fr] gap-x-4 border-b border-line-soft py-6 lg:py-5">
+              <span className="font-display text-4xl leading-none text-gold">{String(s.n).padStart(2, "0")}</span>
+              <div>
+                <h3 className="font-display text-3xl leading-tight text-ivory">{s.name}</h3>
+                <p className="mt-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-stone">{rich(s.duration)}</p>
+                <p className="mt-3 max-w-md text-[0.95rem] text-ivory-dim">{rich(s.summary)}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div className="hidden justify-center lg:col-span-6 lg:col-start-7 lg:flex">
+          <ProcessTrailArt />
+        </div>
+      </div>
     </Section>
   );
 }
@@ -107,15 +117,15 @@ export function AnatomySection() {
           shoulder, the hand work. Here is what to look for in any jacket, ours included.
         </p>
       }
-      className="bg-surface"
     >
-      <div className="grid gap-16 md:grid-cols-12">
-        <div className="hidden md:col-span-4 md:block">
-          <div className="sticky top-32">
-            <JacketArt className="h-auto w-full opacity-80" />
+      <div className="grid gap-16 lg:grid-cols-12">
+        {/* the exploded 3D jacket (or its static drawing) occupies this column */}
+        <div className="hidden lg:col-span-5 lg:block">
+          <div className="sticky top-28">
+            <ExplodedJacketArt />
           </div>
         </div>
-        <dl data-scene="anatomy" className="grid gap-x-12 gap-y-14 sm:grid-cols-2 md:col-span-8">
+        <dl data-scene="anatomy" className="grid gap-x-12 gap-y-14 sm:grid-cols-2 lg:col-span-7">
           {anatomy.map((p, i) => (
             <div key={p.id} data-layer={p.id}>
               <dt>
@@ -127,6 +137,47 @@ export function AnatomySection() {
             </div>
           ))}
         </dl>
+      </div>
+    </Section>
+  );
+}
+
+export function FabricSection() {
+  return (
+    <Section
+      id="fabrics"
+      eyebrow="Fabrics"
+      title={
+        <>
+          Cloth for altitude, season <em>and the way you work</em>.
+        </>
+      }
+      intro={
+        <p>
+          Salt Lake City runs hot and dry in summer and snowy in winter, so most wardrobes here need two
+          weights. Choose by season, weight and wear. <Link className="text-gold-bright underline underline-offset-4" href="/fabrics">Read the fabric guide</Link>.
+        </p>
+      }
+    >
+      <div className="grid gap-16 lg:grid-cols-12">
+        <div className="hidden lg:col-span-5 lg:flex lg:items-start lg:justify-center">
+          <div className="sticky top-40 w-full">
+            <WovenSwatchArt />
+          </div>
+        </div>
+        <ul data-scene="fabric" className="grid gap-px border border-line-soft bg-line-soft sm:grid-cols-2 lg:col-span-7">
+          {fabrics.map((f) => (
+            <li key={f.slug} data-fabric={f.slug} className="flex flex-col bg-void p-7">
+              <p className="eyebrow">{f.season}</p>
+              <h3 className="mt-5 font-display text-[1.75rem] leading-tight text-ivory">{f.name}</h3>
+              <p className="mt-1 text-sm text-stone">{f.weight}</p>
+              <p className="mt-4 flex-1 text-[0.95rem] text-ivory-dim">{f.character}</p>
+              <p className="mt-5 border-t border-line-soft pt-3 text-sm text-ivory-dim">
+                <span className="text-ivory">Mills:</span> {rich(f.mills)}
+              </p>
+            </li>
+          ))}
+        </ul>
       </div>
     </Section>
   );

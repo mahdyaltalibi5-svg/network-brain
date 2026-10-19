@@ -18,7 +18,9 @@
     "predev": "node scripts/copy-gpu-benchmarks.mjs",
     "intro:frames": "node scripts/intro-frames.mjs",
     "intro:fps": "node scripts/fps.mjs",
-    "check:phase2": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run intro:frames -- screenshots/intro"
+    "check:phase2": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run intro:frames -- screenshots/intro",
+    "sections": "node scripts/sections.mjs",
+    "check:phase3": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run build && npm run verify:html -- --compare && npm run verify:jsonld && npm test && npm run shots -- screenshots/p3-pages && npm run sections -- screenshots/sections"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

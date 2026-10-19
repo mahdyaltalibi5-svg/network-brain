@@ -36,6 +36,16 @@ export function createIntroState() {
     // resting hero
     rest: 0,
     restFrame: 0, // 0 = centred intro framing, 1 = hero framing (offset right)
+    // scroll scenes (damped toward lib/scenes.ts)
+    process: 0,
+    camp: 1,
+    anatomy: 0,
+    fabric: 0,
+    hide: 0,
+    frameX: 0.74,
+    frameY: 0.52,
+    yaw: 0,
+    zoom: 1,
   };
 }
 

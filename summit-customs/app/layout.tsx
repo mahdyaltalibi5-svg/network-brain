@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { Header } from "@/components/layout/Header";
+import { SiteMotion } from "@/components/motion/SiteMotion";
 import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { business, SITE_URL } from "@/content/business";
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <SiteMotion />
         <JsonLd data={graph(organization(), localBusiness(), website())} />
       </body>
     </html>

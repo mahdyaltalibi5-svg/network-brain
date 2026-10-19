@@ -360,3 +360,194 @@ html.intro-fallback [data-intro-sound],
 html.intro-fallback [data-intro-tilt] {
   display: none;
 }
+
+/* Anatomy labels over the exploded 3D jacket */
+.anatomy-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* above the canvas */
+  pointer-events: none;
+}
+.anatomy-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+.anatomy-label i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: rgb(201 164 92 / 0.35);
+  box-shadow: 0 0 10px rgb(201 164 92 / 0.6);
+  margin-left: -3.5px;
+}
+.anatomy-label b {
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), rgb(201 164 92 / 0.2));
+}
+
+/* ── Static stand-ins for the 3D scroll scenes ───────────────── */
+html.hero-3d [data-static-3d] {
+  visibility: hidden;
+}
+.process-art .camp-halo {
+  fill: rgb(201 164 92 / 0);
+  transition: fill 0.5s var(--ease-out-expo);
+}
+.process-art .camp-dot {
+  fill: #8a8579;
+  transition: fill 0.5s var(--ease-out-expo);
+}
+.process-art .camp-num {
+  font: 600 11px var(--font-sans);
+  letter-spacing: 0.2em;
+  fill: #8a8579;
+}
+#process[data-active-camp="1"] .camp-1 :is(.camp-dot),
+#process[data-active-camp="2"] .camp-2 :is(.camp-dot),
+#process[data-active-camp="3"] .camp-3 :is(.camp-dot),
+#process[data-active-camp="4"] .camp-4 :is(.camp-dot),
+#process[data-active-camp="5"] .camp-5 :is(.camp-dot) {
+  fill: #e2c27f;
+}
+#process[data-active-camp="1"] .camp-1 .camp-halo,
+#process[data-active-camp="2"] .camp-2 .camp-halo,
+#process[data-active-camp="3"] .camp-3 .camp-halo,
+#process[data-active-camp="4"] .camp-4 .camp-halo,
+#process[data-active-camp="5"] .camp-5 .camp-halo {
+  fill: rgb(201 164 92 / 0.22);
+}
+.layer-label {
+  font: 600 13px var(--font-sans);
+  letter-spacing: 0.22em;
+  fill: #f2ede4;
+}
+.swatch {
+  aspect-ratio: 5 / 7;
+  border: 1px solid var(--line-soft);
+  background-size: 6px 6px;
+}
+.swatch-ivory {
+  background-image:
+    repeating-linear-gradient(0deg, rgb(242 237 228 / 0.18) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(242 237 228 / 0.12) 0 1px, transparent 1px 3px);
+}
+.swatch-gold {
+  background-image:
+    repeating-linear-gradient(0deg, rgb(201 164 92 / 0.28) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(201 164 92 / 0.18) 0 1px, transparent 1px 3px);
+}
+.swatch-stone {
+  background-image:
+    repeating-linear-gradient(45deg, rgb(138 133 121 / 0.3) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-45deg, rgb(138 133 121 / 0.2) 0 1px, transparent 1px 4px);
+}
+
+/* Process steps: the active camp is bright, the rest recede (all text stays in the HTML) */
+/* inactive steps recede with AA-safe colours (stone ≈ 5.2:1 on void), never with opacity */
+[data-camp] :is(h3, p, span) {
+  transition: color 0.5s var(--ease-out-expo);
+}
+[data-process-stage][data-pinned] [data-camp]:not([data-active]) h3 {
+  color: var(--ivory-dim);
+}
+[data-process-stage][data-pinned] [data-camp]:not([data-active]) p,
+[data-process-stage][data-pinned] [data-camp]:not([data-active]) > span {
+  color: var(--stone);
+}
+
+/* ── Route wipe: a gold thread draws a void panel across, then away ── */
+.route-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  visibility: hidden;
+}
+.wipe-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+  transform: scaleX(0);
+}
+.wipe-thread {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--gold-bright) 20%, #fff3d6 50%, var(--gold-bright) 80%, transparent);
+  box-shadow:
+    0 0 14px 2px rgb(201 164 92 / 0.65),
+    0 0 40px 6px rgb(201 164 92 / 0.25);
+}
+
+/* ── Custom cursor (fine pointers only; added by SiteMotion) ───── */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+html.has-cursor.cursor-text input,
+html.has-cursor.cursor-text textarea {
+  cursor: text !important;
+}
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--gold-bright);
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgb(242 237 228 / 0.45);
+  transition:
+    opacity 0.3s,
+    width 0.35s var(--ease-out-expo),
+    height 0.35s var(--ease-out-expo),
+    margin 0.35s var(--ease-out-expo),
+    background-color 0.35s,
+    border-color 0.35s;
+}
+html.cursor-visible .cursor-dot,
+html.cursor-visible .cursor-ring {
+  opacity: 1;
+}
+html.cursor-hover .cursor-ring {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-color: var(--gold);
+  background-color: rgb(201 164 92 / 0.1);
+}
+html.cursor-text .cursor-dot,
+html.cursor-text .cursor-ring {
+  opacity: 0;
+}
