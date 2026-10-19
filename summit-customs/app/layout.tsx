@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { business, SITE_URL } from "@/content/business";
+import { INTRO_BOOT } from "@/lib/intro-boot";
 import { graph, localBusiness, organization, website } from "@/lib/seo/jsonld";
 import "./globals.css";
 
@@ -41,7 +42,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-US" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en-US" className={`${display.variable} ${sans.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Homepage intro: decides the intro mode before first paint (no-op on other pages / without JS) */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT }} />
+      </head>
       <body>
         <a
           href="#main"

@@ -50,7 +50,7 @@ html {
 }
 
 body {
-  background: var(--void);
+  /* transparent: the page-level WebGL canvas (z-index -1) sits between html and content */
   color: var(--ivory);
   font-family: var(--font-sans);
   font-size: 1.0625rem;
@@ -214,4 +214,149 @@ details.faq[open] .faq-icon {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Intro (The Ascent) ──────────────────────────────────────── */
+.intro-veil {
+  display: none;
+}
+html.intro-on .intro-veil {
+  display: block;
+  position: fixed;
+  inset: 0;
+}
+html.intro-done .intro-veil {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.5s var(--ease-in-out),
+    visibility 0s 0.5s;
+}
+.intro-bg {
+  z-index: 50;
+  background: var(--void);
+}
+.intro-ui {
+  z-index: 60;
+  pointer-events: none;
+}
+.intro-point {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: #ffd79a;
+  box-shadow:
+    0 0 12px 3px rgb(226 194 127 / 0.8),
+    0 0 40px 10px rgb(201 164 92 / 0.35);
+  animation: intro-heartbeat 1.6s var(--ease-in-out) infinite;
+}
+html.intro-active .intro-point,
+html.intro-fallback .intro-point {
+  display: none;
+}
+@keyframes intro-heartbeat {
+  0%, 60%, 100% { transform: scale(1); opacity: 0.85; }
+  30% { transform: scale(1.9); opacity: 1; }
+}
+.intro-fallback-art {
+  display: none;
+}
+html.intro-fallback .intro-fallback-art {
+  display: flex;
+}
+.fb-logo {
+  opacity: 0;
+}
+html.intro-fallback .fb-logo {
+  animation: fb-fade 0.6s 1.7s var(--ease-in-out) forwards;
+}
+@keyframes fb-fade {
+  to { opacity: 1; }
+}
+.intro-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 6vh;
+  opacity: 0;
+  visibility: hidden;
+  background: radial-gradient(ellipse 50% 22% at 50% 48%, rgb(7 8 10 / 0.85), transparent 72%);
+  filter: drop-shadow(0 0 10px rgb(201 164 92 / 0.45));
+}
+.intro-tagline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% + min(7vw, 70px));
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  padding-inline: var(--gutter);
+  opacity: 0;
+  visibility: hidden;
+}
+.intro-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem var(--gutter) max(1.25rem, env(safe-area-inset-bottom));
+}
+.intro-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-dim);
+  border: 1px solid rgb(242 237 228 / 0.18);
+  background: rgb(7 8 10 / 0.55);
+  backdrop-filter: blur(6px);
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+}
+.intro-btn:hover,
+.intro-btn:focus-visible,
+.intro-btn[aria-pressed="true"] {
+  color: var(--ivory);
+  border-color: var(--gold);
+}
+.intro-btn[hidden] {
+  display: none;
+}
+.intro-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+}
+.intro-canvas[data-layer="page"] {
+  z-index: -1;
+  pointer-events: none;
+}
+html.hero-3d [data-hero-art] {
+  opacity: 0 !important;
+  transition: opacity 0.8s var(--ease-in-out);
+}
+html.intro-fallback [data-intro-sound],
+html.intro-fallback [data-intro-tilt] {
+  display: none;
 }

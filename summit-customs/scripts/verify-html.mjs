@@ -92,8 +92,11 @@ await withServer(async (base) => {
         if (!now) { fail(p, "route disappeared"); continue; }
         for (const k of ["title", "desc", "h1", "summary"]) if (snap[k] !== now[k]) fail(p, `${k} changed since baseline`);
         if (now.words < snap.words) fail(p, `body copy shrank ${snap.words} → ${now.words} words`);
+        // every sentence of the baseline copy must still be in the raw HTML
+        const missing = snap.text.split(/(?<=[.?!])\s+/).filter((sent) => sent.length > 20 && !now.text.includes(sent));
+        if (missing.length) fail(p, `${missing.length} baseline sentence(s) missing, e.g. "${missing[0].slice(0, 80)}"`);
       }
-      console.log("compared against baseline snapshot");
+      console.log("compared against Phase 1 baseline: titles, descriptions, H1s, summaries and every body sentence intact");
     }
   } else {
     writeFileSync(SNAP, JSON.stringify(snapshot, null, 1));

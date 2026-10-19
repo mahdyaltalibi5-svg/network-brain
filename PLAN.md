@@ -1,6 +1,6 @@
 # Summit Customs — Build Plan
 
-Status: **Approved.** Phase 1 complete ✅ · Phase 2 in progress
+Status: **Approved.** Phase 1 ✅ · Phase 2 ✅ · Phase 3 next
 
 Site: summitcustomsuits.com · Bespoke suits & image consulting · Salt Lake City, UT
 Goal: a static, crawler-complete luxury site with a fully procedural 3D entrance ("The Ascent"), plus best-in-class SEO and GEO (visibility in AI search).
@@ -103,22 +103,22 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 ## PHASE 2 — "The Ascent" entrance (fully procedural)
 
 ### 2.1 Loading strategy (protects LCP and CLS)
-- [ ] The homepage hero is pure HTML/CSS (H1 + tagline + CTA) and is the LCP element
-- [ ] A tiny client `IntroGate` (<3 KB) decides the mode: first visit → full intro; `sessionStorage` flag → 1.5s micro-version; `prefers-reduced-motion`, low tier or no WebGL → 3s SVG fallback
-- [ ] The 3D bundle is loaded with `import()` only after `load` + `requestIdleCallback`. The overlay is `position: fixed`, takes no layout space (CLS stays 0) and shows a void-colored veil until the first GL frame
-- [ ] `detect-gpu` benchmark data is **self-hosted** under `/public/gpu-benchmarks` (no third-party fetch)
-- [ ] Tiers: **High** = 40k particles, full post, DPR ≤ 2 · **Mid** = 15k, bloom only, DPR 1.5 · **Low / no-WebGL / reduced-motion** = SVG fallback
+- [x] The homepage hero is pure HTML/CSS (H1 + tagline + CTA) and is the LCP element
+- [x] A tiny client `IntroGate` (<3 KB) decides the mode: first visit → full intro; `sessionStorage` flag → 1.5s micro-version; `prefers-reduced-motion`, low tier or no WebGL → 3s SVG fallback
+- [x] The 3D bundle is loaded with `import()` only after `load` + `requestIdleCallback`. The overlay is `position: fixed`, takes no layout space (CLS stays 0) and shows a void-colored veil until the first GL frame
+- [x] `detect-gpu` benchmark data is **self-hosted** under `/public/gpu-benchmarks` (no third-party fetch)
+- [x] Tiers: **High** = 40k particles, full post, DPR ≤ 2 · **Mid** = 15k, bloom only, DPR 1.5 · **Low / no-WebGL / reduced-motion** = SVG fallback
 
 ### 2.2 Procedural assets (all generated in code; no .glb and no paid assets)
-- [ ] `targets/heightfield.ts`: layered simplex + ridged noise multiplied by a north–south ridge mask (Wasatch-like front with one dominant summit). Points are sampled by rejection on slope and height.
-- [ ] `targets/jacket.ts`: a hand-authored SVG path of a bespoke jacket front (shoulders, notch lapels, two-button stance, flap pockets, breast welt). Points are sampled along strokes and inside the fill, then given depth on a curved torso (cylindrical bend + chest swell). The ridgeline points are deliberately mapped onto the lapel edge.
-- [ ] `scripts/gen-label-paths.mjs`: converts "SUMMIT CUSTOMS" to stroke paths with opentype.js at build time, then commits a generated TS file
-- [ ] Thread: CatmullRom curve with stitch dips through an invisible plane → `TubeGeometry` with a growing draw range + additive trail; spark bursts at each stitch hole
+- [x] `targets/heightfield.ts`: layered simplex + ridged noise multiplied by a north–south ridge mask (Wasatch-like front with one dominant summit). Points are sampled by rejection on slope and height.
+- [x] `targets/jacket.ts`: a hand-authored SVG path of a bespoke jacket front (shoulders, notch lapels, two-button stance, flap pockets, breast welt). Points are sampled along strokes and inside the fill, then given depth on a curved torso (cylindrical bend + chest swell). The ridgeline points are deliberately mapped onto the lapel edge.
+- [x] `scripts/gen-label-paths.mjs`: converts "SUMMIT CUSTOMS" to stroke paths with opentype.js at build time, then commits a generated TS file
+- [x] Thread: CatmullRom curve with stitch dips through an invisible plane → `TubeGeometry` with a growing draw range + additive trail; spark bursts at each stitch hole
 
 ### 2.3 Particle system (shared with Phase 3)
-- [ ] One `THREE.Points` + custom `ShaderMaterial`. Attributes: `aMountain`, `aJacket`, `aRandom`, `aDelay`, `aColorMix`. Uniforms: `uMorph`, `uSwirl`, `uBurst`, `uTime`, `uMouse`.
-- [ ] Vertex shader: per-particle staggered `smoothstep` delay plus a **curl-noise** offset that peaks mid-flight (reads as weaving, not crossfading); fiber shimmer; mouse repulsion ripple
-- [ ] Fragment shader: soft disc, gold/ivory mix, brighter gold channel for selective bloom
+- [x] One `THREE.Points` + custom `ShaderMaterial`. Attributes: `aMountain`, `aJacket`, `aRandom`, `aDelay`, `aColorMix`. Uniforms: `uMorph`, `uSwirl`, `uBurst`, `uTime`, `uMouse`.
+- [x] Vertex shader: per-particle staggered `smoothstep` delay plus a **curl-noise** offset that peaks mid-flight (reads as weaving, not crossfading); fiber shimmer; mouse repulsion ripple
+- [x] Fragment shader: soft disc, gold/ivory mix, brighter gold channel for selective bloom
 
 ### 2.4 Master timeline: `three/timeline/ascent.ts` (single source of intro timing)
 | Time | Shot | Key work |
@@ -129,17 +129,17 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 | 4.2–6.0 | TRANSFORMATION | whip-around, mountain → jacket morph with curl swirl, gold pick-stitch line traces the lapel |
 | 6.0–7.2 | LABEL | push in to the chest, "SUMMIT CUSTOMS" embroiders itself (dash-offset stitch draw), HTML tagline fades in |
 | 7.2–8.0 | ENTRANCE | outward burst past the camera, canvas fades → resting interactive hero jacket |
-- [ ] Fast-forward: scroll, click or keypress sets `timeline.timeScale(3)` (no jump cut). The **Skip intro** button (bottom-right, focused first, visible from frame 0) tweens to the end in 400ms.
-- [ ] Micro-version (return visit): 1.5s mountain → jacket morph only
-- [ ] Interaction: mouse parallax on camera and key light; optional gyroscope after a permission tap on iOS
-- [ ] Post-processing: selective bloom (gold luminance threshold), chromatic aberration driven by camera velocity, film grain, vignette
-- [ ] Sound toggle (bottom-left, off by default). All cues are synthesized with the Web Audio API: hum → stitch clicks → wind (filtered noise) → whoosh → shears snip
-- [ ] Lifecycle: pause on `visibilitychange`; after the intro, dispose thread/label/post resources and keep only the particle buffer for the hero
-- [ ] A11y: canvas `aria-hidden`, `aria-live="polite"` region ("Intro playing — press Escape or Skip to continue" → "Intro finished"), Escape skips, visible focus ring
-- [ ] Resting hero: lower particle energy, slow rotation toward the cursor, ripple-away from the mouse; idle frame-rate cap when nothing moves
+- [x] Fast-forward: scroll, click or keypress sets `timeline.timeScale(3)` (no jump cut). The **Skip intro** button (bottom-right, focused first, visible from frame 0) tweens to the end in 400ms.
+- [x] Micro-version (return visit): 1.5s mountain → jacket morph only
+- [x] Interaction: mouse parallax on camera and key light; optional gyroscope after a permission tap on iOS
+- [x] Post-processing: selective bloom (gold luminance threshold), chromatic aberration driven by camera velocity, film grain, vignette
+- [x] Sound toggle (bottom-left, off by default). All cues are synthesized with the Web Audio API: hum → stitch clicks → wind (filtered noise) → whoosh → shears snip
+- [x] Lifecycle: pause on `visibilitychange`; after the intro, dispose thread/label/post resources and keep only the particle buffer for the hero
+- [x] A11y: canvas `aria-hidden`, `aria-live="polite"` region ("Intro playing — press Escape or Skip to continue" → "Intro finished"), Escape skips, visible focus ring
+- [x] Resting hero: lower particle energy, slow rotation toward the cursor, ripple-away from the mouse; idle frame-rate cap when nothing moves
 
 ### 2.5 SVG fallback (3s)
-- [ ] Gold stroke draws the ridgeline → path-morphs into the lapel line → logo fades in. Pure SVG + CSS/WAAPI, no WebGL.
+- [x] Gold stroke draws the ridgeline → path-morphs into the lapel line → logo fades in. Pure SVG + CSS/WAAPI, no WebGL.
 
 ### Phase 2 checks
 1. Build passes (and every route is still static)
@@ -148,6 +148,11 @@ Note: Next.js 16 uses Cache Components, so static output is enforced with `ensur
 4. FPS: headless run forced to the mid tier, measured with `requestAnimationFrame` deltas over the intro; target ≥55. *Caveat: headless Chromium here renders WebGL in software (SwiftShader), so I'll report the measured number honestly and also add an in-page FPS meter (`?fps=1`) for you to confirm on real hardware.*
 5. `verify-html.mjs` diffed against the Phase 1 snapshot: raw HTML content unchanged
 6. Commit: `Phase 2: The Ascent procedural intro`
+
+**Phase 2 result:** `npm run check:phase2` passes: lint, types, build, raw-HTML compare against Phase 1, JSON-LD, 7 Playwright intro tests and the frame captures.
+- Frames at 0.5, 2, 3.5, 5, 6.5, 7.8 s and the resting hero, plus 390 px mobile frames, were reviewed and iterated. Fixes along the way: a muddy fog wash; a starfield-like mid-weave (now a coherent lapel-first weave); cyan cores (traced to SOFT_LIGHT grain on HDR values); label legibility; the inverted hero framing offset; portrait chase cam; and a duplicate SVG gradient id that broke the static hero art.
+- **FPS (honest):** this container has no GPU. Headless Chromium renders WebGL in software (SwiftShader, 4 CPU cores) at about 2 fps on the mid tier at 1440×900, which says nothing about real hardware. The GPU-independent number is main-thread cost per frame: median 1.2 ms, p95 3.6 ms, against the 16.7 ms budget at 60 fps. Confirm on real devices with `/?intro=force&fps=1`. SwiftShader-class devices are rated tier 0–1 by detect-gpu and get the SVG version.
+- Particle targets are built in a Web Worker (40k in about 0.3 s, off the main thread). three.js is not in the homepage's initial JS.
 
 ---
 

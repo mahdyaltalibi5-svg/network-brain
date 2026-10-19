@@ -23,7 +23,7 @@ await withServer(async (base) => {
       const errors = [];
       page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
       page.on("pageerror", (e) => errors.push(e.message));
-      await page.goto(base + path, { waitUntil: "networkidle" });
+      await page.goto(base + path + (path === "/" ? "?intro=off" : ""), { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
       const name = path === "/" ? "home" : path.slice(1).replace(/\//g, "__");
       await page.screenshot({ path: `${out}/${w}/${name}.png`, fullPage: true });

@@ -39,6 +39,14 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Cache Components is on. Static output is enforced by `export const ensureStatic = "navigation"` in `app/layout.tsx`. Don't use `new Date()`, `cookies()` or `headers()` in server components.
 - `dynamicParams` isn't available. Unknown journal slugs call `notFound()`.
 
+## The Ascent (homepage intro)
+- Timing: `summit-customs/three/timeline/ascent.ts` (SHOTS table). Shaders: `three/scene/shaders.ts`. Scene/camera/lifecycle: `three/Experience.tsx`.
+- Boot: `lib/intro-boot.ts` (inline in `<head>`, picks full/micro/fallback before paint). Veil + controls: `components/intro/IntroVeil.tsx`. Lazy loader + tier: `components/intro/IntroController.tsx`.
+- Procedural targets: `three/targets/*` (heightfield, jacket from `lib/jacket.ts`, thread), built in a Web Worker.
+- Label outlines are generated: `node scripts/gen-label-paths.mjs` → `three/label/labelPaths.ts`.
+- Debug URL params: `?intro=force|off`, `?tier=high|mid|low`, `?t=<seconds>` (pause at a time), `?fps=1` (meter).
+- One canvas: the intro overlay (z 55) becomes the page background (z -1). `body` must stay transparent.
+
 ## Content map
 - Facts: `content/business.ts` (`business`, `studio`, `founder`) · services: `content/services.ts` · FAQ: `content/faq.ts`
 - Journal: `content/journal/posts.ts` (meta) + `content/journal/bodies/*.tsx` (body), registered in `app/journal/[slug]/page.tsx`
@@ -46,6 +54,8 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 
 ## Commands (run in `summit-customs/`)
 - `npm run check:phase1`: lint + types + build + verify:html + verify:jsonld + screenshots
+- `npm run check:phase2`: Phase 1 checks + raw-HTML compare + Playwright intro tests + intro frame captures
+- `npm run intro:frames -- <dir> --tier=high --w=1440 --h=900 --times=0.5,2` · `npm run intro:fps -- --tier=mid`
 - `npm run dev` · `npm run build` · `npm start`
 - `npm run verify:html`: curl every route and assert content/JSON-LD without JS (`-- --compare` diffs against the Phase 1 snapshot)
 - `npm run verify:jsonld`: parse and validate all JSON-LD

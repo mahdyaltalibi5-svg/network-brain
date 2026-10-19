@@ -45,3 +45,4 @@ next-env.d.ts
 /.lighthouseci
 /test-results
 /playwright-report
+/public/gpu-benchmarks

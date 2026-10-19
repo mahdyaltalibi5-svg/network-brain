@@ -8,6 +8,7 @@ import {
   ProcessSection,
   TestimonialsSection,
 } from "@/components/sections/home";
+import { IntroVeil } from "@/components/intro/IntroVeil";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { homeFaqs } from "@/content/faq";
@@ -29,6 +30,7 @@ export const metadata: Metadata = pageMeta({
 export default function HomePage() {
   return (
     <>
+      <IntroVeil />
       <HomeHero />
       <ProcessSection />
       <AnatomySection />
