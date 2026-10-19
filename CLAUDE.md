@@ -34,9 +34,20 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Images: explicit width/height and meaningful alt text.
 - Commit after each phase. Run the phase checks first and don't skip a failing check.
 
+## Next.js 16 notes
+- Read `summit-customs/node_modules/next/dist/docs/` before using unfamiliar APIs (see `summit-customs/AGENTS.md`).
+- Cache Components is on. Static output is enforced by `export const ensureStatic = "navigation"` in `app/layout.tsx`. Don't use `new Date()`, `cookies()` or `headers()` in server components.
+- `dynamicParams` isn't available. Unknown journal slugs call `notFound()`.
+
+## Content map
+- Facts: `content/business.ts` (`business`, `studio`, `founder`) · services: `content/services.ts` · FAQ: `content/faq.ts`
+- Journal: `content/journal/posts.ts` (meta) + `content/journal/bodies/*.tsx` (body), registered in `app/journal/[slug]/page.tsx`
+- Inline copy markup via `rich()`: `[label](/href)`, `**bold**`, placeholders
+
 ## Commands (run in `summit-customs/`)
+- `npm run check:phase1`: lint + types + build + verify:html + verify:jsonld + screenshots
 - `npm run dev` · `npm run build` · `npm start`
-- `npm run verify:html`: curl every route and assert content/JSON-LD without JS
+- `npm run verify:html`: curl every route and assert content/JSON-LD without JS (`-- --compare` diffs against the Phase 1 snapshot)
 - `npm run verify:jsonld`: parse and validate all JSON-LD
 - `npm run shots`: Playwright screenshots (390 / 1440)
 - `npm test`: Playwright tests · `npm run lhci`: Lighthouse CI

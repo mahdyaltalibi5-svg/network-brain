@@ -1,6 +1,6 @@
 # Summit Customs — Build Plan
 
-Status: **DRAFT — awaiting client approval before any code is written.**
+Status: **Approved.** Phase 1 complete ✅ · Phase 2 in progress
 
 Site: summitcustomsuits.com · Bespoke suits & image consulting · Salt Lake City, UT
 Goal: a static, crawler-complete luxury site with a fully procedural 3D entrance ("The Ascent"), plus best-in-class SEO and GEO (visibility in AI search).
@@ -59,34 +59,34 @@ Key principles:
 ## PHASE 1 — Foundation + content-first site (no 3D)
 
 ### 1.1 Scaffold
-- [ ] `create-next-app` (TypeScript, App Router, Tailwind, ESLint) in `summit-customs/`
-- [ ] Tailwind wired to CSS variables: `--void #07080A`, `--ivory #F2EDE4`, `--gold #C9A45C`, `--charcoal #2A2B2E`, `--stone #8A8579`, plus a type scale, spacing and easing tokens
-- [ ] `next/font` setup (D3), base layout, skip-to-content link, focus styles
-- [ ] `CLAUDE.md`, `PLACEHOLDERS.md`, npm scripts: `build`, `verify:html`, `verify:jsonld`, `shots`, `test`, `lhci`
+- [x] `create-next-app` (TypeScript, App Router, Tailwind, ESLint) in `summit-customs/`
+- [x] Tailwind wired to CSS variables: `--void #07080A`, `--ivory #F2EDE4`, `--gold #C9A45C`, `--charcoal #2A2B2E`, `--stone #8A8579`, plus a type scale, spacing and easing tokens
+- [x] `next/font` setup (D3), base layout, skip-to-content link, focus styles
+- [x] `CLAUDE.md`, `PLACEHOLDERS.md`, npm scripts: `build`, `verify:html`, `verify:jsonld`, `shots`, `test`, `lhci`
 
 ### 1.2 Design system (server components)
-- [ ] Header with primary nav (all 12 routes reachable within 2 clicks), mobile menu that works without JS (`<details>`), footer with full NAP, hours, service area and secondary links
-- [ ] Primitives: `Section`, `Eyebrow`, `DisplayHeading`, `Prose`, `Button`/`LinkButton`, `FactList` (quotable key–value facts), `Breadcrumbs`, `FAQAccordion` (native `<details>`), `CTA`, `Figure` (explicit width/height; placeholder art is generated SVG, not stock photos)
-- [ ] Editorial grid: generous whitespace, hairline gold rules, small-caps eyebrows. Restraint is the luxury signal.
+- [x] Header with primary nav (all 12 routes reachable within 2 clicks), mobile menu that works without JS (`<details>`), footer with full NAP, hours, service area and secondary links
+- [x] Primitives: `Section`, `Eyebrow`, `DisplayHeading`, `Prose`, `Button`/`LinkButton`, `FactList` (quotable key–value facts), `Breadcrumbs`, `FAQAccordion` (native `<details>`), `CTA`, `Figure` (explicit width/height; placeholder art is generated SVG, not stock photos)
+- [x] Editorial grid: generous whitespace, hairline gold rules, small-caps eyebrows. Restraint is the luxury signal.
 
 ### 1.3 Content (`content/*`): real, specific, premium copy
-- [ ] **Homepage:** Hero · The Process (Consultation → Measurements → Fabric → Construction → Final Fitting) · Anatomy of the Suit · Image Consulting · Occasions (Business / Wedding / Executive) · Testimonials · FAQ · Final CTA "Book a Private Fitting" with NAP
-- [ ] **Service pages:** `/bespoke-suits`, `/custom-wedding-suits-salt-lake-city`, `/image-consulting`, `/executive-wardrobe`. Each opens with a 2–3 sentence answer-first summary ("Summit Customs is a Salt Lake City bespoke tailor that…"), followed by: who it's for, what's included, timeline, construction facts, pricing (placeholder), FAQs, related links and a CTA
-- [ ] `/fabrics` (weights, compositions, seasons for Utah's dry climate and altitude; mills = placeholders) · `/process` (step-by-step with durations and fitting count) · `/about` (visible founder bio with credentials, all placeholders: name, training, years, photo) · `/faq` · `/book` · `/contact`
-- [ ] **Journal:** `/journal` index plus the 3 starter articles (≈1,200–1,800 words each, with author byline, published/updated dates, table of contents and internal links)
-- [ ] Construction facts are written as general tailoring knowledge (full vs half canvas, hand-padded lapels, working cuffs, typical 6–10 week bespoke timeline, typical 3 fittings). Any claim specific to *Summit's* own numbers is marked `[PLACEHOLDER: confirm]`.
+- [x] **Homepage:** Hero · The Process (Consultation → Measurements → Fabric → Construction → Final Fitting) · Anatomy of the Suit · Image Consulting · Occasions (Business / Wedding / Executive) · Testimonials · FAQ · Final CTA "Book a Private Fitting" with NAP
+- [x] **Service pages:** `/bespoke-suits`, `/custom-wedding-suits-salt-lake-city`, `/image-consulting`, `/executive-wardrobe`. Each opens with a 2–3 sentence answer-first summary ("Summit Customs is a Salt Lake City bespoke tailor that…"), followed by: who it's for, what's included, timeline, construction facts, pricing (placeholder), FAQs, related links and a CTA
+- [x] `/fabrics` (weights, compositions, seasons for Utah's dry climate and altitude; mills = placeholders) · `/process` (step-by-step with durations and fitting count) · `/about` (visible founder bio with credentials, all placeholders: name, training, years, photo) · `/faq` · `/book` · `/contact`
+- [x] **Journal:** `/journal` index plus the 3 starter articles (≈1,200–1,800 words each, with author byline, published/updated dates, table of contents and internal links)
+- [x] Construction facts are written as general tailoring knowledge (full vs half canvas, hand-padded lapels, working cuffs, typical 6–10 week bespoke timeline, typical 3 fittings). Any claim specific to *Summit's* own numbers is marked `[PLACEHOLDER: confirm]`.
 
 ### 1.4 SEO
-- [ ] `lib/seo/metadata.ts`: unique title, description, canonical, OG and Twitter tags per route; exactly one H1 per page
-- [ ] JSON-LD builders: `ClothingStore` (with `LocalBusiness` traits: NAP, geo, openingHours, priceRange, areaServed = Salt Lake City, Park City, Provo, Ogden, Sandy, Draper), `Organization` + `sameAs`, `Service` per service page, `FAQPage`, `BreadcrumbList`, `Article` on posts, `WebSite`. `AggregateRating` is gated (D7). Entities are linked by `@id`.
-- [ ] `sitemap.ts` (with lastModified), `robots.ts`, descriptive anchor text, alt text everywhere, explicit image dimensions
-- [ ] Keyword map: one primary keyword per page (bespoke suits SLC → `/bespoke-suits`, custom wedding suits Utah → wedding page, image consultant SLC → `/image-consulting`, executive wardrobe consultant → `/executive-wardrobe`, custom/made-to-measure suits SLC/Utah → home + journal #1)
+- [x] `lib/seo/metadata.ts`: unique title, description, canonical, OG and Twitter tags per route; exactly one H1 per page
+- [x] JSON-LD builders: `ClothingStore` (with `LocalBusiness` traits: NAP, geo, openingHours, priceRange, areaServed = Salt Lake City, Park City, Provo, Ogden, Sandy, Draper), `Organization` + `sameAs`, `Service` per service page, `FAQPage`, `BreadcrumbList`, `Article` on posts, `WebSite`. `AggregateRating` is gated (D7). Entities are linked by `@id`.
+- [x] `sitemap.ts` (with lastModified), `robots.ts`, descriptive anchor text, alt text everywhere, explicit image dimensions
+- [x] Keyword map: one primary keyword per page (bespoke suits SLC → `/bespoke-suits`, custom wedding suits Utah → wedding page, image consultant SLC → `/image-consulting`, executive wardrobe consultant → `/executive-wardrobe`, custom/made-to-measure suits SLC/Utah → home + journal #1)
 
 ### 1.5 GEO (AI search visibility)
-- [ ] `robots.txt` explicitly allows `GPTBot`, `OAI-SearchBot`, `PerplexityBot`, `ClaudeBot`, `Google-Extended` (plus `*`)
-- [ ] `/llms.txt` (concise index) and `/llms-full.txt` (full fact sheet: business, services, area, process, pricing range, timelines, key URLs), both generated from `content/*` at build time
-- [ ] FAQ written as the questions people actually ask AI: custom suit cost in Salt Lake City; bespoke vs made-to-measure; how long a custom suit takes; what to wear to a Utah wedding (temple sealing/reception, outdoor mountain venues); what an image consultant does; and similar
-- [ ] Quotable, fact-dense formatting: short declarative sentences, `<dl>` fact lists, comparison table (bespoke vs MTM vs off-the-rack)
+- [x] `robots.txt` explicitly allows `GPTBot`, `OAI-SearchBot`, `PerplexityBot`, `ClaudeBot`, `Google-Extended` (plus `*`)
+- [x] `/llms.txt` (concise index) and `/llms-full.txt` (full fact sheet: business, services, area, process, pricing range, timelines, key URLs), both generated from `content/*` at build time
+- [x] FAQ written as the questions people actually ask AI: custom suit cost in Salt Lake City; bespoke vs made-to-measure; how long a custom suit takes; what to wear to a Utah wedding (temple sealing/reception, outdoor mountain venues); what an image consultant does; and similar
+- [x] Quotable, fact-dense formatting: short declarative sentences, `<dl>` fact lists, comparison table (bespoke vs MTM vs off-the-rack)
 
 ### Phase 1 checks (all must pass before Phase 2)
 1. `npm run build`: zero errors, zero type errors (`tsc --noEmit` + `next lint`), and every route is static
@@ -94,6 +94,9 @@ Key principles:
 3. `scripts/validate-jsonld.mjs`: parses every JSON-LD block, checks required properties per `@type`, checks for no dangling `@id` references, and confirms no `AggregateRating` without reviews
 4. Playwright: screenshot every page at 390px and 1440px → review each one → fix layout issues → re-shoot
 5. Commit: `Phase 1: content-first static site with SEO + GEO`
+
+**Phase 1 result:** all checks pass via `npm run check:phase1`. Lint, types and build are clean, and all 15 routes are static. Every page has its H1, copy, nav and JSON-LD in the raw HTML. JSON-LD is valid, with placeholder facts withheld. No overflow or console errors at 390px or 1440px.
+Note: Next.js 16 uses Cache Components, so static output is enforced with `ensureStatic = "navigation"` on the root layout rather than `dynamic = 'force-static'`. The `◐ /journal/[slug]` row in the build output is only the fallback shell for unknown slugs, which return 404. Article JSON-LD points at per-post OG images that arrive in Phase 4.
 
 ---
 

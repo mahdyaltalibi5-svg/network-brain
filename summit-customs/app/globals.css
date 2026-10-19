@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* ── Brand tokens ─────────────────────────────────────────────── */
+:root {
+  --void: #07080a;
+  --ivory: #f2ede4;
+  --gold: #c9a45c;
+  --charcoal: #2a2b2e;
+  --stone: #8a8579;
+
+  /* derived */
+  --ivory-dim: #c9c3b8; /* secondary text on void */
+  --gold-bright: #e2c27f;
+  --line: rgb(201 164 92 / 0.28); /* hairline gold rules */
+  --line-soft: rgb(242 237 228 / 0.1);
+  --surface: #101114;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --measure: 68ch;
+}
+
+@theme inline {
+  --color-void: var(--void);
+  --color-ivory: var(--ivory);
+  --color-ivory-dim: var(--ivory-dim);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-charcoal: var(--charcoal);
+  --color-stone: var(--stone);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", system-ui, sans-serif;
+
+  --ease-expo: var(--ease-out-expo);
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+  background: var(--void);
+  color: var(--ivory);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--void);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--void);
+}
+
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 4px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ── Utilities ────────────────────────────────────────────────── */
+@utility container-site {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+@utility hairline {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0.6;
+}
+
+/* Long-form copy */
+.prose-site {
+  max-width: var(--measure);
+  color: var(--ivory-dim);
+}
+.prose-site > * + * {
+  margin-top: 1.15em;
+}
+.prose-site h2 {
+  color: var(--ivory);
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  margin-top: 2.2em;
+}
+.prose-site h3 {
+  color: var(--ivory);
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  margin-top: 1.8em;
+}
+.prose-site strong {
+  color: var(--ivory);
+  font-weight: 600;
+}
+.prose-site a {
+  color: var(--gold-bright);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+.prose-site a:hover {
+  color: var(--ivory);
+}
+.prose-site ul,
+.prose-site ol {
+  padding-left: 1.2em;
+}
+.prose-site ul {
+  list-style: none;
+}
+.prose-site ul > li {
+  position: relative;
+}
+.prose-site ul > li::before {
+  content: "";
+  position: absolute;
+  left: -1.1em;
+  top: 0.8em;
+  width: 0.5em;
+  height: 1px;
+  background: var(--gold);
+}
+.prose-site ol {
+  list-style: decimal;
+}
+.prose-site li + li {
+  margin-top: 0.45em;
+}
+.prose-site table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose-site th,
+.prose-site td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.75em 0.9em 0.75em 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.prose-site th {
+  color: var(--ivory);
+  font-weight: 600;
+}
+
+/* Placeholder marker: deliberately visible so nothing ships unnoticed */
+.ph {
+  background: rgb(201 164 92 / 0.12);
+  color: var(--gold-bright);
+  border: 1px dashed rgb(201 164 92 / 0.55);
+  border-radius: 2px;
+  padding: 0 0.3em;
+  font-size: 0.92em;
+  font-style: normal;
+  white-space: normal;
+}
+
+/* Native FAQ disclosure */
+details.faq > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.faq > summary::-webkit-details-marker {
+  display: none;
+}
+details.faq .faq-icon {
+  transition: transform 0.4s var(--ease-out-expo);
+}
+details.faq[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
