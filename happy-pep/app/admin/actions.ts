@@ -2,15 +2,15 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { endSession, passwordMatches, requireAdmin, startSession } from "@/lib/admin-auth";
+import { credentialsMatch, endSession, requireAdmin, startSession } from "@/lib/admin-auth";
 import { setNotes, setStatus } from "@/lib/orders";
 import { STATUSES, type OrderStatus } from "@/lib/order-types";
 
 export async function login(_: unknown, form: FormData) {
-  if (!passwordMatches(String(form.get("password") ?? ""))) {
+  if (!credentialsMatch(String(form.get("email") ?? ""), String(form.get("password") ?? ""))) {
     // Slow down guessing.
     await new Promise((r) => setTimeout(r, 800));
-    return { error: "Wrong password." };
+    return { error: "Wrong email or password." };
   }
   await startSession();
   redirect("/admin");

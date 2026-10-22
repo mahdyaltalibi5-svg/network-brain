@@ -25,10 +25,10 @@ npm run build && npm start
 
 ## Admin dashboard
 
-`/admin` shows revenue, orders, where orders ship, top products, traffic source and a fulfillment queue, plus a searchable orders list with status updates and CSV export.
+The dashboard lives at **admin.happypep.shop** (`/admin` on the store domain redirects there; routing is in `proxy.ts`). It shows revenue, orders, where orders ship, top products, traffic source and a fulfillment queue, plus a searchable orders list with status updates and CSV export.
 
 1. Vercel → happy-pep → Storage → create a **Neon (Postgres)** database and connect it. This sets `DATABASE_URL`; the `orders` table is created automatically.
-2. Vercel → Settings → Environment Variables → add `ADMIN_PASSWORD` (long and unique).
+2. Vercel → Settings → Environment Variables → `ADMIN_EMAIL`, `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` (random) are the login.
 3. Redeploy, then sign in at `/admin`.
 
 Every checkout is saved as **Awaiting payment**. Once a payment processor is connected (`lib/checkout.ts`), its webhook should call `markPaid()` from `lib/orders.ts`; until then you can mark orders paid by hand.
@@ -36,7 +36,7 @@ Every checkout is saved as **Awaiting payment**. Once a payment processor is con
 ## Environment variables
 
 - `DATABASE_URL`: Postgres connection string (orders + dashboard).
-- `ADMIN_PASSWORD`: password for `/admin`. Optional `ADMIN_SESSION_SECRET` signs login sessions (defaults to the password).
+- `ADMIN_EMAIL` / `ADMIN_PASSWORD`: the admin login. `ADMIN_SESSION_SECRET` signs login sessions.
 
 - `NEXT_PUBLIC_TIKTOK_PIXEL_ID`: turns on the TikTok Pixel (ViewContent, AddToCart, InitiateCheckout, CompletePayment).
 - `NEXT_PUBLIC_SITE_URL`: your live domain, used for social share images.

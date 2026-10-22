@@ -8,10 +8,18 @@ export function LoginForm() {
   return (
     <form action={action} className="space-y-3">
       <input
+        name="email"
+        type="email"
+        required
+        autoFocus
+        autoComplete="username"
+        placeholder="Email"
+        className="h-12 w-full rounded-xl bg-[#F5F6FA] px-4 outline-none ring-1 ring-[#E6E8F0] focus:ring-2 focus:ring-pep-blue"
+      />
+      <input
         name="password"
         type="password"
         required
-        autoFocus
         autoComplete="current-password"
         placeholder="Password"
         className="h-12 w-full rounded-xl bg-[#F5F6FA] px-4 outline-none ring-1 ring-[#E6E8F0] focus:ring-2 focus:ring-pep-blue"

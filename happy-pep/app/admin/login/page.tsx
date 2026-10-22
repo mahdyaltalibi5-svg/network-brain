@@ -6,7 +6,7 @@ import { LoginForm } from "@/components/admin/login-form";
 async function Login() {
   if (await isAdmin()) redirect("/admin");
   if (!adminConfigured()) {
-    return <p className="text-sm text-[#6B7085]">Set the <code className="rounded bg-[#F0F2F8] px-1">ADMIN_PASSWORD</code> environment variable in Vercel, then redeploy.</p>;
+    return <p className="text-sm text-[#6B7085]">Set <code className="rounded bg-[#F0F2F8] px-1">ADMIN_EMAIL</code> and <code className="rounded bg-[#F0F2F8] px-1">ADMIN_PASSWORD</code> in Vercel, then redeploy.</p>;
   }
   return <LoginForm />;
 }

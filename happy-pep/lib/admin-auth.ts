@@ -3,12 +3,12 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-// Single-password admin login. Set ADMIN_PASSWORD (and optionally a separate
-// ADMIN_SESSION_SECRET) in your environment. Sessions are signed cookies.
+// Admin login: one email + password, set as ADMIN_EMAIL and ADMIN_PASSWORD in
+// the environment (never in code). ADMIN_SESSION_SECRET signs the session cookie.
 const COOKIE = "hp_admin";
 const TTL_SECONDS = 7 * 24 * 60 * 60;
 
-export const adminConfigured = () => Boolean(process.env.ADMIN_PASSWORD);
+export const adminConfigured = () => Boolean(process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD);
 
 function secret() {
   const s = process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD;
@@ -19,10 +19,13 @@ function secret() {
 const sign = (exp: number) => createHmac("sha256", secret()).update(`hp-admin.${exp}`).digest("base64url");
 const digest = (s: string) => createHash("sha256").update(s).digest();
 
-export function passwordMatches(input: string) {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return false;
-  return timingSafeEqual(digest(input), digest(expected));
+export function credentialsMatch(email: string, password: string) {
+  const { ADMIN_EMAIL, ADMIN_PASSWORD } = process.env;
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD) return false;
+  // Compare both, always, so timing doesn't reveal which one was wrong.
+  const emailOk = timingSafeEqual(digest(email.trim().toLowerCase()), digest(ADMIN_EMAIL.trim().toLowerCase()));
+  const passwordOk = timingSafeEqual(digest(password), digest(ADMIN_PASSWORD));
+  return emailOk && passwordOk;
 }
 
 export async function startSession() {
