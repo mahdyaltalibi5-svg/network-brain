@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Summit Customs &mdash; The Anatomy of a Suit</title>
+<meta name="description" content="Summit Customs. Bespoke suits, cut for one person only.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Cpath d='M4 24 13 10l5 7 3-4 7 11z' fill='%23c9a96e'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="frames/f_000.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#000; --bone:#ece8e1; --mute:#a29e96; --dim:#6f6b64;
+  --gold:#c9a96e; --gold-soft:rgba(201,169,110,.35);
+  --serif:"Cormorant Garamond",Georgia,serif; --sans:"Jost",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink);-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--bone);font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(16px,4vw,56px);pointer-events:none}
+.nav>*{pointer-events:auto}
+.logo{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.42em;font-weight:400}
+.logo svg{width:26px;height:18px}
+.nav-r{display:flex;align-items:center;gap:30px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
+.nav-r a:hover{color:var(--bone)}
+.btn{display:inline-block;border:1px solid var(--gold-soft);color:var(--bone);padding:11px 18px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;transition:background .3s,border-color .3s}
+.btn:hover{background:rgba(201,169,110,.12);border-color:var(--gold)}
+@media (max-width:760px){.nav-r .lnk{display:none}.nav{padding:16px}.btn{padding:9px 12px;font-size:9.5px}}
+.progress{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:50;background:rgba(255,255,255,.06)}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#fff);transform-origin:0 50%;transform:scaleX(0)}
+
+/* film */
+#film{position:relative;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
+#seq{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.65) 100%)}
+.fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+.loader{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:9.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);transition:opacity .6s}
+
+.hero{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:5;pointer-events:none}
+.hero .inner{transform:translateY(-2vh)}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(56px,10.5vw,170px);line-height:.86;letter-spacing:-.015em;text-shadow:0 0 50px rgba(0,0,0,.85),0 0 12px rgba(0,0,0,.6)}
+.hero h1 span{display:block}
+.hero .eyebrow{margin-bottom:26px}
+.scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:9.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:12px}
+.scroll-cue i{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);animation:cue 2s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+.panel{position:absolute;top:50%;transform:translateY(-50%);width:min(360px,25vw);z-index:5;opacity:0}
+.panel.l{left:clamp(16px,4vw,72px)}
+.panel.r{right:clamp(16px,4vw,72px);text-align:right}
+.panel.r p{margin-left:auto}
+.eyebrow{font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.panel h2{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5.2vw,86px);line-height:.95;letter-spacing:-.01em;margin-bottom:22px}
+.panel h2 em,.hero h1 em,.cta h2 em{font-style:italic;color:#e4cfa3}
+.panel p{font-size:15px;line-height:1.7;color:var(--mute);max-width:34ch;margin-bottom:24px}
+.panel h2,.panel p{text-shadow:0 2px 24px rgba(0,0,0,.8)}
+.spec{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);padding-top:14px;border-top:1px solid rgba(201,169,110,.22);display:inline-block}
+.spec b{font-weight:400;color:var(--bone);margin-left:10px}
+
+@media (max-width:760px){
+  .panel{top:auto;bottom:6svh;transform:none;width:auto;left:16px!important;right:16px!important;text-align:left!important}
+  .panel p{margin-left:0!important;font-size:14px;margin-bottom:16px}
+  .panel h2{font-size:clamp(36px,10.5vw,52px);margin-bottom:12px}
+  .panel::before{content:"";position:absolute;inset:-70px -16px -6svh;background:linear-gradient(180deg,transparent,rgba(0,0,0,.88) 42%);z-index:-1}
+}
+
+/* cta + footer */
+.cta{min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 16px 80px;background:radial-gradient(60% 50% at 50% 40%,#101216,#000 75%)}
+.cta .eyebrow{display:flex;align-items:center;justify-content:center;gap:14px;flex-direction:column}
+.cta .eyebrow svg{width:22px;height:16px}
+.cta h2{font-family:var(--serif);font-weight:300;font-size:clamp(52px,9vw,140px);line-height:.92;margin:6px 0 30px}
+.cta h2 .ch{display:inline-block}
+.cta p{color:var(--mute);font-size:15px;line-height:1.75;max-width:46ch;margin:0 auto 40px}
+.cta .btn{padding:16px 28px}
+footer{border-top:1px solid rgba(255,255,255,.07);padding:56px clamp(16px,6vw,96px) 40px;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px;font-size:13px;color:var(--mute)}
+footer h4{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:400;margin-bottom:16px}
+footer li{list-style:none;margin-bottom:10px}
+footer li a:hover{color:var(--bone)}
+footer .copy{grid-column:1/-1;font-size:11px;letter-spacing:.12em;color:var(--dim);padding-top:28px;border-top:1px solid rgba(255,255,255,.05)}
+@media (max-width:760px){footer{grid-template-columns:1fr 1fr}footer .brand{grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 26 18"><path d="M1 17 9.5 3l4.2 6.4L16.6 5 25 17Z" fill="none" stroke="#c9a96e" stroke-width="1.2" stroke-linejoin="round"/><path d="M7.3 6.7 9.5 3l2.2 3.4-1.1.9-1.1-1-1.1 1Z" fill="#c9a96e"/></symbol>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <a class="logo" href="#top"><svg><use href="#mark"/></svg>SUMMIT</a>
+  <div class="nav-r">
+    <a class="lnk" href="#top">Atelier</a>
+    <a class="lnk" href="#cta">Collection</a>
+    <a class="btn" href="#cta">Book a Fitting</a>
+  </div>
+</nav>
+<div class="progress"><i></i></div>
+
+<section id="film" aria-label="The anatomy of a suit">
+  <canvas id="seq"></canvas>
+  <div class="vignette"></div>
+
+  <div class="hero" id="top">
+    <div class="inner">
+      <div class="eyebrow">Summit Customs &nbsp;&middot;&nbsp; Bespoke Tailoring</div>
+      <h1><span>The</span><span>Anatomy</span><span><em>of a Suit</em></span></h1>
+    </div>
+    <div class="scroll-cue">Scroll<i></i></div>
+  </div>
+
+  <div class="panel l" data-p="shirt">
+    <div class="eyebrow">I &mdash; The Foundation</div>
+    <h2>A Shirt of<br>Pure Cotton</h2>
+    <p>Everything begins against the skin. Two-ply cotton cut to your measure, with a collar shaped to sit just so beneath the jacket.</p>
+    <div class="spec">Cloth<b>Two-ply cotton poplin</b></div>
+  </div>
+  <div class="panel r" data-p="vest">
+    <div class="eyebrow">II &mdash; The Waistcoat</div>
+    <h2>Structure,<br><em>Held Close</em></h2>
+    <p>The waistcoat draws the line of the body inward. Horn buttons, a silk back, and a cut that lies flat whether you stand or sit.</p>
+    <div class="spec">Lining<b>Silk &middot; Horn buttons</b></div>
+  </div>
+  <div class="panel l" data-p="jacket">
+    <div class="eyebrow">III &mdash; The Canvas</div>
+    <h2>Built on<br>Full Canvas</h2>
+    <p>No glue, no shortcuts. A floating canvas is hand-padded into the chest so the jacket moulds to you and keeps its shape for years.</p>
+    <div class="spec">Construction<b>Hand-padded full canvas</b></div>
+  </div>
+  <div class="panel r" data-p="complete">
+    <div class="eyebrow">IV &mdash; The Suit</div>
+    <h2>The Complete<br><em>Silhouette</em></h2>
+    <p>Shirt, waistcoat and jacket, cut as one conversation. Three pieces, one unbroken line from shoulder to hem.</p>
+    <div class="spec">Cloth<b>Super 120s wool</b></div>
+  </div>
+  <div class="panel l" data-p="detail">
+    <div class="eyebrow">V &mdash; The Detail</div>
+    <h2>The Last<br><em>Quarter-Inch</em></h2>
+    <p>Working surgeon's cuffs. Horn buttons, each one hand-shanked. Pick-stitching you will only ever find by touch.</p>
+    <div class="spec">Finish<b>Made entirely by hand</b></div>
+  </div>
+  <div class="loader">Loading</div>
+  <div class="fade"></div>
+</section>
+
+<section class="cta" id="cta">
+  <div>
+    <div class="eyebrow"><svg><use href="#mark"/></svg>The House of Summit</div>
+    <h2 id="ctaTitle">Tailoring<br><em>for the few.</em></h2>
+    <p>Every Summit suit is cut for one person only. It begins with a conversation, a measure, and a single bolt of cloth chosen for you alone.</p>
+    <a class="btn" href="#cta">Book a Private Fitting</a>
+  </div>
+</section>
+
+<footer>
+  <div class="brand"><a class="logo" href="#top"><svg><use href="#mark"/></svg>SUMMIT CUSTOMS</a></div>
+  <div><h4>Atelier</h4><ul><li><a href="#top">The House</a></li><li><a href="#top">Full Canvas</a></li><li><a href="#cta">The Cloth Library</a></li></ul></div>
+  <div><h4>Wardrobe</h4><ul><li><a href="#cta">Suits</a></li><li><a href="#cta">Shirting</a></li><li><a href="#cta">Accessories</a></li></ul></div>
+  <div><h4>Visit</h4><ul><li><a href="#cta">By Appointment</a></li><li><a href="#cta">Contact</a></li></ul></div>
+  <div class="copy">&copy; 2026 Summit Customs &mdash; Made by hand, for a lifetime.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+// 121 frames = every second frame of the 10s / 24fps Kling clip.
+const COUNT = 121, FPS = COUNT / 10;
+const src = i => `frames/f_${String(i).padStart(3, '0')}.webp`;
+const frames = new Array(COUNT);
+const canvas = document.getElementById('seq'), ctx = canvas.getContext('2d');
+const state = { frame: 0, zoom: 0, shift: 0 };
+// Where the camera pushes in for the detail shot, as a fraction of the frame.
+const FOCUS = { x: .56, y: .5 };
+
+function load(i) {
+  return new Promise(res => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => { frames[i] = img; res(); };
+    img.onerror = res;
+    img.src = src(i);
+  });
+}
+// First frame, then the rest in a few parallel lanes so early frames arrive first.
+load(0).then(() => {
+  draw();
+  let next = 1, done = 1;
+  const lane = () => next < COUNT ? load(next++).then(() => { done++; if (done === COUNT) document.querySelector('.loader').style.opacity = 0; draw(); return lane(); }) : null;
+  for (let k = 0; k < 6; k++) lane();
+});
+
+function nearest(i) {
+  for (let d = 0; d < COUNT; d++) {
+    if (frames[i - d]) return frames[i - d];
+    if (frames[i + d]) return frames[i + d];
+  }
+}
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = canvas.clientWidth; H = canvas.clientHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  draw();
+}
+let queued = false;
+function draw() {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(() => {
+    queued = false;
+    const img = nearest(Math.round(state.frame));
+    if (!img) return;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    // Landscape: cover the screen with room for the sideways drift. Portrait: size the suit (~27% of frame width) to ~88% of the screen width.
+    let s = W / H >= 1 ? Math.max(W * 1.2 / iw, H / ih) : (W * .88) / (iw * .27);
+    const cy = W / H >= 1 ? .5 : .42;
+    const z = 1 + state.zoom * .9;
+    s *= z;
+    const fx = .5 + (FOCUS.x - .5) * state.zoom, fy = .5 + (FOCUS.y - .5) * state.zoom;
+    // On wide screens the footage drifts away from whichever side the copy is on.
+    const off = W / H >= 1 ? state.shift * W * .1 : 0;
+    const dx = W / 2 + off - fx * iw * s, dy = H * cy - fy * ih * s;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(img, dx, dy, iw * s, ih * s);
+    // Feather the footage into the page wherever it doesn't reach the screen edge.
+    const bottom = dy + ih * s, band = Math.min(160, ih * s * .25);
+    if (bottom < H) {
+      const g = ctx.createLinearGradient(0, bottom - band, 0, bottom);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, '#000');
+      ctx.fillStyle = g; ctx.fillRect(0, bottom - band, W, band + 1);
+    }
+    if (dy > 0) {
+      const g = ctx.createLinearGradient(0, dy, 0, dy + band);
+      g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fillRect(0, dy - 1, W, band + 1);
+    }
+  });
+}
+resize(); addEventListener('resize', resize);
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.to('.progress i', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
+
+// Timeline units: the clip plays from 0.8 to 10.8 (one unit per second of footage).
+const V0 = .8, at = sec => V0 + sec;
+const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: draw,
+  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=1100%', scrub: 1, pin: true, anticipatePin: 1 } });
+const panel = (k, start, hold) => {
+  const el = `[data-p="${k}"]`;
+  tl.fromTo(el, { opacity: 0, y: 30, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5 }, start)
+    .to(el, { opacity: 0, y: -30, filter: 'blur(8px)', duration: .4, ease: 'power2.in' }, start + hold);
+};
+tl.to(state, { frame: COUNT - 1, duration: 10, ease: 'none' }, V0)
+  .to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
+  .to('.scroll-cue', { opacity: 0, duration: .3 }, 0);
+const drift = (to, t) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, t);
+drift(1, at(3.4)); drift(-1, at(4.9)); drift(1, at(6.6)); drift(-1, at(8.4)); drift(.6, at(10.9));
+panel('shirt', at(4.0), 1.1);
+panel('vest', at(5.3), 1.0);
+panel('jacket', at(7.2), 1.3);
+panel('complete', at(8.9), 1.8);
+// Hold on the finished suit, then push in on the detail.
+tl.to(state, { zoom: 1, duration: 2, ease: 'power2.inOut' }, at(11))
+  .to('.vignette', { opacity: .6, duration: 2 }, at(11));
+panel('detail', at(11.6), 1.8);
+tl.to('#film .fade', { opacity: 1, duration: .8 }, at(13.6));
+
+// Closing title, letter by letter
+const title = document.getElementById('ctaTitle');
+(function split(node) {
+  [...node.childNodes].forEach(n => {
+    if (n.nodeType === 3) {
+      const f = document.createDocumentFragment();
+      [...n.textContent].forEach(ch => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch === ' ' ? ' ' : ch; f.appendChild(s); });
+      n.replaceWith(f);
+    } else if (n.nodeType === 1 && n.tagName !== 'BR') split(n);
+  });
+})(title);
+gsap.from('#ctaTitle .ch', { opacity: 0, y: 40, filter: 'blur(12px)', stagger: .035, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: '#cta', start: 'top 65%' } });
+gsap.from('#cta p, #cta .btn, #cta .eyebrow', { opacity: 0, y: 24, stagger: .12, duration: .9, scrollTrigger: { trigger: '#cta', start: 'top 55%' } });
+})();
+</script>
+</body>
+</html>
