@@ -659,7 +659,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 <main id="main">
 <section id="film" aria-label="The anatomy of a bespoke suit">
   <canvas id="seq" role="img" aria-label="A bespoke charcoal three-piece suit assembling piece by piece: shirt, tie, waistcoat, then jacket"></canvas>
-  <noscript><img src="frames/f_240.webp" width="1912" height="1080" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
+  <noscript><img src="frames/f_216.webp" width="2200" height="1244" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
   <div class="vignette"></div>
 
   <div class="hero" id="top">
@@ -950,9 +950,9 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 (() => {
-// Every frame of the 10s / 24fps Kling clip. Portrait screens only ever show the middle of
-// the frame, so they get a centre-cropped set at about half the weight.
-const COUNT = 241;
+// The first 9s (217 frames at 24fps) of the 4K Kling clip; the last second is the suit standing still.
+// Portrait screens only ever show the middle of the frame, so they get a centre-cropped, lighter set.
+const COUNT = 217;
 const PORTRAIT = innerWidth < innerHeight;
 const DIR = PORTRAIT ? 'frames-m' : 'frames';
 const src = i => `${DIR}/f_${String(i).padStart(3, '0')}.webp`;
@@ -1003,11 +1003,12 @@ function draw() {
     const img = nearest(Math.round(state.frame));
     if (!img) return;
     const iw = img.naturalWidth, ih = img.naturalHeight;
-    // Landscape: cover the screen with room for the sideways drift. Portrait: size the suit to ~88% of
-    // the screen width (it spans 520px of the 1912px source frame, whichever set is loaded).
+    // Landscape: cover the screen with room for the sideways drift. Portrait: size the suit to ~76% of
+    // the screen width so the spread shirt sleeves still fit (the suit spans ~598px of the 2200px
+    // frame; the cropped set keeps the same scale).
     const wide = W / H >= 1 && iw > 1000;
-    let s = wide ? Math.max(W * 1.2 / iw, H / ih) : (W * .88) / 520;
-    const cy = wide ? .5 : .42;
+    let s = wide ? Math.max(W * 1.2 / iw, H / ih) : (W * .76) / 598;
+    const cy = wide ? .5 : .45;
     // On wide screens the footage drifts away from whichever side the copy is on.
     const off = wide ? state.shift * W * .1 : 0;
     const dx = W / 2 + off - iw * s / 2, dy = H * cy - ih * s / 2;
@@ -1033,27 +1034,27 @@ resize(); addEventListener('resize', resize);
 gsap.registerPlugin(ScrollTrigger);
 gsap.to('.progress i', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
 
-// Timeline units: the clip plays from 0.8 to 10.8 (one unit per second of footage).
+// Timeline units: the clip plays from 0.8 to 9.8 (one unit per second of footage).
 const V0 = .8, at = sec => V0 + sec;
 const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: draw,
-  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=560%', scrub: .6, pin: true, anticipatePin: 1 } });
+  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=480%', scrub: .6, pin: true, anticipatePin: 1 } });
 const panel = (k, start, hold) => {
   const el = `[data-p="${k}"]`;
   tl.fromTo(el, { opacity: 0, y: 30, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5 }, start);
   if (hold) tl.to(el, { opacity: 0, y: -30, filter: 'blur(8px)', duration: .4, ease: 'power2.in' }, start + hold);
 };
-tl.to(state, { frame: COUNT - 1, duration: 10, ease: 'none' }, V0)
+tl.to(state, { frame: COUNT - 1, duration: 9, ease: 'none' }, V0)
   .to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
   .to('.scroll-cue', { opacity: 0, duration: .3 }, 0);
 const drift = (to, t) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, t);
-// Captions follow the clip: shirt forms ~3.7s, waistcoat ~5s, jacket pieces fly in ~6-8s, suit settles ~8.5s.
-drift(1, at(3.2)); drift(-1, at(4.6)); drift(1, at(5.8)); drift(-1, at(7.8));
-panel('shirt', at(3.7), 1.0);
-panel('vest', at(5.0), .8);
-panel('jacket', at(6.1), 1.4);
+// Captions follow the clip: shirt and tie form ~2.5-3.5s, waistcoat ~5s, jacket ~5.5-7s, suit settles ~7.5s.
+drift(1, at(2.1)); drift(-1, at(4.2)); drift(1, at(5.4)); drift(-1, at(7.0));
+panel('shirt', at(2.6), 1.2);
+panel('vest', at(4.6), 1.0);
+panel('jacket', at(5.9), 1.2);
 // The film ends on the finished suit; a short hold, then the pin releases and the site follows.
-panel('complete', at(8.4));
-tl.to({}, { duration: .2 }, at(10.6));
+panel('complete', at(7.5));
+tl.to({}, { duration: .2 }, at(8.8));
 
 // Nav turns solid once past the film
 // (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
