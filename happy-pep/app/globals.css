@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@theme inline {
+  --color-pep-blue: #0a2bc4;
+  --color-pep-mint: #3ef5b9;
+  --color-pep-ink: #0b0f2e;
+  --color-pep-cloud: #f4f6ff;
+  --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-pep-blue);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-pep-cloud);
+  color: var(--color-pep-ink);
+  font-family: var(--font-sans);
+}
+
+/* Returning visitors who already confirmed 21+: gate never paints. */
+html[data-age="ok"] .age-gate {
+  display: none;
+}
+
+/* While the age gate or cart is open the page can't scroll. */
+html.scroll-locked body {
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-pep-mint);
+  color: var(--color-pep-blue);
+}
