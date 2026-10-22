@@ -13,8 +13,8 @@
 <meta name="format-detection" content="telephone=yes">
 <meta name="geo.region" content="US-UT">
 <meta name="geo.placename" content="Salt Lake City">
-<meta name="geo.position" content="40.7608;-111.8910">
-<meta name="ICBM" content="40.7608, -111.8910">
+<meta name="geo.position" content="40.7645;-111.8879">
+<meta name="ICBM" content="40.7645, -111.8879">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Summit Customs">
@@ -68,14 +68,16 @@
       "email": "kobe@summitcustomsuits.com",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "215 S State St, Suite 575",
         "addressLocality": "Salt Lake City",
         "addressRegion": "UT",
+        "postalCode": "84111",
         "addressCountry": "US"
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": 40.7608,
-        "longitude": -111.891
+        "latitude": 40.7644811,
+        "longitude": -111.8879169
       },
       "areaServed": [
         {
@@ -106,7 +108,8 @@
         "@id": "https://summitcustomsuits.com/#kobe"
       },
       "sameAs": [
-        "https://www.instagram.com/summitcustomsuits/"
+        "https://www.instagram.com/summitcustomsuits/",
+        "https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE"
       ],
       "knowsAbout": [
         "Bespoke tailoring",
@@ -208,7 +211,8 @@
             }
           }
         ]
-      }
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE"
     },
     {
       "@type": "Person",
@@ -294,7 +298,7 @@
           "name": "Where is Summit Customs located?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Salt Lake City, Utah. Consultations are by appointment, Monday to Saturday, 10am to 6pm Mountain Time. You can also meet by video."
+            "text": "215 S State St, Suite 575, in downtown Salt Lake City, Utah 84111. Consultations are by appointment, Monday to Saturday, 10am to 6pm Mountain Time. You can also meet by video."
           }
         },
         {
@@ -346,7 +350,7 @@
 <style>
 :root{
   --ink:#000; --ink-2:#0a0a0b; --ink-3:#121214; --line:rgba(255,255,255,.08);
-  --bone:#ece8e1; --mute:#a29e96; --dim:#75716a;
+  --bone:#ece8e1; --mute:#b0aca4; --dim:#8f8a81;
   --gold:#c9a96e; --gold-2:#e4cfa3; --gold-soft:rgba(201,169,110,.35);
   --serif:"Cormorant Garamond",Georgia,serif; --sans:"Jost",system-ui,sans-serif;
   --gut:clamp(16px,6vw,96px);
@@ -409,8 +413,8 @@ img{display:block;max-width:100%;height:auto}
 /* shared section type */
 .eyebrow{font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;font-weight:400}
 em{font-style:italic;color:var(--gold-2)}
-.sec{padding:clamp(80px,12vw,160px) var(--gut);position:relative}
-.sec-head{max-width:760px;margin-bottom:clamp(40px,6vw,72px)}
+.sec{padding:clamp(72px,8.5vw,124px) var(--gut);position:relative}
+.sec-head{max-width:760px;margin-bottom:clamp(36px,4.5vw,60px)}
 .sec-head.c{margin-left:auto;margin-right:auto;text-align:center}
 .h2{font-family:var(--serif);font-weight:300;font-size:clamp(44px,6.4vw,100px);line-height:.95;letter-spacing:-.01em}
 .lede{font-size:clamp(17px,1.35vw,19.5px);line-height:1.7;color:var(--mute);max-width:56ch;margin-top:22px}
@@ -437,13 +441,13 @@ em{font-style:italic;color:var(--gold-2)}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,28px)}
 .card{position:relative;display:block;overflow:hidden;background:var(--ink-3)}
 .card figure{aspect-ratio:2/3;overflow:hidden}
-.card img{width:100%;height:100%;object-fit:cover;transition:filter 1s;filter:saturate(.9)}
+.card img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transition:filter 1s;filter:saturate(.9)}
 .card:hover img{filter:saturate(1)}
 .card .cap{position:absolute;inset:auto 0 0 0;padding:90px 26px 26px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}
 .card h3{font-family:var(--serif);font-weight:300;font-size:clamp(34px,3vw,46px);line-height:1}
 .card p{font-size:16.5px;line-height:1.6;color:var(--mute);margin-top:10px;max-width:34ch}
 .card .num{position:absolute;top:22px;left:24px;font-size:12px;letter-spacing:.3em;color:var(--gold-2);z-index:2}
-.also{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--line);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.also{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--line);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
 .also b{color:var(--gold);font-weight:400}
 .also a:hover{color:var(--bone)}
 @media (max-width:900px){.cards{grid-template-columns:1fr}.card figure{aspect-ratio:4/5}}
@@ -472,17 +476,17 @@ em{font-style:italic;color:var(--gold-2)}
 @media (max-width:520px){.pillars{grid-template-columns:1fr}.pillar,.pillar+.pillar{padding:24px 0 6px;border-left:0}.pillar+.pillar{border-top:1px solid var(--line)}}
 
 /* gallery */
-.gallery{columns:3;column-gap:clamp(12px,1.6vw,22px)}
-.gallery figure{break-inside:avoid;margin-bottom:clamp(12px,1.6vw,22px);overflow:hidden;position:relative;background:var(--ink-3)}
-.gallery img{width:100%}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.4vw,20px)}
+.gallery figure{margin:0;aspect-ratio:4/5;overflow:hidden;position:relative;background:var(--ink-3)}
+.gallery img{width:100%;height:100%;object-fit:cover;object-position:50% 25%}
 .gallery figcaption{position:absolute;inset:auto 0 0 0;padding:40px 18px 16px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));opacity:0;transition:opacity .4s}
 .gallery figure:hover figcaption{opacity:1}
-@media (max-width:900px){.gallery{columns:2}}
+@media (max-width:900px){.gallery{grid-template-columns:1fr 1fr}}
 
 /* process */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,60px);counter-reset:s}
 .step{border-top:1px solid var(--gold-soft);padding-top:28px}
-.step .n{font-family:var(--serif);font-size:clamp(54px,6vw,86px);line-height:1;color:transparent;-webkit-text-stroke:1px var(--gold-soft)}
+.step .n{font-family:var(--serif);font-weight:300;font-size:clamp(54px,6vw,86px);line-height:1;color:rgba(201,169,110,.55)}
 .step h3{font-family:var(--serif);font-weight:400;font-size:clamp(30px,2.6vw,38px);margin:18px 0 6px}
 .step .tag{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
 .step p{font-size:17px;line-height:1.7;color:var(--mute)}
@@ -506,6 +510,7 @@ em{font-style:italic;color:var(--gold-2)}
 .shoe h3{font-family:var(--serif);font-weight:400;font-size:25px;line-height:1.1}
 .shoe span{display:block;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:#7a6a55;margin-top:6px}
 @media (max-width:900px){.shoes{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.shoe div{padding:12px 12px 14px}.shoe h3{font-size:19px}.shoe span{font-size:10.5px;letter-spacing:.12em}}
 
 /* kobe */
 .kobe{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(40px,7vw,110px);align-items:center}
@@ -546,6 +551,13 @@ footer a:hover{color:var(--bone)}
 footer address{font-style:normal;line-height:1.9}
 footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px;letter-spacing:.08em;color:var(--dim);padding-top:28px;border-top:1px solid rgba(255,255,255,.05)}
 @media (max-width:900px){footer{grid-template-columns:1fr 1fr}footer .brand{grid-column:1/-1}}
+
+/* google badge */
+.gbadge{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:30px;padding:12px 18px;border:1px solid var(--line);font-size:13px;letter-spacing:.06em;color:var(--mute);transition:border-color .3s}
+.gbadge:hover{border-color:var(--gold-soft)}
+.gbadge .stars{color:var(--gold);letter-spacing:.18em;font-size:14px}
+.gbadge b{font-weight:400;color:var(--bone)}
+.gbadge span:last-child{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-2)}
 
 /* elevation layer */
 :focus-visible{outline:1px solid var(--gold);outline-offset:4px}
@@ -696,6 +708,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
       <a class="btn fill" href="https://summitcustomsuits.com/book">Book a Free Consultation</a>
       <a class="btn" href="tel:+18018669718">Call (801) 866-9718</a>
     </div>
+    <a class="gbadge" href="https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE" target="_blank" rel="noopener"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><b>5.0 on Google</b><span>Read reviews</span></a>
   </div>
   <div class="stats">
     <div class="stat"><b>30 min</b><span>Complimentary private consultation</span></div>
@@ -772,14 +785,14 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <p class="lede">A bespoke garment is only as good as it looks and feels when worn. Real fittings, real finished pieces, and the professionals who wear them.</p>
   </div>
   <div class="gallery">
-    <figure class="rv"><img src="img/client-trio-640.webp" srcset="img/client-trio-640.webp 640w, img/client-trio-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Three Summit Customs clients in custom suits: navy, charcoal and light grey"><figcaption>Three commissions, one standard</figcaption></figure>
-    <figure class="rv"><img src="img/tan-fitting-640.webp" srcset="img/tan-fitting-640.webp 640w, img/tan-fitting-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="853" loading="lazy" decoding="async" alt="Client trying on a custom tan suit during a fitting in a Salt Lake City studio"><figcaption>Tan suit &middot; Fitting</figcaption></figure>
-    <figure class="rv"><img src="img/rooftop-640.webp" srcset="img/rooftop-640.webp 640w, img/rooftop-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="853" loading="lazy" decoding="async" alt="Clients wearing custom tailoring in tan, beige and navy check on a rooftop terrace"><figcaption>Rooftop &middot; Finished pieces</figcaption></figure>
-    <figure class="rv"><img src="img/client-linings-640.webp" srcset="img/client-linings-640.webp 640w, img/client-linings-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Clients revealing the custom patterned linings inside their bespoke suit jackets"><figcaption>Custom linings</figcaption></figure>
-    <figure class="rv"><img src="img/plaid-coat-640.webp" srcset="img/plaid-coat-640.webp 640w, img/plaid-coat-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="1107" loading="lazy" decoding="async" alt="Client wearing a green plaid custom sport coat with dark navy trousers"><figcaption>Plaid sport coat</figcaption></figure>
-    <figure class="rv"><img src="img/grey-suit-640.webp" srcset="img/grey-suit-640.webp 640w, img/grey-suit-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="853" loading="lazy" decoding="async" alt="Client in a light grey custom suit on a balcony overlooking the mountains"><figcaption>Light grey suit</figcaption></figure>
-    <figure class="rv"><img src="img/kobe-event-640.webp" srcset="img/kobe-event-640.webp 640w, img/kobe-event-1100.webp 1100w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="853" loading="lazy" decoding="async" alt="Kobe Apponsah in a black tuxedo and western hat at an outdoor event with a guest"><figcaption>Black tie, outdoors</figcaption></figure>
-    <figure class="rv"><img src="img/fitting-640.webp" srcset="img/fitting-640.webp 640w, img/fitting-1100.webp 900w" sizes="(max-width:900px) 50vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Bespoke suit fitting at Summit Customs, adjusting a navy jacket sleeve"><figcaption>The fitting</figcaption></figure>
+    <figure class="rv"><img src="img/client-trio-640.webp" srcset="img/client-trio-640.webp 640w, img/client-trio-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Three Summit Customs clients in custom suits: navy, charcoal and light grey"><figcaption>Three commissions, one standard</figcaption></figure>
+    <figure class="rv"><img src="img/tan-fitting-640.webp" srcset="img/tan-fitting-640.webp 640w, img/tan-fitting-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client trying on a custom tan suit during a fitting in a Salt Lake City studio"><figcaption>Tan suit &middot; Fitting</figcaption></figure>
+    <figure class="rv"><img src="img/rooftop-640.webp" srcset="img/rooftop-640.webp 640w, img/rooftop-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Clients wearing custom tailoring in tan, beige and navy check on a rooftop terrace"><figcaption>Rooftop &middot; Finished pieces</figcaption></figure>
+    <figure class="rv"><img src="img/client-linings-640.webp" srcset="img/client-linings-640.webp 640w, img/client-linings-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Clients revealing the custom patterned linings inside their bespoke suit jackets"><figcaption>Custom linings</figcaption></figure>
+    <figure class="rv"><img src="img/plaid-coat-640.webp" srcset="img/plaid-coat-640.webp 640w, img/plaid-coat-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="1107" loading="lazy" decoding="async" alt="Client wearing a green plaid custom sport coat with dark navy trousers"><figcaption>Plaid sport coat</figcaption></figure>
+    <figure class="rv"><img src="img/grey-suit-640.webp" srcset="img/grey-suit-640.webp 640w, img/grey-suit-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client in a light grey custom suit on a balcony overlooking the mountains"><figcaption>Light grey suit</figcaption></figure>
+    <figure class="rv"><img src="img/kobe-event-640.webp" srcset="img/kobe-event-640.webp 640w, img/kobe-event-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Kobe Apponsah in a black tuxedo and western hat at an outdoor event with a guest"><figcaption>Black tie, outdoors</figcaption></figure>
+    <figure class="rv"><img src="img/kobe-portrait-640.webp" srcset="img/kobe-portrait-640.webp 640w, img/kobe-portrait-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="336" loading="lazy" decoding="async" alt="Kobe Apponsah in a midnight bespoke tuxedo with satin peak lapels and bow tie"><figcaption>Midnight tuxedo</figcaption></figure>
   </div>
   <a class="more" href="https://summitcustomsuits.com/gallery">See the full gallery</a>
 </section>
@@ -851,7 +864,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <details><summary>Who will I work with?</summary><p>You work directly with founder Kobe Apponsah from the first conversation through the final fitting. You are never handed off to a salesperson.</p></details>
     <details><summary>What garments do you make?</summary><p>Two-piece and three-piece suits, sport coats and blazers, tuxedos and evening wear, dress trousers, overcoats, and custom shirts, plus made-to-order Goodyear-welted footwear.</p></details>
     <details><summary>What fabrics can I choose from?</summary><p>A library of more than 4,000 cloths from respected mills in England, Italy, and Japan, including Dormeuil, Scabal, Vitale Barberis Canonico, and Holland &amp; Sherry. Kobe walks you through the options suited to your climate, occasion, and body.</p></details>
-    <details><summary>Where are you located?</summary><p>Salt Lake City, Utah. Consultations are by appointment, Monday to Saturday, 10am to 6pm Mountain Time. You can also meet by video.</p></details>
+    <details><summary>Where are you located?</summary><p>215 S State St, Suite 575, in downtown Salt Lake City, Utah 84111 (<a href="https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE" target="_blank" rel="noopener" style="color:var(--gold-2)">open in Google Maps</a>). Consultations are by appointment, Monday to Saturday, 10am to 6pm Mountain Time. You can also meet by video.</p></details>
     <details><summary>Should I rent or buy a tuxedo?</summary><p>A bespoke tuxedo is cut to your exact measurements in barathea wool, with satin or grosgrain peak or shawl lapels. It is a garment you own for every black-tie occasion ahead, rather than a rented approximation.</p></details>
     <details><summary>Do you keep my measurements on file?</summary><p>Yes. Your measurements, cloth choices, and pattern are kept on file, so every future order starts exactly where the last one left off.</p></details>
     <details><summary>Do you make wedding suits and tuxedos for grooms?</summary><p>Yes. Three-piece suits are a favourite for weddings, and bespoke tuxedos are cut with peak or shawl lapels in satin or grosgrain, in black or midnight navy. Book early: allow 5 to 8 weeks before the date.</p></details>
@@ -870,7 +883,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
       <a class="btn" href="tel:+18018669718">Call (801) 866-9718</a>
     </div>
     <div class="direct">
-      <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a><br>
+      <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a> &middot; 215 S State St, Suite 575, Salt Lake City<br>
       By appointment &middot; Monday to Saturday, 10am&ndash;6pm MST &middot; Replies within 24 hours
     </div>
   </div>
@@ -908,11 +921,12 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <h2>Visit</h2>
     <address>
       Summit Customs<br>
-      Salt Lake City, Utah<br>
+      <a href="https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE" target="_blank" rel="noopener">215 S State St, Suite 575<br>Salt Lake City, UT 84111</a><br>
       <a href="tel:+18018669718">(801) 866-9718</a><br>
       <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a><br>
       Mon&ndash;Sat &middot; 10am&ndash;6pm MST<br>
-      <a href="https://www.instagram.com/summitcustomsuits/" rel="noopener" target="_blank">@summitcustomsuits</a>
+      <a href="https://www.instagram.com/summitcustomsuits/" rel="noopener" target="_blank">@summitcustomsuits</a><br>
+      <a href="https://search.google.com/local/writereview?placeid=ChIJ6_VVx3v1UocRr6uhoW6oEFE" rel="noopener" target="_blank">&#9733; Review us on Google</a>
     </address>
   </div>
   <div class="copy"><span>&copy; 2026 Summit Customs. All rights reserved.</span><span>Bespoke tailoring &middot; Salt Lake City, Utah &middot; <a href="https://summitcustomsuits.com/privacy">Privacy</a></span></div>
@@ -1044,7 +1058,7 @@ tl.to({}, { duration: .2 }, at(10.6));
 // Nav turns solid once past the film
 // (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
 const past = on => { document.getElementById('nav').classList.toggle('solid', on); document.body.classList.toggle('past', on); };
-ScrollTrigger.create({ trigger: '.intro', start: 'top 80px', onEnter: () => past(true), onLeaveBack: () => past(false) });
+ScrollTrigger.create({ start: () => tl.scrollTrigger.end + 1, onEnter: () => past(true), onLeaveBack: () => past(false) });
 
 // Headings rise line by line inside their reveal blocks
 document.querySelectorAll('.rv .h2, .rv .quote').forEach(h => {
