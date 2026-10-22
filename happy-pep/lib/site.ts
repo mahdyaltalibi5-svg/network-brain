@@ -33,7 +33,7 @@ export const site = {
   emailSignupAction: "",
   // Set NEXT_PUBLIC_TIKTOK_PIXEL_ID in your environment to turn the pixel on.
   tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID ?? "",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://happy-pep.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://happypep.shop",
 };
 
 export const disclaimer =
