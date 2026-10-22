@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { credentialsMatch, endSession, requireAdmin, startSession } from "@/lib/admin-auth";
-import { setNotes, setStatus } from "@/lib/orders";
+import { deleteOrder, setNotes, setStatus } from "@/lib/orders";
 import { STATUSES, type OrderStatus } from "@/lib/order-types";
 
 export async function login(_: unknown, form: FormData) {
@@ -25,6 +25,12 @@ export async function updateOrderStatus(id: string, status: OrderStatus, trackin
   await requireAdmin();
   if (!STATUSES.includes(status)) return;
   await setStatus(String(id), status, tracking === undefined ? undefined : String(tracking).slice(0, 120));
+  revalidatePath("/admin", "layout");
+}
+
+export async function removeOrder(id: string) {
+  await requireAdmin();
+  await deleteOrder(String(id));
   revalidatePath("/admin", "layout");
 }
 

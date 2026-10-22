@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { updateOrderNotes, updateOrderStatus } from "@/app/admin/actions";
+import { removeOrder, updateOrderNotes, updateOrderStatus } from "@/app/admin/actions";
 import { StatusBadge, ZoneBadge } from "./status";
 import { usd } from "./charts";
 import { STATUS_META, STATUSES, ZONE_LABEL, type Order, type OrderStatus } from "@/lib/order-types";
@@ -160,6 +160,22 @@ function OrderDrawer({ order, onClose }: { order: Order; onClose: () => void }) 
                 </button>
               ))}
             </div>
+          </section>
+
+          <section className="border-t border-[#E6E8F0] pt-5">
+            <button
+              onClick={() => {
+                if (!confirm(`Permanently delete ${order.id}? Use this for test or spam orders only.`)) return;
+                start(async () => {
+                  await removeOrder(order.id);
+                  onClose();
+                });
+              }}
+              disabled={pending}
+              className="text-sm font-semibold text-[#A32A2A] hover:underline disabled:opacity-50"
+            >
+              Delete order
+            </button>
           </section>
         </div>
       </motion.aside>

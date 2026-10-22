@@ -122,6 +122,11 @@ export async function setNotes(id: string, notes: string) {
   await sql`update orders set notes = ${clip(notes, 2000)}, updated_at = now() where id = ${id}`;
 }
 
+export async function deleteOrder(id: string) {
+  const sql = await db();
+  await sql`delete from orders where id = ${id}`;
+}
+
 // For your payment processor's webhook: call this once a payment is confirmed.
 export async function markPaid(id: string) {
   const sql = await db();
