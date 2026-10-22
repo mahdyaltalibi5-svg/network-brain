@@ -1,24 +1,12 @@
-import type { Line } from "@/components/cart";
-import type { Pricing } from "./pricing";
+import "server-only";
+import type { Order } from "./order-types";
 
-export type Customer = {
-  email: string;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  phone: string;
-};
-
-// Connect your payment processor here. It should create a hosted checkout
-// session for these lines + customer and return its URL; the processor then
-// redirects back to /checkout/success after payment. Apply `totals.discount`
-// (stack savings) and free shipping when `totals.freeShipping` is true.
-// Recompute prices server-side; never trust totals sent from the browser.
-// Most mainstream processors don't allow research peptides, so use a
-// high-risk-approved provider.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function startPayment(lines: Line[], customer: Customer, totals: Pricing): Promise<string> {
-  throw new Error("Payment processor not connected yet.");
+// Connect your payment processor here. Create a hosted payment session for
+// `order` (charge `order.total`, which already includes stack savings and
+// shipping) and return its URL. Point the processor's success redirect at
+// /checkout/success and its webhook at a route that calls markPaid(order.id)
+// from lib/orders.ts. Returns null while no processor is connected.
+export async function startPayment(order: Order): Promise<string | null> {
+  void order;
+  return null;
 }

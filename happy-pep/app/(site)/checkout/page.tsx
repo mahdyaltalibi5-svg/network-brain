@@ -7,7 +7,8 @@ import { toContents, useCart } from "@/components/cart";
 import { Button } from "@/components/button";
 import { spring } from "@/components/reveal";
 import { getProduct, money, priceOf } from "@/lib/products";
-import { startPayment, type Customer } from "@/lib/checkout";
+import { placeOrder } from "./actions";
+import { getSource } from "@/lib/source";
 import { pct, pricing } from "@/lib/pricing";
 import { DeliveryPromise, useZip } from "@/components/delivery";
 import { Unlocks } from "@/components/cart-drawer";
@@ -16,40 +17,60 @@ import { track } from "@/lib/pixel";
 const field =
   "h-13 w-full rounded-2xl bg-white px-4 text-pep-ink ring-1 ring-pep-ink/10 placeholder:text-pep-ink/40 transition-shadow focus:outline-none focus:ring-2 focus:ring-pep-blue";
 
-const EXCLUDED = ["AK", "HI"];
-
 export default function CheckoutPage() {
   const { lines, ready, open } = useCart();
   const p = pricing(lines);
   const zip = useZip();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState<{ id: string; email: string } | null>(null);
   const tracked = useRef(false);
 
   useEffect(() => {
     if (tracked.current || lines.length === 0) return;
     tracked.current = true;
-    track("InitiateCheckout", toContents(lines), pricing(lines).total);
+    track("InitiateCheckout", toContents(lines), pricing(lines).grandTotal);
   }, [lines]);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    const data = Object.fromEntries(new FormData(e.currentTarget)) as Customer;
-    if (EXCLUDED.includes(data.state.trim().toUpperCase())) {
-      setError("Sorry, we don't ship to Alaska or Hawaii yet.");
+    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    setBusy(true);
+    const res = await placeOrder({
+      lines,
+      customer: { email: f.email, name: f.name, phone: f.phone, address: f.address, city: f.city, state: f.state, zip: f.zip },
+      ...getSource(),
+    }).catch(() => ({ ok: false as const, error: "Something went wrong. Please try again." }));
+    if (!res.ok) {
+      setError(res.error);
+      setBusy(false);
       return;
     }
-    setBusy(true);
-    try {
-      window.location.assign(await startPayment(lines, data, p));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
-      setBusy(false);
+    if (res.paymentUrl) {
+      window.location.assign(res.paymentUrl);
+      return;
     }
+    // No payment processor connected yet: the order is saved as "awaiting payment".
+    setSaved({ id: res.orderId, email: f.email });
+    setBusy(false);
   }
 
   if (!ready) return <section className="min-h-[60vh]" />;
+
+  if (saved) {
+    return (
+      <section className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-28 text-center">
+        <h1 className="font-display text-4xl font-semibold">Order saved: {saved.id}</h1>
+        <p className="text-pep-ink/70">
+          Online payment isn&apos;t live yet. We&apos;ll reach out at <b>{saved.email}</b> to complete your order.
+        </p>
+        <Button tone="blue" href="/shop">
+          Back to shop
+        </Button>
+      </section>
+    );
+  }
 
   if (lines.length === 0) {
     return (
@@ -99,7 +120,7 @@ export default function CheckoutPage() {
           {error && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p>}
 
           <Button tone="blue" type="submit" disabled={busy} className="w-full">
-            {busy ? "One sec…" : `Pay ${money(p.total)}`}
+            {busy ? "One sec…" : `Pay ${money(p.grandTotal)}`}
           </Button>
 
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-semibold text-pep-ink/60">
@@ -144,14 +165,13 @@ export default function CheckoutPage() {
             )}
             <div className="flex justify-between">
               <span className="text-pep-ink/70">Shipping</span>
-              <span className={p.freeShipping ? "font-semibold text-pep-blue" : ""}>{p.freeShipping ? "FREE" : "At payment"}</span>
+              <span className={p.freeShipping ? "font-semibold text-pep-blue" : ""}>{p.freeShipping ? "FREE" : money(p.shipping)}</span>
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between border-t border-pep-ink/10 pt-3">
             <span className="text-pep-ink/70">Total</span>
-            <span className="font-display text-2xl font-semibold">{money(p.total)}</span>
+            <span className="font-display text-2xl font-semibold">{money(p.grandTotal)}</span>
           </div>
-          <p className="mt-1 text-xs text-pep-ink/50">Tax calculated at payment.</p>
           <DeliveryPromise className="mt-4" />
           {(p.nextTier || !p.freeShipping) && (
             <div className="mt-4">

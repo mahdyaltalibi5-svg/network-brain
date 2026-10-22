@@ -13,6 +13,9 @@ export type Pricing = {
   nextTier: { min: number; off: number; need: number } | null;
   freeShipping: boolean;
   toFreeShipping: number;
+  shipping: number;
+  // What the customer pays: total after discount, plus shipping.
+  grandTotal: number;
 };
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -26,6 +29,8 @@ export function pricing(lines: Line[]): Pricing {
   const discount = round(subtotal * off);
   const total = round(subtotal - discount);
   const next = tiers.find((t) => vials < t.min);
+  const freeShipping = total >= site.freeShippingMin;
+  const shipping = freeShipping || vials === 0 ? 0 : site.shippingRate;
   return {
     vials,
     subtotal,
@@ -33,8 +38,10 @@ export function pricing(lines: Line[]): Pricing {
     total,
     off,
     nextTier: next ? { ...next, need: next.min - vials } : null,
-    freeShipping: total >= site.freeShippingMin,
+    freeShipping,
     toFreeShipping: round(Math.max(0, site.freeShippingMin - total)),
+    shipping,
+    grandTotal: round(total + shipping),
   };
 }
 

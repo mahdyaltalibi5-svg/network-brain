@@ -12,8 +12,9 @@ export const site = {
   // Nationwide delivery guarantee, in business days after shipping.
   guaranteeDays: 5,
   timeZone: "America/Denver",
-  // Orders at or above this (after discounts) ship free.
+  // Orders at or above this (after discounts) ship free; below it, a flat rate.
   freeShippingMin: 99,
+  shippingRate: 9.99,
   // "Stack & save": discount by number of vials in the cart.
   stackTiers: [
     { min: 2, off: 0.1 },

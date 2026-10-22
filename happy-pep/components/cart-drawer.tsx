@@ -238,9 +238,9 @@ export function CartDrawer() {
                       <span className="font-display text-2xl font-semibold">{money(p.total)}</span>
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-pep-ink/50">{p.freeShipping ? "Free shipping included." : "Shipping calculated at checkout."}</p>
+                  <p className="mt-0.5 text-xs text-pep-ink/50">{p.freeShipping ? "Free shipping included." : `+ ${money(p.shipping)} shipping`}</p>
                   <Button tone="blue" href="/checkout" onClick={close} className="mt-4 w-full">
-                    Checkout · {money(p.total)}
+                    Checkout · {money(p.grandTotal)}
                   </Button>
                   <Link href="/shipping" onClick={close} className="mt-3 block text-center text-xs text-pep-ink/60 underline underline-offset-2">
                     🔒 Secure checkout · COA on every lot · Free BAC water

@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Inter } from "next/font/google";
-import { Providers } from "@/components/providers";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { gateScript } from "@/components/gate";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -31,13 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: gateScript }} />
       </head>
       <body className="min-h-dvh">
-        <Providers>
-          <div id="site" className="flex min-h-dvh flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </Providers>
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>

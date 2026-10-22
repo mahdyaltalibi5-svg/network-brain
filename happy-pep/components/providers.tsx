@@ -8,10 +8,12 @@ import { CartProvider } from "./cart";
 import { CartDrawer } from "./cart-drawer";
 import { GateProvider } from "./gate";
 import { setLenis } from "@/lib/scroll";
+import { captureSource } from "@/lib/source";
 import { site } from "@/lib/site";
 
 function SmoothScroll() {
   useEffect(() => {
+    captureSource();
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const lenis = new Lenis({ autoRaf: true, lerp: 0.12 });
     setLenis(lenis);
