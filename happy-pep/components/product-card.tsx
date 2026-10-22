@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { ProductImage } from "./product-image";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { AddToCart, SizePills } from "./add-to-cart";
 import { item } from "./reveal";
-import { Vial } from "./vial";
 import { bestValue, defaultSize, money, type Product } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -22,13 +22,13 @@ export function ProductCard({ product }: { product: Product }) {
         className="flex h-full flex-col rounded-3xl bg-white p-3 shadow-[0_8px_30px_-16px_rgba(1,37,196,0.25)] sm:p-4"
       >
         <Link href={`/p/${product.slug}`} className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-pep-mint/60">
-          <div className="relative">
-            <Vial name={product.name} size={size} cap={product.cap} className="mx-auto aspect-square w-full transition-transform duration-300 group-hover:scale-[1.04]" />
-            <span className="absolute left-0 top-0 rounded-full bg-pep-mint px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-pep-blue sm:text-[11px]">
+          <div className="relative overflow-hidden rounded-2xl">
+            <ProductImage product={product} size={size} className="w-full transition-transform duration-500 group-hover:scale-[1.05]" />
+            <span className="absolute left-2 top-2 rounded-full bg-pep-mint px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-pep-blue sm:text-[11px]">
               + Free BAC water
             </span>
             {product.badge && (
-              <span className="absolute right-0 top-0 rounded-full bg-pep-blue px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-[11px]">
+              <span className="absolute right-2 top-2 rounded-full bg-white text-pep-blue px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-[11px]">
                 {product.badge}
               </span>
             )}

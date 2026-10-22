@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { ProductImage } from "./product-image";
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "./cart";
 import { Button } from "./button";
-import { Vial } from "./vial";
 import { DeliveryPromise } from "./delivery";
 import { getProduct, isInStock, money, priceOf, products } from "@/lib/products";
 import { pct, pricing, type Pricing } from "@/lib/pricing";
@@ -87,7 +87,7 @@ function Upsell() {
           const size = p.sizes.find((s) => s.inStock)!;
           return (
             <li key={p.slug} className="flex w-40 shrink-0 items-center gap-2 rounded-2xl bg-pep-cloud p-2 pr-3">
-              <Vial name={p.name} size={size.label} cap={p.cap} className="size-12 shrink-0" />
+              <ProductImage product={p} size={size.label} sizes="48px" className="size-12 shrink-0 !rounded-xl" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{p.name}</p>
                 <p className="text-xs text-pep-ink/60">{money(size.price)}</p>
@@ -184,7 +184,7 @@ export function CartDrawer() {
                             transition={{ type: "spring", stiffness: 260, damping: 24 }}
                             className="flex items-center gap-4 rounded-3xl bg-pep-cloud/70 p-3"
                           >
-                            <Vial name={prod.name} size={l.size} cap={prod.cap} className="size-16 shrink-0" />
+                            <ProductImage product={prod} size={l.size} sizes="64px" className="size-16 shrink-0 !rounded-2xl" />
                             <div className="min-w-0 flex-1">
                               <p className="truncate font-semibold">{prod.name}</p>
                               <p className="text-sm text-pep-ink/60">

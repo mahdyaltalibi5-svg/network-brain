@@ -1,8 +1,7 @@
-// Placeholder catalog: replace names, sizes, prices, lots and COA links with
-// your real inventory. Keep descriptions factual (identity, form, purity):
-// no health, dosing or results claims.
+// The catalog. Keep descriptions factual (identity, form, purity): no health,
+// dosing or results claims. Photos live in public/products (square, 1000px).
 
-export type Size = { label: string; price: number; inStock: boolean };
+export type Size = { label: string; price: number; inStock: boolean; image?: string };
 
 export type Product = {
   slug: string;
@@ -10,42 +9,79 @@ export type Product = {
   kind: string;
   description: string;
   sizes: Size[];
+  // Product photo (square). A size's own image wins when that size is selected.
+  image?: string;
   lot: string;
   // Batch Certificate of Analysis. Leave fields empty until the real COA is in.
   coa: { url: string; lab: string; date: string; purity: string };
   // Optional card badge, e.g. "Bestseller". Only use it if it's true.
   badge?: string;
+  // Cap color for the illustrated fallback vial (used when there's no photo).
   cap: string;
 };
 
 const NO_COA = { url: "", lab: "", date: "", purity: "" };
 
+const desc = (form = "Research peptide") =>
+  `${form} supplied as a lyophilized powder in a sealed vial. Third-party tested for purity (HPLC) and identity (mass spec); batch COA linked above.`;
+
+// PRICES ARE PLACEHOLDERS: set your real prices before launch.
 export const products: Product[] = [
   {
-    slug: "bpc-157",
-    name: "BPC-157",
-    kind: "Pentadecapeptide",
-    description:
-      "Synthetic 15-amino-acid peptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
+    slug: "rt",
+    name: "RT",
+    kind: "Research peptide",
+    description: desc(),
     sizes: [
-      { label: "5mg", price: 39, inStock: true },
-      { label: "10mg", price: 59, inStock: true },
+      { label: "10mg", price: 99, inStock: true, image: "/products/rt-10mg.webp" },
+      { label: "20mg", price: 169, inStock: true, image: "/products/rt-20mg.webp" },
     ],
-    lot: "HP-BPC-2410",
+    image: "/products/rt-10mg.webp",
+    lot: "HP-RT-2410",
     coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
-    slug: "tb-500",
-    name: "TB-500",
-    kind: "Synthetic peptide fragment",
-    description:
-      "Synthetic peptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [
-      { label: "5mg", price: 45, inStock: true },
-      { label: "10mg", price: 79, inStock: true },
-    ],
-    lot: "HP-TB5-2410",
+    slug: "tr",
+    name: "TR",
+    kind: "Research peptide",
+    description: desc(),
+    sizes: [{ label: "10mg", price: 79, inStock: true }],
+    image: "/products/tr-10mg.webp",
+    lot: "HP-TR-2410",
+    coa: NO_COA,
+    cap: "#0125C4",
+  },
+  {
+    slug: "glp-1",
+    name: "GLP-1",
+    kind: "Research peptide",
+    description: desc(),
+    sizes: [{ label: "5mg", price: 59, inStock: true }],
+    image: "/products/glp-1-5mg.webp",
+    lot: "HP-GLP-2410",
+    coa: NO_COA,
+    cap: "#5B7BFF",
+  },
+  {
+    slug: "bc",
+    name: "BC",
+    kind: "Research peptide",
+    description: desc(),
+    sizes: [{ label: "10mg", price: 59, inStock: true }],
+    image: "/products/bc-10mg.webp",
+    lot: "HP-BC-2410",
+    coa: NO_COA,
+    cap: "#3EF5B9",
+  },
+  {
+    slug: "tesa",
+    name: "TESA",
+    kind: "Research peptide",
+    description: desc(),
+    sizes: [{ label: "10mg", price: 119, inStock: true }],
+    image: "/products/tesa-10mg.webp",
+    lot: "HP-TESA-2410",
     coa: NO_COA,
     cap: "#0125C4",
   },
@@ -53,86 +89,16 @@ export const products: Product[] = [
     slug: "ghk-cu",
     name: "GHK-Cu",
     kind: "Copper tripeptide",
-    description:
-      "Copper-complexed tripeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [
-      { label: "50mg", price: 39, inStock: true },
-      { label: "100mg", price: 59, inStock: true },
-    ],
+    description: desc("Copper-complexed tripeptide"),
+    sizes: [{ label: "10mg", price: 39, inStock: true }],
+    image: "/products/ghk-cu-10mg.webp",
     lot: "HP-GHK-2410",
     coa: NO_COA,
     cap: "#5B7BFF",
   },
-  {
-    slug: "bpc-tb-blend",
-    name: "BPC + TB Blend",
-    kind: "Peptide blend",
-    description:
-      "BPC-157 and TB-500 combined in one sealed vial as a lyophilized powder. Each component verified by HPLC and mass spec.",
-    sizes: [{ label: "10mg", price: 89, inStock: true }],
-    lot: "HP-BLD-2410",
-    coa: NO_COA,
-    cap: "#3EF5B9",
-  },
-  {
-    slug: "nad-plus",
-    name: "NAD+",
-    kind: "Coenzyme",
-    description:
-      "Nicotinamide adenine dinucleotide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC.",
-    sizes: [{ label: "500mg", price: 89, inStock: true }],
-    lot: "HP-NAD-2410",
-    coa: NO_COA,
-    cap: "#0125C4",
-  },
-  {
-    slug: "ipamorelin",
-    name: "Ipamorelin",
-    kind: "Pentapeptide",
-    description:
-      "Synthetic pentapeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [
-      { label: "5mg", price: 35, inStock: true },
-      { label: "10mg", price: 59, inStock: true },
-    ],
-    lot: "HP-IPA-2410",
-    coa: NO_COA,
-    cap: "#5B7BFF",
-  },
-  {
-    slug: "cjc-1295",
-    name: "CJC-1295",
-    kind: "No DAC · Synthetic peptide",
-    description:
-      "Synthetic peptide (without DAC) supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [{ label: "5mg", price: 45, inStock: true }],
-    lot: "HP-CJC-2410",
-    coa: NO_COA,
-    cap: "#3EF5B9",
-  },
-  {
-    slug: "epitalon",
-    name: "Epitalon",
-    kind: "Tetrapeptide",
-    description:
-      "Synthetic tetrapeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [{ label: "10mg", price: 49, inStock: true }],
-    lot: "HP-EPI-2410",
-    coa: NO_COA,
-    cap: "#0125C4",
-  },
-  {
-    slug: "selank",
-    name: "Selank",
-    kind: "Heptapeptide",
-    description:
-      "Synthetic heptapeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
-    sizes: [{ label: "10mg", price: 55, inStock: false }],
-    lot: "HP-SEL-2410",
-    coa: NO_COA,
-    cap: "#5B7BFF",
-  },
 ];
+
+export const imageFor = (p: Product, size?: string) => p.sizes.find((s) => s.label === size)?.image ?? p.image;
 
 export const isInStock = (p: Product) => p.sizes.some((s) => s.inStock);
 

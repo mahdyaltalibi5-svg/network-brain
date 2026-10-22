@@ -6,7 +6,8 @@ import { Countdown } from "./countdown";
 import { ZipChecker } from "./delivery";
 import { Button } from "./button";
 import { Smile } from "./smile";
-import { Vial } from "./vial";
+import { ProductImage } from "./product-image";
+import { getProduct } from "@/lib/products";
 import { scrollToId } from "@/lib/scroll";
 
 const group: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } } };
@@ -59,14 +60,14 @@ export function Hero() {
 
         <motion.div variants={rise} className="relative mx-auto hidden w-full max-w-sm md:block" aria-hidden>
           <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-            <Vial name="BPC-157" size="10mg" className="w-full drop-shadow-2xl" />
+            <ProductImage product={getProduct("rt")!} size="10mg" priority sizes="384px" className="w-full !rounded-[32px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.6)] ring-1 ring-white/20" />
           </motion.div>
           <motion.div
-            className="absolute -bottom-6 -left-10 w-40"
+            className="absolute -bottom-8 -left-14 w-44"
             animate={{ y: [0, 8, 0], rotate: [-8, -5, -8] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Vial name="GHK-Cu" size="50mg" cap="#5B7BFF" className="w-full drop-shadow-xl" />
+            <ProductImage product={getProduct("bc")!} size="10mg" sizes="176px" className="w-full !rounded-3xl shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-white/20" />
           </motion.div>
         </motion.div>
       </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ProductImage } from "@/components/product-image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AddToCart, SizePills } from "@/components/add-to-cart";
@@ -8,7 +9,6 @@ import { Qty } from "@/components/cart-drawer";
 import { CoaButton } from "@/components/coa-modal";
 import { DeliveryPromise } from "@/components/delivery";
 import { ProductCard } from "@/components/product-card";
-import { Vial } from "@/components/vial";
 import { spring } from "@/components/reveal";
 import { bestValue, defaultSize, isInStock, money, perMg, products, type Product } from "@/lib/products";
 import { pct } from "@/lib/pricing";
@@ -80,12 +80,12 @@ export function ProductDetail({ product }: { product: Product }) {
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={spring}
-            className="relative rounded-[32px] bg-white p-6 md:sticky md:top-32 md:self-start"
+            className="relative overflow-hidden rounded-[32px] md:sticky md:top-32 md:self-start"
           >
             <span className="absolute left-5 top-5 z-10 rounded-full bg-pep-mint px-3 py-1 text-xs font-bold uppercase tracking-wide text-pep-blue">
               + Free BAC water
             </span>
-            <Vial name={product.name} size={size} cap={product.cap} className="mx-auto w-full max-w-md" />
+            <ProductImage product={product} size={size} priority sizes="(min-width: 768px) 50vw, 100vw" className="w-full !rounded-none" />
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.06 }}>
