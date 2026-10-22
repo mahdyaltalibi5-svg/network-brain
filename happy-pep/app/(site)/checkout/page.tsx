@@ -124,10 +124,10 @@ export default function CheckoutPage() {
           </Button>
 
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-semibold text-pep-ink/60">
-            <li>🔒 Secure checkout</li>
-            <li>⚡ Same-day Utah</li>
-            <li>📦 5 days or free shipping</li>
-            <li>🧪 COA on every lot</li>
+            <li>Secure checkout</li>
+            <li>Same-day Utah</li>
+            <li>5 days or free shipping</li>
+            <li>COA on every lot</li>
           </ul>
         </motion.form>
 
@@ -148,8 +148,8 @@ export default function CheckoutPage() {
               </li>
             ))}
             <li className="flex justify-between gap-3 text-pep-blue">
-              <span>💧 Free BAC Water</span>
-              <span className="font-semibold">$0.00 ✓</span>
+              <span>Free BAC water</span>
+              <span className="font-semibold">Free</span>
             </li>
           </ul>
           <div className="mt-5 space-y-2 border-t border-pep-ink/10 pt-4 text-sm">

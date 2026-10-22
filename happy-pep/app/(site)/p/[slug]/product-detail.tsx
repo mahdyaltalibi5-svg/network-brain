@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Rolling } from "@/components/animated-number";
+import { ArrowLeft, ArrowRight } from "@/components/icons";
 import { ProductImage } from "@/components/product-image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -63,18 +65,19 @@ function TierCards({ qty, onPick }: { qty: number; onPick: (n: number) => void }
             role="radio"
             aria-checked={active}
             onClick={() => onPick(t.min)}
-            className={`relative rounded-2xl px-2 py-3 text-center transition-colors ${active ? "bg-pep-blue text-white" : "bg-white text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue"}`}
+            className={`relative rounded-2xl bg-white px-2 py-3 text-center ring-1 transition-colors ${active ? "text-white ring-transparent" : "text-pep-ink ring-pep-ink/10 hover:ring-pep-blue"}`}
           >
+            {active && <motion.span layoutId="tier-active" className="absolute inset-0 rounded-2xl bg-pep-blue" transition={{ type: "spring", stiffness: 450, damping: 34 }} />}
             {best && (
-              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-pep-mint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-pep-blue">
-                ★ Best value
+              <span className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-pep-mint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-pep-blue">
+                Best value
               </span>
             )}
-            <span className="block text-sm font-semibold">
+            <span className="relative block text-sm font-semibold">
               {t.min}
               {best ? "+" : ""} vial{t.min > 1 ? "s" : ""}
             </span>
-            <span className={`block font-display text-lg font-semibold ${active ? "text-pep-mint" : "text-pep-blue"}`}>{t.off ? `${pct(t.off)} off` : "Standard"}</span>
+            <span className={`relative block font-display text-lg font-semibold ${active ? "text-pep-mint" : "text-pep-blue"}`}>{t.off ? `${pct(t.off)} off` : "Standard"}</span>
           </button>
         );
       })}
@@ -124,14 +127,16 @@ export function ProductDetail({ product }: { product: Product }) {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.06 }}>
-            <Link href="/shop" className="text-sm font-semibold text-pep-blue">
-              ← All peptides
+            <Link href="/shop" className="inline-flex items-center gap-1.5 text-sm font-semibold text-pep-blue transition-transform hover:-translate-x-0.5">
+              <ArrowLeft /> All peptides
             </Link>
             <p className="mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-pep-blue">{product.category}</p>
             <h1 className="mt-1 font-display text-5xl font-semibold tracking-tight text-pep-ink">{product.name}</h1>
 
             <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-display text-4xl font-semibold text-pep-blue">{money(current.price)}</p>
+              <p className="font-display text-4xl font-semibold text-pep-blue">
+                <Rolling value={money(current.price)} />
+              </p>
               {unit && <p className="text-sm text-pep-ink/50">{money(Math.round(unit * 100) / 100)}/mg</p>}
               <p className="text-sm text-pep-ink/50">· Purity ≥99%</p>
             </div>
@@ -142,8 +147,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <SizePills sizes={product.sizes} value={size} onChange={setSize} />
               {best && (
                 <p className="mt-2 text-sm font-semibold text-pep-blue">
-                  {best.label === size ? "✓ " : ""}
-                  {best.label} is the best value: save {pct(best.save)} per mg
+                  {best.label} is the best value: {pct(best.save)} less per mg
                 </p>
               )}
             </div>
@@ -161,13 +165,13 @@ export function ProductDetail({ product }: { product: Product }) {
             </div>
 
             <Link href="/work-with-us" className="mt-3 flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-pep-blue ring-1 ring-pep-blue/25 hover:bg-pep-blue/5">
-              Bulk &amp; lab orders · mix &amp; match · ask for pricing →
+              Bulk &amp; lab orders · mix &amp; match · ask for pricing <ArrowRight className="size-3.5" />
             </Link>
 
             <ul className="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-semibold text-pep-ink/70">
-              <li className="rounded-2xl bg-white px-2 py-3">💧 Free BAC water</li>
-              <li className="rounded-2xl bg-white px-2 py-3">🧪 COA every lot</li>
-              <li className="rounded-2xl bg-white px-2 py-3">🔒 Secure checkout</li>
+              <li className="rounded-2xl bg-white px-2 py-3">Free BAC water</li>
+              <li className="rounded-2xl bg-white px-2 py-3">COA every lot</li>
+              <li className="rounded-2xl bg-white px-2 py-3">Secure checkout</li>
             </ul>
 
             <div className="mt-6 rounded-3xl bg-white p-5 ring-1 ring-pep-ink/8">

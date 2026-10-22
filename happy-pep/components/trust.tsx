@@ -4,38 +4,40 @@ import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Reveal, RevealItem } from "./reveal";
-import { Smile } from "./smile";
+import { ArrowLink, SplitHeading } from "./motion";
+import { ArrowUpRight } from "./icons";
+
+// Mint smile that draws itself when scrolled into view.
+function SmileDraw() {
+  return (
+    <svg viewBox="0 0 100 32" fill="none" className="mt-2 w-14" aria-hidden>
+      <motion.path
+        d="M7 7 Q50 36 93 7"
+        stroke="#3EF5B9"
+        strokeWidth={10}
+        strokeLinecap="round"
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.3, ease: [0.65, 0, 0.35, 1] }}
+      />
+    </svg>
+  );
+}
 import { reviews } from "@/lib/reviews";
 import { site } from "@/lib/site";
 import { TOP_FAQ, type FaqItem } from "@/lib/faq";
 
-const ICONS = {
-  tag: "M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9Zm5-5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z",
-  flask: "M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3M7 15h10",
-  shield: "M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3Zm-3.5 9 2.5 2.5 5-5",
-  doc: "M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Zm0 0v5h5M9 14l2 2 4-4",
-  bolt: "M13 2 4 14h7l-1 8 9-12h-7l1-8Z",
-  chat: "M4 5h16v11H8l-4 4V5Zm4 5h8M8 13h5",
-};
-
-const WHY: { icon: keyof typeof ICONS; title: string; body: string }[] = [
-  { icon: "tag", title: "Simple pricing", body: "The price you see is the price. Stack discounts and free shipping apply on their own, no codes to hunt for." },
-  { icon: "flask", title: "99%+ purity", body: "Every lot is checked by HPLC for purity and mass spec for identity before it ships." },
-  { icon: "shield", title: "Third-party tested", body: "Testing is done by independent labs, not by us, so the results are worth something." },
-  { icon: "doc", title: "COA on every lot", body: "Each product links to its batch certificate. Lot number on the vial, results one tap away." },
-  { icon: "bolt", title: "Same-day in Utah", body: `Order before ${site.cutoffHour} PM MT and it's at your door today in our Utah zones. Everywhere else ships same day.` },
-  { icon: "chat", title: "Real human support", body: "Questions about an order or a lot get answered by a person who knows the products." },
+const WHY = [
+  { title: "Simple pricing", body: "The price you see is the price. Stack discounts and free shipping apply on their own, no codes to hunt for." },
+  { title: "99%+ purity", body: "Every lot is checked by HPLC for purity and mass spec for identity before it ships." },
+  { title: "Third-party tested", body: "Testing is done by independent labs, not by us, so the results are worth something." },
+  { title: "A COA for every lot", body: "Each product links to its batch certificate. Batch number on the vial, results one tap away." },
+  { title: "Same-day in Utah", body: `Order before ${site.cutoffHour} PM MT and it's at your door today in our Utah zones. Everywhere else ships same day.` },
+  { title: "Real human support", body: "Questions about an order or a batch get answered by a person who knows the products." },
 ];
 
-function Icon({ d }: { d: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d={d} />
-    </svg>
-  );
-}
-
-// "Why Happy Pep": six reasons, icon cards.
+// "Why Happy Pep": six reasons as a numbered editorial grid.
 export function WhyUs() {
   return (
     <section className="bg-white py-20">
@@ -45,30 +47,27 @@ export function WhyUs() {
             <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Why Happy Pep</p>
           </RevealItem>
           <RevealItem>
-            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">
-              Proof, not promises<span className="text-pep-mint">.</span>
-            </h2>
+            <SplitHeading text="Proof, not promises." accent={["promises"]} accentClass="text-pep-blue" className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl" />
           </RevealItem>
           <RevealItem>
             <p className="mx-auto mt-3 max-w-xl text-pep-ink/65">Independent testing, published results and fast local fulfillment, on every order.</p>
           </RevealItem>
         </Reveal>
-        <Reveal as="ul" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {WHY.map((w) => (
-            <RevealItem as="li" key={w.title} className="rounded-3xl bg-pep-cloud p-7 text-center">
-              <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-pep-blue text-pep-mint">
-                <Icon d={ICONS[w.icon]} />
-              </span>
-              <h3 className="mt-5 font-display text-xl font-semibold text-pep-ink">{w.title}</h3>
-              <Smile className="mx-auto mt-1 w-8" width={12} />
-              <p className="mt-2 text-sm leading-relaxed text-pep-ink/65">{w.body}</p>
+        <Reveal as="ul" className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {WHY.map((w, i) => (
+            <RevealItem as="li" key={w.title} className="group relative pt-6">
+              <span className="absolute inset-x-0 top-0 h-px bg-pep-ink/10" aria-hidden />
+              <span className="absolute left-0 top-0 h-px w-full origin-left scale-x-0 bg-pep-blue transition-transform duration-500 ease-out group-hover:scale-x-100" aria-hidden />
+              <p className="font-display text-sm font-semibold tabular-nums text-pep-blue">{String(i + 1).padStart(2, "0")}</p>
+              <h3 className="mt-2 font-display text-2xl font-semibold text-pep-ink">{w.title}</h3>
+              <p className="mt-2 leading-relaxed text-pep-ink/65">{w.body}</p>
             </RevealItem>
           ))}
         </Reveal>
-        <p className="mt-8 text-center">
-          <Link href="/coas" className="font-display text-lg font-semibold text-pep-blue underline-offset-4 hover:underline">
-            See every COA →
-          </Link>
+        <p className="mt-12 text-center">
+          <ArrowLink href="/coas" className="font-display text-lg text-pep-blue">
+            See every COA
+          </ArrowLink>
         </p>
       </div>
     </section>
@@ -88,9 +87,7 @@ export function OurPromise() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal className="text-center">
           <RevealItem>
-            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              The Happy Pep <span className="text-pep-mint">Promise</span>
-            </h2>
+            <SplitHeading text="The Happy Pep Promise" accent={["Promise"]} className="font-display text-4xl font-semibold tracking-tight sm:text-5xl" />
           </RevealItem>
           <RevealItem>
             <p className="mx-auto mt-3 max-w-xl text-white/75">Same-day in Utah, {site.guaranteeDays} days everywhere else, and free BAC water in every box.</p>
@@ -99,11 +96,19 @@ export function OurPromise() {
         <Reveal as="ul" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {PROMISES.map((p) => (
             <RevealItem as="li" key={p.title} className="flex flex-col items-center rounded-3xl bg-white p-7 text-center text-pep-ink">
-              <span className="rounded-full bg-pep-mint/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-pep-blue">● {p.tag}</span>
+              <span className="rounded-full bg-pep-mint/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-pep-blue">{p.tag}</span>
               <h3 className="mt-4 font-display text-2xl font-semibold leading-tight">{p.title}</h3>
               <p className={`mt-3 text-sm text-pep-ink/45 ${p.was.includes("value") ? "line-through" : ""}`}>{p.was}</p>
-              <p className="font-display text-5xl font-semibold leading-none text-pep-blue">{p.big}</p>
-              <Smile className="mt-2 w-14" width={10} />
+              <motion.p
+                className="font-display text-5xl font-semibold leading-none text-pep-blue"
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 220, damping: 18, delay: 0.15 }}
+              >
+                {p.big}
+              </motion.p>
+              <SmileDraw />
               <p className="mt-3 text-sm text-pep-ink/65">{p.body}</p>
             </RevealItem>
           ))}
@@ -126,13 +131,13 @@ function ReviewButtons() {
       <p className="font-semibold text-pep-ink">Had a good experience?</p>
       <div className="mt-3 flex flex-wrap justify-center gap-3">
         {google && (
-          <a href={google} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
-            ★ Review us on Google ↗
+          <a href={google} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
+            Review us on Google <ArrowUpRight />
           </a>
         )}
         {trustpilot && (
-          <a href={trustpilot} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
-            ★ Trustpilot ↗
+          <a href={trustpilot} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
+            Trustpilot <ArrowUpRight />
           </a>
         )}
       </div>
@@ -154,8 +159,12 @@ export function Reviews() {
             <Reveal as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
               {reviews.map((r) => (
                 <RevealItem as="li" key={r.url + r.name} className="flex flex-col rounded-3xl bg-white p-6">
-                  <p className="text-pep-blue" aria-label={`${r.rating} out of 5 stars`}>
-                    {"★".repeat(r.rating)}
+                  <p className="flex gap-0.5 text-pep-blue" aria-label={`${r.rating} out of 5 stars`}>
+                    {Array.from({ length: r.rating }, (_, i) => (
+                      <svg key={i} viewBox="0 0 20 20" className="size-4 fill-current" aria-hidden>
+                        <path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8L10 1.8Z" />
+                      </svg>
+                    ))}
                   </p>
                   <p className="mt-3 flex-1 text-pep-ink/80">“{r.text}”</p>
                   <p className="mt-4 text-sm font-semibold text-pep-ink">
@@ -221,14 +230,14 @@ export function Faq() {
   return (
     <section id="faq" className="scroll-mt-28 bg-white py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <h2 className="text-center font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Questions?</h2>
+        <SplitHeading text="Questions?" className="text-center font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl" />
         <div className="mt-10">
           <FaqList items={TOP_FAQ} />
         </div>
         <p className="mt-8 text-center">
-          <Link href="/faq" className="font-display text-lg font-semibold text-pep-blue underline-offset-4 hover:underline">
-            All questions →
-          </Link>
+          <ArrowLink href="/faq" className="font-display text-lg text-pep-blue">
+            All questions
+          </ArrowLink>
         </p>
       </div>
     </section>

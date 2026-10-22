@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Button } from "@/components/button";
 import { Logo } from "@/components/logo";
 import { Reveal, RevealItem } from "@/components/reveal";
 import { HowItWorks } from "@/components/sections";
+import { ArrowLink, SplitHeading } from "@/components/motion";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 };
 
 const DIFFERENT = [
-  { icon: "🧪", title: "Tested by someone else", body: "Every batch goes to an independent lab for HPLC purity and mass spec identity. We don't grade our own homework." },
-  { icon: "📄", title: "Transparent by default", body: "Certificates of analysis are public, on every product page and in the COA library. Not gated, not \"on request.\"" },
-  { icon: "⚡", title: "Fast where we live", body: `Same-day delivery across ${site.sameDayZones.join(", ")} for orders before ${site.cutoffHour} PM. Everywhere else ships the same day.` },
-  { icon: "💧", title: "Extras, standard", body: `Bacteriostatic water in every box, and free shipping over $${site.freeShippingMin}. No codes to hunt for.` },
-  { icon: "💬", title: "People, not tickets", body: "Questions about an order or a batch are answered by the people who pack your order." },
+  { title: "Tested by someone else", body: "Every batch goes to an independent lab for HPLC purity and mass spec identity. We don't grade our own homework." },
+  { title: "Transparent by default", body: "Certificates of analysis are public, on every product page and in the COA library. Not gated, not \"on request.\"" },
+  { title: "Fast where we live", body: `Same-day delivery across ${site.sameDayZones.join(", ")} for orders before ${site.cutoffHour} PM. Everywhere else ships the same day.` },
+  { title: "Extras, standard", body: `Bacteriostatic water in every box, and free shipping over $${site.freeShippingMin}. No codes to hunt for.` },
+  { title: "People, not tickets", body: "Questions about an order or a batch are answered by the people who pack your order." },
 ];
 
 export default function About() {
@@ -61,15 +61,13 @@ export default function About() {
               <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Why Happy Pep</p>
             </RevealItem>
             <RevealItem>
-              <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink">What makes us different</h2>
+              <SplitHeading text="What makes us different" className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink" />
             </RevealItem>
           </Reveal>
           <Reveal as="ul" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {DIFFERENT.map((v) => (
               <RevealItem as="li" key={v.title} className="flex gap-4 rounded-3xl bg-white p-6 ring-1 ring-pep-ink/8">
-                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-pep-mint text-xl" aria-hidden>
-                  {v.icon}
-                </span>
+                <span className="font-display text-sm font-semibold tabular-nums text-pep-blue">{String(DIFFERENT.indexOf(v) + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="font-display text-lg font-semibold text-pep-ink">{v.title}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-pep-ink/65">{v.body}</p>
@@ -103,9 +101,9 @@ export default function About() {
                 Each batch is verified before it reaches you: purity by HPLC and identity by mass spectrometry, run by an independent lab. The certificate is
                 published so you can match lot to data.
               </p>
-              <Link href="/coas" className="mt-4 inline-block text-sm font-bold uppercase tracking-[0.15em] text-pep-blue">
-                Browse certificates →
-              </Link>
+              <ArrowLink href="/coas" className="mt-4 text-sm text-pep-blue">
+                Browse certificates
+              </ArrowLink>
             </RevealItem>
             <RevealItem className="rounded-[28px] border-l-4 border-pep-blue bg-white p-8 ring-1 ring-pep-ink/8">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-pep-blue">Compliance</p>
@@ -114,9 +112,9 @@ export default function About() {
                 All products are intended strictly for in-vitro laboratory research. They are not for human or animal use and must be handled by qualified
                 people in line with applicable law.
               </p>
-              <Link href="/research-use" className="mt-4 inline-block text-sm font-bold uppercase tracking-[0.15em] text-pep-blue">
-                Read the policy →
-              </Link>
+              <ArrowLink href="/research-use" className="mt-4 text-sm text-pep-blue">
+                Read the policy
+              </ArrowLink>
             </RevealItem>
           </Reveal>
         </div>

@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { lockScroll, unlockScroll } from "@/lib/scroll";
+import { Chevron, Close } from "./icons";
+import { ScrollProgress } from "./motion";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./logo";
 import { useCart } from "./cart";
 
 const MESSAGES = [
-  "⚡ Utah: same-day delivery before 12 PM MT",
-  "🇺🇸 USA: 5 days or shipping's free",
-  "💧 Free BAC water with every order",
+  "Same-day delivery in Utah before 12 PM MT",
+  "Everywhere else: 5 days or shipping's free",
+  "Free BAC water with every order",
 ];
 
 function TopBar() {
@@ -110,7 +112,10 @@ function SupportMenu({ items }: { items: NavLink[] }) {
         aria-expanded={open}
         className="flex items-center gap-1 text-sm font-semibold text-white/80 transition-colors hover:text-white"
       >
-        Support <span className={`text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
+        Support
+        <span className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}>
+          <Chevron />
+        </span>
       </button>
       <AnimatePresence>
         {open && (
@@ -172,16 +177,16 @@ function MobileMenu() {
                   <Logo />
                 </span>
                 <button onClick={() => setOpen(false)} className="grid size-11 place-items-center rounded-full bg-white/10" aria-label="Close menu">
-                  ✕
+                  <Close />
                 </button>
               </div>
               <ul className="mt-6 space-y-1">
-                {links.map((l) => (
-                  <li key={l.href}>
+                {links.map((l, i) => (
+                  <motion.li key={l.href} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 + i * 0.03, duration: 0.3 }}>
                     <Link href={l.href} onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-3 font-display text-2xl font-semibold hover:bg-white/10">
                       {l.label}
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </motion.nav>
@@ -196,7 +201,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40">
       <TopBar />
-      <div className="bg-pep-blue/95 text-white backdrop-blur-md">
+      <div className="relative bg-pep-blue/95 text-white backdrop-blur-md">
+        <ScrollProgress />
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link href="/" aria-label="Happy Pep home" className="pt-1 text-[1.65rem]">
             <Logo />
@@ -206,8 +212,9 @@ export function Header() {
               "children" in n ? (
                 <SupportMenu key={n.label} items={n.children} />
               ) : (
-                <Link key={n.href} href={n.href} className="text-sm font-semibold text-white/80 transition-colors hover:text-white">
+                <Link key={n.href} href={n.href} className="group relative text-sm font-semibold text-white/80 transition-colors hover:text-white">
                   {n.label}
+                  <span className="absolute -bottom-1 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full bg-pep-mint transition-transform duration-300 ease-out group-hover:scale-x-100" aria-hidden />
                 </Link>
               ),
             )}

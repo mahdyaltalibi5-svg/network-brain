@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "./icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { site } from "@/lib/site";
 
@@ -71,8 +72,8 @@ export function PartnerForm() {
             <ul className="mt-4 space-y-3 text-sm text-pep-ink/75">
               {t.points.map((p) => (
                 <li key={p} className="flex gap-2">
-                  <span className="text-pep-blue" aria-hidden>
-                    ✓
+                  <span className="mt-0.5 text-pep-blue">
+                    <Check />
                   </span>
                   {p}
                 </li>

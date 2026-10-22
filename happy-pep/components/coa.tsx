@@ -1,4 +1,5 @@
 import type { Coa, Product } from "@/lib/products";
+import { ArrowRight, Download } from "./icons";
 
 function Row({ label, value }: { label: string; value?: string }) {
   return (
@@ -18,7 +19,7 @@ export function CoaActions({ coa, small = false }: { coa?: Coa; small?: boolean 
         View
       </a>
       <a href={coa.url} download className={`${cls} text-pep-blue ring-1 ring-pep-blue/30 hover:bg-pep-blue/5`}>
-        ↓ Download
+        <Download /> Download
       </a>
     </span>
   );
@@ -30,8 +31,8 @@ export function CoaCards({ product }: { product: Product }) {
     <div>
       <div className="mb-3 flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pep-blue">Certificates of analysis</p>
-        <a href={`/coas#${product.slug}`} className="text-xs font-semibold text-pep-blue">
-          COA library →
+        <a href={`/coas#${product.slug}`} className="group inline-flex items-center gap-1 text-xs font-semibold text-pep-blue">
+          COA library <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </a>
       </div>
       <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2">

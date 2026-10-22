@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ArrowRight } from "./icons";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -99,8 +100,9 @@ export function VialCarousel() {
       </motion.div>
 
       <div className="mt-2 flex flex-col items-center gap-3">
-        <Link href={`/p/${current.product.slug}`} className="font-display text-lg font-semibold text-white hover:text-pep-mint" aria-live="polite">
-          {current.product.name} · {current.size} →
+        <Link href={`/p/${current.product.slug}`} className="group inline-flex items-center gap-1.5 font-display text-lg font-semibold text-white hover:text-pep-mint" aria-live="polite">
+          {current.product.name} · {current.size}
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </Link>
         <div className="flex items-center gap-1.5" role="tablist" aria-label="Choose a vial">
           {SLIDES.map((s, i) => (

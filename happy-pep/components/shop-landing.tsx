@@ -44,9 +44,9 @@ export function ShopLanding({ city }: { city?: string }) {
           </motion.h1>
           <motion.ul variants={rise} className="mt-3 flex flex-wrap gap-2 text-[13px]">
             {[
-              ["💧 Free BAC water", "every order"],
-              [`📦 Free shipping`, `$${site.freeShippingMin}+`],
-              [`🧪 ${tier.min}+ vials`, `save ${pct(tier.off)}`],
+              ["Free BAC water", "every order"],
+              ["Free shipping", `$${site.freeShippingMin}+`],
+              [`${tier.min}+ vials`, `save ${pct(tier.off)}`],
             ].map(([a, b]) => (
               <li key={a} className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/15">
                 <b className="font-semibold">{a}</b> <span className="text-pep-mint">· {b}</span>

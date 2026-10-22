@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import { Reveal, RevealItem } from "./reveal";
+import { Smile } from "./smile";
+import { SplitHeading } from "./motion";
 import { site } from "@/lib/site";
 
 const TRUST = ["99%+ HPLC purity", "Ships from Utah", "COA on every lot", "Free BAC water", "Same-day before noon", "5 days or free shipping", "21+ · research use only"];
@@ -15,9 +17,7 @@ export function TrustMarquee({ dark = false }: { dark?: boolean }) {
       {TRUST.map((t) => (
         <li key={t} className="flex items-center gap-8 whitespace-nowrap font-display text-sm font-semibold">
           {t}
-          <span className={dark ? "text-pep-mint" : "text-pep-blue"} aria-hidden>
-            ●
-          </span>
+          <Smile className="w-5" color={dark ? "#3EF5B9" : "#0125C4"} width={16} />
         </li>
       ))}
     </ul>
@@ -37,9 +37,9 @@ export function TrustMarquee({ dark = false }: { dark?: boolean }) {
 }
 
 const STEPS = [
-  { icon: "🛒", title: `Order by ${site.cutoffHour} PM`, body: "Mountain Time, Monday to Friday. Takes about a minute." },
-  { icon: "📦", title: "Packed same day", body: "Sealed vials, batch COA on file, free BAC water in the box." },
-  { icon: "⚡", title: "At your door", body: `Today in our Utah zones. Within ${site.guaranteeDays} business days everywhere else, or shipping's free.` },
+  { title: `Order by ${site.cutoffHour} PM`, body: "Mountain Time, Monday to Friday. Takes about a minute." },
+  { title: "Packed same day", body: "Sealed vials, batch COA on file, free BAC water in the box." },
+  { title: "At your door", body: `Today in our Utah zones. Within ${site.guaranteeDays} business days everywhere else, or shipping's free.` },
 ];
 
 // Three steps joined by a line that draws itself as you scroll through.
@@ -56,7 +56,7 @@ export function HowItWorks() {
             <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-pep-blue">How it works</p>
           </RevealItem>
           <RevealItem>
-            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Order to door, fast.</h2>
+            <SplitHeading text="Order to door, fast." accent={["fast"]} accentClass="text-pep-blue" className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl" />
           </RevealItem>
         </Reveal>
 
@@ -69,9 +69,8 @@ export function HowItWorks() {
           <Reveal as="ul" className="relative grid gap-8 md:grid-cols-3 md:gap-6">
             {STEPS.map((s, i) => (
               <RevealItem as="li" key={s.title} className="flex gap-5 md:flex-col md:items-center md:text-center">
-                <span className="relative grid size-14 shrink-0 place-items-center rounded-2xl bg-pep-blue text-2xl shadow-[0_10px_30px_-10px_rgba(1,37,196,0.6)]">
-                  <span aria-hidden>{s.icon}</span>
-                  <span className="absolute -right-2 -top-2 grid size-6 place-items-center rounded-full bg-pep-mint text-xs font-bold text-pep-blue">{i + 1}</span>
+                <span className="relative grid size-14 shrink-0 place-items-center rounded-full bg-white font-display text-xl font-semibold text-pep-blue ring-2 ring-pep-blue/15">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <div>
                   <h3 className="font-display text-xl font-semibold text-pep-ink">{s.title}</h3>

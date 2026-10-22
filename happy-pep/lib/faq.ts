@@ -1,13 +1,12 @@
 import { site } from "./site";
 
 export type FaqItem = { q: string; a: string };
-export type FaqGroup = { title: string; icon: string; items: FaqItem[] };
+export type FaqGroup = { title: string; items: FaqItem[] };
 
 // Keep answers factual: no health, dosing or results claims.
 export const FAQ: FaqGroup[] = [
   {
     title: "General",
-    icon: "ℹ︎",
     items: [
       { q: "What are research peptides?", a: "Short synthetic chains of amino acids, supplied as a lyophilized (freeze-dried) powder in sealed vials for in-vitro laboratory research." },
       { q: "Who are your products for?", a: "Researchers aged 21 and over, for laboratory research use only. Products are not for human or veterinary use." },
@@ -17,7 +16,6 @@ export const FAQ: FaqGroup[] = [
   },
   {
     title: "Storage & handling",
-    icon: "❄︎",
     items: [
       { q: "Do vials need to be refrigerated when they arrive?", a: "Lyophilized powder ships at room temperature. On arrival, store vials refrigerated (2–8°C) and away from light; for long-term storage, many labs keep them frozen." },
       { q: "What is BAC water?", a: "Bacteriostatic water: sterile water with 0.9% benzyl alcohol, a standard laboratory diluent. A vial is included free with every order." },
@@ -25,7 +23,6 @@ export const FAQ: FaqGroup[] = [
   },
   {
     title: "Product quality",
-    icon: "⚗︎",
     items: [
       { q: "How do you verify quality?", a: "Every batch is sent to an independent third-party lab for HPLC (purity) and mass spectrometry (identity) before it's sold." },
       { q: "What purity do your peptides meet?", a: "Our standard is ≥99% purity by HPLC. The exact result for each batch is on its Certificate of Analysis." },
@@ -34,7 +31,6 @@ export const FAQ: FaqGroup[] = [
   },
   {
     title: "Shipping",
-    icon: "➜",
     items: [
       {
         q: "How long does shipping take?",
@@ -47,7 +43,6 @@ export const FAQ: FaqGroup[] = [
   },
   {
     title: "Compliance",
-    icon: "§",
     items: [
       { q: "Are your products FDA approved?", a: "No. All products are sold strictly for laboratory research use and have not been evaluated by the FDA." },
       { q: "Do I need to be 21 to order?", a: "Yes. You must be 21 or older and confirm research-only use to enter the site and to check out." },
@@ -55,7 +50,6 @@ export const FAQ: FaqGroup[] = [
   },
   {
     title: "Contact",
-    icon: "✉︎",
     items: [{ q: "How do I reach you?", a: `Email ${site.email}. Real people answer, usually within one business day.` }],
   },
 ];

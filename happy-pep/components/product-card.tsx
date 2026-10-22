@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Rolling } from "./animated-number";
 import { ProductImage } from "./product-image";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -16,7 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <motion.li variants={item} className="list-none">
       <motion.article
-        whileHover={{ y: -6, rotate: -0.6, boxShadow: "0 24px 48px -20px rgba(1,37,196,0.35)" }}
+        whileHover={{ y: -6, boxShadow: "0 24px 48px -20px rgba(1,37,196,0.35)" }}
         whileTap={{ scale: 0.985 }}
         transition={{ type: "spring", stiffness: 260, damping: 24 }}
         className="flex h-full flex-col rounded-3xl bg-white p-3 shadow-[0_8px_30px_-16px_rgba(1,37,196,0.25)] sm:p-4"
@@ -29,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
             {(product.badge || best?.label === size) && (
               <span className="absolute bottom-2 left-2 rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-pep-blue sm:text-[11px]">
-                {product.badge ?? "★ Best value"}
+                {product.badge ?? "Best value"}
               </span>
             )}
           </div>
@@ -41,7 +42,9 @@ export function ProductCard({ product }: { product: Product }) {
           <SizePills small sizes={product.sizes} value={size} onChange={setSize} />
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-[11px] text-pep-ink/50 sm:text-xs">Purity ≥99%</span>
-            <span className="font-display text-xl font-semibold text-pep-blue">{money(current.price)}</span>
+            <span className="font-display text-xl font-semibold text-pep-blue">
+              <Rolling value={money(current.price)} />
+            </span>
           </div>
           <AddToCart slug={product.slug} size={size} disabled={!current.inStock} />
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SplitHeading } from "./motion";
 import { motion } from "framer-motion";
 import { CoaActions } from "./coa";
 import { CATEGORIES, products } from "@/lib/products";
@@ -19,7 +20,7 @@ export function CoaLibrary() {
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="text-center">
           <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Documentation</p>
-          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">Certificates of Analysis</h1>
+          <SplitHeading as="h1" text="Certificates of Analysis" className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl" />
           <p className="mx-auto mt-3 max-w-lg text-pep-ink/65">
             Independent lab results for every product and size: HPLC purity and mass spec identity. Match the batch number on your vial.
           </p>
@@ -57,9 +58,6 @@ export function CoaLibrary() {
                 {p.sizes.map((s) => (
                   <li key={s.label} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 ring-1 ring-pep-ink/8">
                     <div className="flex items-center gap-3">
-                      <span className="grid size-9 place-items-center rounded-xl bg-pep-cloud text-pep-blue" aria-hidden>
-                        🧪
-                      </span>
                       <div>
                         <p className="text-sm font-semibold uppercase">{s.label} COA</p>
                         <p className="text-xs text-pep-ink/50">

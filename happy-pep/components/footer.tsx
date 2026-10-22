@@ -70,17 +70,17 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5 text-sm text-white/75">
               <li>
                 <a href={`mailto:${site.email}`} className="break-all transition-colors hover:text-pep-mint">
-                  ✉ {site.email}
+                  {site.email}
                 </a>
               </li>
               {site.phone && (
                 <li>
                   <a href={`tel:${site.phone}`} className="transition-colors hover:text-pep-mint">
-                    ☎ {site.phone}
+                    {site.phone}
                   </a>
                 </li>
               )}
-              {site.supportHours && <li>◷ {site.supportHours}</li>}
+              {site.supportHours && <li>{site.supportHours}</li>}
             </ul>
           </div>
         </div>

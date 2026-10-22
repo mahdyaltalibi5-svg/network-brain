@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "./cart";
 
@@ -101,6 +101,7 @@ export function SizePills({
   onChange: (s: string) => void;
   small?: boolean;
 }) {
+  const id = useId();
   return (
     <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Size">
       {sizes.map((s) => {
@@ -116,10 +117,9 @@ export function SizePills({
           >
             {active && (
               <motion.span
+                layoutId={`size-${id}`}
                 className="absolute inset-0 rounded-full bg-pep-blue"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                transition={{ type: "spring", stiffness: 500, damping: 36 }}
               />
             )}
             <span className="relative">{s.label}</span>

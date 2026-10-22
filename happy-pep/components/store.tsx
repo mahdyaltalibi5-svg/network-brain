@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { SplitHeading } from "./motion";
+import { ArrowRight } from "./icons";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ProductCard } from "./product-card";
@@ -28,7 +30,7 @@ export function Store({ compact = false }: { compact?: boolean }) {
             <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Research catalog</p>
           </RevealItem>
           <RevealItem>
-            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Featured peptides</h2>
+            <SplitHeading text="Featured peptides" className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl" />
           </RevealItem>
           <RevealItem>
             <p className="mx-auto mt-3 max-w-lg text-pep-ink/60">Every lot third-party tested with a COA. Free BAC water with every order. For research use only.</p>
@@ -91,8 +93,8 @@ export function Store({ compact = false }: { compact?: boolean }) {
 
         {!compact && (
           <div className="mt-10 text-center">
-            <Link href="/shop" className="inline-flex rounded-full px-6 py-3 font-display font-semibold text-pep-blue ring-2 ring-pep-blue/25 transition-colors hover:bg-pep-blue hover:text-white">
-              View all peptides →
+            <Link href="/shop" className="group inline-flex items-center gap-2 rounded-full px-6 py-3 font-display font-semibold text-pep-blue ring-2 ring-pep-blue/25 transition-colors hover:bg-pep-blue hover:text-white">
+              View all peptides <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         )}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FaqList } from "@/components/trust";
+import { SplitHeading } from "@/components/motion";
 import { FAQ } from "@/lib/faq";
 
 export const metadata: Metadata = { title: "FAQ · Happy Pep", description: "Answers about Happy Pep research peptides: quality, COAs, storage, shipping and compliance." };
@@ -11,7 +12,7 @@ export default function FaqPage() {
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="text-center">
           <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Support</p>
-          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">Frequently asked questions</h1>
+          <SplitHeading as="h1" text="Frequently asked questions" className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl" />
         </div>
         <nav className="mt-8 flex flex-wrap justify-center gap-2" aria-label="FAQ sections">
           {FAQ.map((g) => (
@@ -24,9 +25,7 @@ export default function FaqPage() {
           {FAQ.map((g) => (
             <div key={g.title} id={g.title.toLowerCase().replace(/\W+/g, "-")} className="scroll-mt-32">
               <div className="mb-4 flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-xl bg-pep-blue text-sm text-pep-mint" aria-hidden>
-                  {g.icon}
-                </span>
+                <span className="font-display text-sm font-semibold tabular-nums text-pep-blue">{String(FAQ.indexOf(g) + 1).padStart(2, "0")}</span>
                 <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-pep-blue">{g.title}</h2>
                 <span className="h-px flex-1 bg-pep-ink/10" aria-hidden />
                 {g.title === "Product quality" && (

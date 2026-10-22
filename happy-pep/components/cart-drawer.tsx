@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Rolling } from "./animated-number";
+import { Drop } from "./icons";
 import { ProductImage } from "./product-image";
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -44,16 +46,16 @@ export function Unlocks({ p }: { p: Pricing }) {
   const top = site.stackTiers.at(-1)!;
   const stackMsg = p.nextTier ? (
     <>
-      Add <b>{p.nextTier.need} more vial{p.nextTier.need > 1 ? "s" : ""}</b> → <b>{pct(p.nextTier.off)} off</b> everything
+      Add <b>{p.nextTier.need} more vial{p.nextTier.need > 1 ? "s" : ""}</b> for <b>{pct(p.nextTier.off)} off</b> everything
     </>
   ) : (
     <>
-      🎉 <b>{pct(top.off)} off</b> unlocked: max stack savings
+      <b>{pct(top.off)} off</b> unlocked, the best stack price
     </>
   );
   const shipMsg = p.freeShipping ? (
     <>
-      🎉 <b>Free shipping</b> unlocked
+      <b>Free shipping</b> unlocked
     </>
   ) : (
     <>
@@ -204,8 +206,8 @@ export function CartDrawer() {
                         transition={{ type: "spring", stiffness: 500, damping: 14, delay: 0.15 }}
                         className="flex items-center gap-4 rounded-3xl border-2 border-dashed border-pep-mint bg-pep-mint/10 p-3"
                       >
-                        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-pep-mint/30 text-3xl" aria-hidden>
-                          💧
+                        <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-pep-mint/25 text-pep-blue" aria-hidden>
+                          <Drop className="size-6" />
                         </span>
                         <div className="flex-1">
                           <p className="font-semibold">Free BAC Water</p>
@@ -235,7 +237,9 @@ export function CartDrawer() {
                     <span className="text-pep-ink/70">Total</span>
                     <span className="flex items-baseline gap-2">
                       {p.discount > 0 && <s className="text-sm text-pep-ink/40">{money(p.subtotal)}</s>}
-                      <span className="font-display text-2xl font-semibold">{money(p.total)}</span>
+                      <span className="font-display text-2xl font-semibold">
+                        <Rolling value={money(p.total)} />
+                      </span>
                     </span>
                   </div>
                   <p className="mt-0.5 text-xs text-pep-ink/50">{p.freeShipping ? "Free shipping included." : `+ ${money(p.shipping)} shipping`}</p>
@@ -243,7 +247,7 @@ export function CartDrawer() {
                     Checkout · {money(p.grandTotal)}
                   </Button>
                   <Link href="/shipping" onClick={close} className="mt-3 block text-center text-xs text-pep-ink/60 underline underline-offset-2">
-                    🔒 Secure checkout · COA on every lot · Free BAC water
+                    Secure checkout · COA on every lot · Free BAC water
                   </Link>
                 </div>
               </>

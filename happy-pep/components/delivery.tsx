@@ -3,6 +3,7 @@
 import { useEffect, useId, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cutoffState, delivery, fmtDay } from "@/lib/cutoff";
+import { LiveDot, Pin } from "./icons";
 import { getZip, setZip, subscribeZip, zoneFor, type ZipZone } from "@/lib/zip";
 
 // Current time, ticking on the client only (null during SSR/hydration).
@@ -27,7 +28,7 @@ export function fmtLeft(secs: number) {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-type Promise_ = { icon: string; text: React.ReactNode; tone: "mint" | "blue" | "muted" };
+type Promise_ = { text: React.ReactNode; tone: "mint" | "blue" | "muted" };
 
 export function promiseFor(zone: ZipZone | null, now: Date): Promise_ {
   const d = delivery(now);
@@ -35,18 +36,17 @@ export function promiseFor(zone: ZipZone | null, now: Date): Promise_ {
   const left = c.open ? fmtLeft(c.secondsLeft) : "";
   const shipDay = d.shipsToday ? "today" : fmtDay(d.shipDay);
 
-  if (zone === "excluded") return { icon: "🚫", tone: "muted", text: "We don't ship to AK, HI or U.S. territories yet." };
+  if (zone === "excluded") return { tone: "muted", text: "We don't ship to AK, HI or U.S. territories yet." };
   if (zone === "sameday") {
     return c.open
-      ? { icon: "⚡", tone: "mint", text: <>Order in <b>{left}</b> → at your door <b>today</b></> }
-      : { icon: "⚡", tone: "mint", text: <>Same-day delivery <b>{fmtDay(d.shipDay)}</b> · order by noon</> };
+      ? { tone: "mint", text: <>Order in <b>{left}</b> and it&apos;s at your door <b>today</b></> }
+      : { tone: "mint", text: <>Same-day delivery <b>{fmtDay(d.shipDay)}</b> · order by noon</> };
   }
   return {
-    icon: "📦",
     tone: "blue",
     text: (
       <>
-        {c.open ? <>Order in <b>{left}</b> → ships today. </> : <>Ships <b>{shipDay}</b>. </>}
+        {c.open ? <>Order in <b>{left}</b>, ships today. </> : <>Ships <b>{shipDay}</b>. </>}
         Get it by <b>{fmtDay(d.guaranteedBy)}</b> or shipping&apos;s free
       </>
     ),
@@ -62,17 +62,17 @@ export function DeliveryPromise({ className = "" }: { className?: string }) {
   const tones = { mint: "bg-pep-mint/15 text-pep-ink", blue: "bg-pep-blue/8 text-pep-ink", muted: "bg-pep-ink/5 text-pep-ink/70" };
   return (
     <p className={`flex min-h-12 items-center gap-2.5 rounded-2xl px-4 py-3 text-sm ${tones[p.tone]} ${className}`}>
-      <span aria-hidden>{p.icon}</span>
+      <LiveDot className={p.tone === "muted" ? "bg-pep-ink/30" : p.tone === "mint" ? "bg-[#12B886]" : "bg-pep-blue"} />
       <span>{p.text}</span>
     </p>
   );
 }
 
-const RESULTS: Record<ZipZone, { title: string; sub: (d: ReturnType<typeof delivery>) => string; icon: string; good: boolean }> = {
-  sameday: { icon: "⚡", good: true, title: "Same-day delivery available!", sub: (d) => (d.shipsToday ? "Order before noon and it's at your door today." : `Order now and it arrives ${fmtDay(d.shipDay)}.`) },
-  utah: { icon: "🏔️", good: true, title: "Ships from Utah, fast", sub: (d) => `Guaranteed by ${fmtDay(d.guaranteedBy)}, or shipping's free.` },
-  usa: { icon: "📦", good: true, title: "5-day guarantee applies", sub: (d) => `Get it by ${fmtDay(d.guaranteedBy)}, or shipping's free.` },
-  excluded: { icon: "🚫", good: false, title: "Not yet, sorry!", sub: () => "We don't ship to AK, HI or U.S. territories yet." },
+const RESULTS: Record<ZipZone, { title: string; sub: (d: ReturnType<typeof delivery>) => string; good: boolean }> = {
+  sameday: { good: true, title: "Same-day delivery available", sub: (d) => (d.shipsToday ? "Order before noon and it's at your door today." : `Order now and it arrives ${fmtDay(d.shipDay)}.`) },
+  utah: { good: true, title: "Ships from Utah, fast", sub: (d) => `Guaranteed by ${fmtDay(d.guaranteedBy)}, or shipping's free.` },
+  usa: { good: true, title: "5-day guarantee applies", sub: (d) => `Get it by ${fmtDay(d.guaranteedBy)}, or shipping's free.` },
+  excluded: { good: false, title: "Not available yet", sub: () => "We don't ship to AK, HI or U.S. territories yet." },
 };
 
 export function ZipChecker({ dark = false, className = "" }: { dark?: boolean; className?: string }) {
@@ -112,10 +112,17 @@ export function ZipChecker({ dark = false, className = "" }: { dark?: boolean; c
               initial={{ scale: 0, rotate: -30 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 500, damping: 14, delay: 0.08 }}
-              className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/60 text-xl"
+              className="grid size-11 shrink-0 place-items-center rounded-full bg-white/70"
               aria-hidden
             >
-              {r.icon}
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round">
+                <motion.path
+                  d={r.good ? "M5 12.5l4.5 4.5L19 7.5" : "M7 7l10 10M17 7 7 17"}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.35, delay: 0.15 }}
+                />
+              </svg>
             </motion.span>
             <div className="min-w-0 flex-1">
               <p className="font-display text-lg font-semibold leading-tight">{r.title}</p>
@@ -141,7 +148,7 @@ export function ZipChecker({ dark = false, className = "" }: { dark?: boolean; c
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
             className={`flex items-center gap-3 rounded-3xl p-2 pl-5 ring-1 ${dark ? "bg-white/10 text-white ring-white/20" : "bg-white text-pep-ink ring-pep-ink/10"}`}
           >
-            <span aria-hidden>📍</span>
+            <Pin className="size-5 shrink-0 opacity-70" />
             <span className="sr-only">Enter your ZIP code to check delivery speed</span>
             <input
               id={id}
