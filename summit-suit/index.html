@@ -36,7 +36,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 
-<link rel="preload" as="image" href="frames/f_000.webp" fetchpriority="high">
+<link rel="preload" as="image" href="frames/f_000.webp" fetchpriority="high" media="(orientation: landscape)">
+<link rel="preload" as="image" href="frames-m/f_000.webp" fetchpriority="high" media="(orientation: portrait)">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -360,7 +361,7 @@ img{display:block;max-width:100%;height:auto}
 
 /* nav */
 .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(16px,4vw,56px);transition:background .4s,padding .4s}
-.nav.solid{background:rgba(0,0,0,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding-top:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.nav.solid{background:rgba(0,0,0,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding-top:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.42em;font-weight:400;color:var(--gold-2)}
 .logo img{width:46px;height:auto}
 .logo span{white-space:nowrap}
@@ -436,8 +437,8 @@ em{font-style:italic;color:var(--gold-2)}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,28px)}
 .card{position:relative;display:block;overflow:hidden;background:var(--ink-3)}
 .card figure{aspect-ratio:2/3;overflow:hidden}
-.card img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.7,.2,1),filter 1s;filter:saturate(.9)}
-.card:hover img{transform:scale(1.05);filter:saturate(1)}
+.card img{width:100%;height:100%;object-fit:cover;transition:filter 1s;filter:saturate(.9)}
+.card:hover img{filter:saturate(1)}
 .card .cap{position:absolute;inset:auto 0 0 0;padding:90px 26px 26px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}
 .card h3{font-family:var(--serif);font-weight:300;font-size:clamp(34px,3vw,46px);line-height:1}
 .card p{font-size:16.5px;line-height:1.6;color:var(--mute);margin-top:10px;max-width:34ch}
@@ -473,8 +474,7 @@ em{font-style:italic;color:var(--gold-2)}
 /* gallery */
 .gallery{columns:3;column-gap:clamp(12px,1.6vw,22px)}
 .gallery figure{break-inside:avoid;margin-bottom:clamp(12px,1.6vw,22px);overflow:hidden;position:relative;background:var(--ink-3)}
-.gallery img{width:100%;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
-.gallery figure:hover img{transform:scale(1.04)}
+.gallery img{width:100%}
 .gallery figcaption{position:absolute;inset:auto 0 0 0;padding:40px 18px 16px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));opacity:0;transition:opacity .4s}
 .gallery figure:hover figcaption{opacity:1}
 @media (max-width:900px){.gallery{columns:2}}
@@ -546,6 +546,71 @@ footer a:hover{color:var(--bone)}
 footer address{font-style:normal;line-height:1.9}
 footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px;letter-spacing:.08em;color:var(--dim);padding-top:28px;border-top:1px solid rgba(255,255,255,.05)}
 @media (max-width:900px){footer{grid-template-columns:1fr 1fr}footer .brand{grid-column:1/-1}}
+
+/* elevation layer */
+:focus-visible{outline:1px solid var(--gold);outline-offset:4px}
+body::after{content:"";position:fixed;inset:0;z-index:70;pointer-events:none;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.js .ln{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em}
+.js .ln>span{display:block;transform:translateY(110%);transition:transform 1.15s cubic-bezier(.2,.75,.15,1)}
+.js .in .ln>span{transform:none}
+.js .in .ln:nth-child(2)>span{transition-delay:.1s}
+.js .in .ln:nth-child(3)>span{transition-delay:.2s}
+@media (prefers-reduced-motion:reduce){.js .ln>span{transform:none;transition:none}}
+
+.marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:clamp(18px,2.4vw,30px) 0;background:var(--ink)}
+.marquee .track{display:flex;align-items:center;width:max-content;animation:mq 46s linear infinite}
+.marquee span{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,3.6vw,54px);color:var(--bone);white-space:nowrap;padding:0 clamp(18px,2.2vw,34px)}
+.marquee i{width:clamp(22px,2.4vw,34px);height:clamp(10px,1.1vw,15px);background:url(img/mark.png) center/contain no-repeat;opacity:.8;flex:none}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.marquee .track{animation:none}}
+
+.card figure{transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.card:hover figure{transform:scale(1.035)}
+.card .go{display:inline-flex;align-items:center;gap:12px;margin-top:18px;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-2)}
+.card .go::after{content:"";width:22px;height:1px;background:currentColor;transition:width .4s}
+.card:hover .go::after{width:46px}
+.gallery figure{cursor:zoom-in}
+.gallery figure img{transition:filter .6s}
+.gallery figure:hover img{filter:brightness(1.08)}
+
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+.swatches figure{margin:0}
+.swatches img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.swatches figure:hover img{transform:scale(1.04)}
+.swatches figcaption{margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+
+footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size:clamp(88px,23vw,400px);line-height:.78;letter-spacing:.04em;text-align:center;margin:clamp(20px,4vw,60px) 0 -.06em;background:linear-gradient(180deg,rgba(228,207,163,.5),rgba(201,169,110,.04) 88%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
+
+.menu-btn{display:none;width:44px;height:40px;margin-left:4px;background:none;border:1px solid var(--gold-soft);cursor:pointer;position:relative}
+.menu-btn i{position:absolute;left:12px;right:12px;height:1px;background:var(--bone);transition:transform .35s,top .35s}
+.menu-btn i:first-child{top:15px}.menu-btn i:last-child{top:23px}
+.menu-open .menu-btn i:first-child{top:19px;transform:rotate(45deg)}
+.menu-open .menu-btn i:last-child{top:19px;transform:rotate(-45deg)}
+#menu{position:fixed;inset:0;z-index:49;background:#000;display:flex;flex-direction:column;justify-content:center;gap:48px;padding:100px clamp(20px,6vw,60px) 40px;opacity:0;visibility:hidden;transition:opacity .45s,visibility .45s}
+#menu nav{display:flex;flex-direction:column;gap:6px}
+#menu nav a{font-family:var(--serif);font-weight:300;font-size:clamp(40px,10vw,64px);line-height:1.1;color:var(--bone);transform:translateY(16px);opacity:0;transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .6s}
+#menu .menu-foot{display:flex;flex-direction:column;gap:12px;max-width:360px}
+#menu .menu-foot .btn{text-align:center}
+.menu-open #menu{opacity:1;visibility:visible}
+.menu-open #menu nav a{transform:none;opacity:1}
+.menu-open #menu nav a:nth-child(2){transition-delay:.04s}.menu-open #menu nav a:nth-child(3){transition-delay:.08s}.menu-open #menu nav a:nth-child(4){transition-delay:.12s}.menu-open #menu nav a:nth-child(5){transition-delay:.16s}.menu-open #menu nav a:nth-child(6){transition-delay:.2s}
+.menu-open{overflow:hidden}
+@media (max-width:900px){.menu-btn{display:block}}
+
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:48;display:none;grid-template-columns:1.6fr 1fr;gap:1px;background:var(--line);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.7,.2,1);padding-bottom:env(safe-area-inset-bottom);background-color:#000}
+.mbar a{display:block;text-align:center;padding:18px 8px;font-size:11.5px;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase;background:#0b0b0c;color:var(--bone)}
+.mbar a:first-child{background:var(--gold);color:#0b0b0b;font-weight:400}
+.past .mbar{transform:none}
+@media (max-width:760px){.mbar{display:grid}.progress{display:none}footer{padding-bottom:90px}}
+
+.lb{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:60px 16px}
+.lb[hidden]{display:none}
+.lb img{max-width:min(1100px,92vw);max-height:80vh;width:auto;height:auto;object-fit:contain}
+.lb-cap{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.lb button{position:absolute;background:none;border:1px solid var(--gold-soft);color:var(--bone);width:48px;height:48px;font-size:22px;cursor:pointer}
+.lb button:hover{border-color:var(--gold)}
+.lb-x{top:18px;right:18px}.lb-p{left:18px;top:50%;transform:translateY(-50%)}.lb-n{right:18px;top:50%;transform:translateY(-50%)}
+@media (max-width:760px){.lb-p,.lb-n{top:auto;bottom:60px;transform:none}}
 </style>
 </head>
 <body>
@@ -560,8 +625,23 @@ footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
     <a class="lnk" href="#process">Process</a>
     <a class="lnk" href="#kobe">About</a>
     <a class="btn" href="https://summitcustomsuits.com/book">Book<span class="long"> a Consultation</span></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i></button>
   </nav>
 </header>
+<div id="menu" aria-hidden="true">
+  <nav aria-label="Mobile">
+    <a href="#garments">Garments</a>
+    <a href="#occasions">Occasions</a>
+    <a href="#work">The Work</a>
+    <a href="#process">Process</a>
+    <a href="#kobe">About Kobe</a>
+    <a href="#faq">Questions</a>
+  </nav>
+  <div class="menu-foot">
+    <a class="btn fill" href="https://summitcustomsuits.com/book">Book a Free Consultation</a>
+    <a class="btn" href="tel:+18018669718">Call (801) 866-9718</a>
+  </div>
+</div>
 <div class="progress" aria-hidden="true"><i></i></div>
 
 <main id="main">
@@ -605,6 +685,8 @@ footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
   <div class="loader" aria-hidden="true">Loading</div>
 </section>
 
+<div class="marquee" aria-hidden="true"><div class="track"><span>Bespoke Suits</span><i></i><span>Sport Coats</span><i></i><span>Tuxedos</span><i></i><span>Overcoats</span><i></i><span>Custom Shirts</span><i></i><span>Footwear</span><i></i><span>Salt Lake City</span><i></i><span>Bespoke Suits</span><i></i><span>Sport Coats</span><i></i><span>Tuxedos</span><i></i><span>Overcoats</span><i></i><span>Custom Shirts</span><i></i><span>Footwear</span><i></i><span>Salt Lake City</span><i></i></div></div>
+
 <section class="sec intro" aria-labelledby="intro-h">
   <div>
     <div class="eyebrow">Summit Customs &middot; Salt Lake City, Utah</div>
@@ -633,17 +715,17 @@ footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
     <a class="card rv" href="https://summitcustomsuits.com/suits">
       <span class="num">01</span>
       <figure><img src="img/suit-640.webp" srcset="img/suit-640.webp 640w, img/suit-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah fitting a client in a navy bespoke suit jacket with pink shirt in Salt Lake City"></figure>
-      <div class="cap"><h3>The Suit</h3><p>Two or three pieces, cut from one cloth around your measurements. The foundation of your wardrobe.</p></div>
+      <div class="cap"><h3>The Suit</h3><p>Two or three pieces, cut from one cloth around your measurements. The foundation of your wardrobe.</p><span class="go">Explore</span></div>
     </a>
     <a class="card rv" href="https://summitcustomsuits.com/sport-coats">
       <span class="num">02</span>
       <figure><img src="img/sportcoat-640.webp" srcset="img/sportcoat-640.webp 640w, img/sportcoat-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Navy bespoke sport coat worn over a grey turtleneck with tailored trousers"></figure>
-      <div class="cap"><h3>The Sport Coat</h3><p>A jacket built to stand alone, in a different cloth and a different character. The most versatile garment in a working wardrobe.</p></div>
+      <div class="cap"><h3>The Sport Coat</h3><p>A jacket built to stand alone, in a different cloth and a different character. The most versatile garment in a working wardrobe.</p><span class="go">Explore</span></div>
     </a>
     <a class="card rv" href="https://summitcustomsuits.com/tuxedos">
       <span class="num">03</span>
       <figure><img src="img/tuxedo-640.webp" srcset="img/tuxedo-640.webp 640w, img/tuxedo-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah wearing a bespoke midnight tuxedo with silk peak lapels and bow tie"></figure>
-      <div class="cap"><h3>The Tuxedo</h3><p>Black tie done correctly. Peak or shawl lapels in barathea or grosgrain. A garment you own, not rent.</p></div>
+      <div class="cap"><h3>The Tuxedo</h3><p>Black tie done correctly. Peak or shawl lapels in barathea or grosgrain. A garment you own, not rent.</p><span class="go">Explore</span></div>
     </a>
   </div>
   <div class="also rv">
@@ -724,7 +806,8 @@ footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
     <ul class="mills" aria-label="Mills">
       <li>Dormeuil</li><li>Scabal</li><li>Vitale Barberis Canonico</li><li>Holland &amp; Sherry</li><li>Marlane</li><li>Marzotto</li><li>Fratelli Tallia di Delfino</li>
     </ul>
-    <a class="more" href="https://summitcustomsuits.com/fabrics">Browse fabric swatches</a>
+    <div class="swatches"><figure><img src="img/swatch/57505.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy solid suit cloth from Marlane"><figcaption>Marlane &middot; Navy</figcaption></figure><figure><img src="img/swatch/57506.webp" width="360" height="360" loading="lazy" decoding="async" alt="Grey solid suit cloth from Marlane"><figcaption>Marlane &middot; Grey</figcaption></figure><figure><img src="img/swatch/57511.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy check suit cloth from Marlane"><figcaption>Marlane &middot; Navy Check</figcaption></figure><figure><img src="img/swatch/57531.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown check suit cloth from Marlane"><figcaption>Marlane &middot; Brown Check</figcaption></figure><figure><img src="img/swatch/27016.webp" width="360" height="360" loading="lazy" decoding="async" alt="Blue check jacket cloth from E. Thomas"><figcaption>E. Thomas &middot; Blue Check</figcaption></figure><figure><img src="img/swatch/27008.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown textured jacket cloth from Fratelli Tallia di Delfino"><figcaption>Tallia di Delfino &middot; Brown</figcaption></figure></div>
+    <a class="more" href="https://summitcustomsuits.com/fabrics">Browse all fabric swatches</a>
   </div>
 </section>
 
@@ -833,15 +916,32 @@ footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
     </address>
   </div>
   <div class="copy"><span>&copy; 2026 Summit Customs. All rights reserved.</span><span>Bespoke tailoring &middot; Salt Lake City, Utah &middot; <a href="https://summitcustomsuits.com/privacy">Privacy</a></span></div>
+  <div class="mega" aria-hidden="true">SUMMIT</div>
 </footer>
+
+<div class="mbar">
+  <a href="https://summitcustomsuits.com/book">Book a Consultation</a>
+  <a href="tel:+18018669718">Call</a>
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Gallery photo" hidden>
+  <img alt="">
+  <p class="lb-cap"></p>
+  <button class="lb-x" type="button" aria-label="Close">&times;</button>
+  <button class="lb-p" type="button" aria-label="Previous photo">&larr;</button>
+  <button class="lb-n" type="button" aria-label="Next photo">&rarr;</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 (() => {
-// Every frame of the 10s / 24fps Kling clip.
+// Every frame of the 10s / 24fps Kling clip. Portrait screens only ever show the middle of
+// the frame, so they get a centre-cropped set at about half the weight.
 const COUNT = 241;
-const src = i => `frames/f_${String(i).padStart(3, '0')}.webp`;
+const PORTRAIT = innerWidth < innerHeight;
+const DIR = PORTRAIT ? 'frames-m' : 'frames';
+const src = i => `${DIR}/f_${String(i).padStart(3, '0')}.webp`;
 const frames = new Array(COUNT);
 const canvas = document.getElementById('seq'), ctx = canvas.getContext('2d');
 const state = { frame: 0, shift: 0 };
@@ -889,11 +989,13 @@ function draw() {
     const img = nearest(Math.round(state.frame));
     if (!img) return;
     const iw = img.naturalWidth, ih = img.naturalHeight;
-    // Landscape: cover the screen with room for the sideways drift. Portrait: size the suit (~27% of frame width) to ~88% of the screen width.
-    let s = W / H >= 1 ? Math.max(W * 1.2 / iw, H / ih) : (W * .88) / (iw * .27);
-    const cy = W / H >= 1 ? .5 : .42;
+    // Landscape: cover the screen with room for the sideways drift. Portrait: size the suit to ~88% of
+    // the screen width (it spans 520px of the 1912px source frame, whichever set is loaded).
+    const wide = W / H >= 1 && iw > 1000;
+    let s = wide ? Math.max(W * 1.2 / iw, H / ih) : (W * .88) / 520;
+    const cy = wide ? .5 : .42;
     // On wide screens the footage drifts away from whichever side the copy is on.
-    const off = W / H >= 1 ? state.shift * W * .1 : 0;
+    const off = wide ? state.shift * W * .1 : 0;
     const dx = W / 2 + off - iw * s / 2, dy = H * cy - ih * s / 2;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
@@ -940,7 +1042,56 @@ panel('complete', at(8.4));
 tl.to({}, { duration: .2 }, at(10.6));
 
 // Nav turns solid once past the film
-ScrollTrigger.create({ trigger: '.intro', start: 'top 80px', end: 'max', onToggle: s => document.getElementById('nav').classList.toggle('solid', s.isActive) });
+// (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
+const past = on => { document.getElementById('nav').classList.toggle('solid', on); document.body.classList.toggle('past', on); };
+ScrollTrigger.create({ trigger: '.intro', start: 'top 80px', onEnter: () => past(true), onLeaveBack: () => past(false) });
+
+// Headings rise line by line inside their reveal blocks
+document.querySelectorAll('.rv .h2, .rv .quote').forEach(h => {
+  h.innerHTML = h.innerHTML.split(/<br\s*\/?>/i).map(l => `<span class="ln"><span>${l}</span></span>`).join('');
+});
+
+// Gentle parallax on photography
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('.card figure img, .gallery figure img, .cloth figure img').forEach(img => {
+    gsap.fromTo(img, { yPercent: -5, scale: 1.12 }, { yPercent: 5, scale: 1.12, ease: 'none',
+      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+}
+
+// Mobile menu
+const menuBtn = document.querySelector('.menu-btn'), menu = document.getElementById('menu');
+const setMenu = open => {
+  document.body.classList.toggle('menu-open', open);
+  menuBtn.setAttribute('aria-expanded', open); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  menu.setAttribute('aria-hidden', !open);
+};
+menuBtn.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+// Gallery viewer
+const lb = document.getElementById('lb'), lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
+const shots = [...document.querySelectorAll('.gallery figure')];
+let cur = 0, lastFocus = null;
+const show = i => {
+  cur = (i + shots.length) % shots.length;
+  const im = shots[cur].querySelector('img');
+  lbImg.src = im.src.replace('-640.', '-1100.'); lbImg.alt = im.alt;
+  lbCap.textContent = shots[cur].querySelector('figcaption').textContent;
+};
+const openLb = i => { lastFocus = document.activeElement; show(i); lb.hidden = false; document.body.style.overflow = 'hidden'; lb.querySelector('.lb-x').focus(); };
+const closeLb = () => { lb.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); };
+shots.forEach((f, i) => { f.tabIndex = 0; f.setAttribute('role', 'button'); f.addEventListener('click', () => openLb(i)); f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); } }); });
+lb.querySelector('.lb-x').addEventListener('click', closeLb);
+lb.querySelector('.lb-p').addEventListener('click', () => show(cur - 1));
+lb.querySelector('.lb-n').addEventListener('click', () => show(cur + 1));
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (!lb.hidden) closeLb(); else if (document.body.classList.contains('menu-open')) setMenu(false); }
+  if (lb.hidden) return;
+  if (e.key === 'ArrowLeft') show(cur - 1);
+  if (e.key === 'ArrowRight') show(cur + 1);
+});
 
 // Section reveals
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
