@@ -2,6 +2,8 @@
 
 Mobile-first storefront for Happy Pep, built for TikTok ad traffic: a 21+ entrance gate, a same-day Utah / 5-day USA offer, a simple store with free BAC water on every order, and smooth Framer Motion + Lenis animations.
 
+**TikTok ads → `/shop`** (age gate, then straight into the products). Local search pages live at `/utah/<city>`.
+
 ## Run it
 
 ```bash
@@ -14,8 +16,9 @@ npm run build && npm start
 
 | What | Where |
 |---|---|
-| Products, sizes, prices, lot numbers, COA links | `lib/products.ts` |
-| Contact email, same-day delivery zones, cutoff hour | `lib/site.ts` |
+| Products, sizes, prices, badges, lot numbers, COA details | `lib/products.ts` |
+| Contact email, same-day zones + ZIP prefixes, cutoff hour, free-shipping minimum, stack discounts, founder block, email signup URL | `lib/site.ts` |
+| Same-day city pages | `lib/cities.ts` |
 | Real customer reviews (section hides while empty) | `lib/reviews.ts` |
 | Payment processor (checkout errors until connected) | `lib/checkout.ts` |
 | Terms / Privacy / Refunds copy (templates, get a legal review) | `app/terms`, `app/privacy`, `app/refunds` |

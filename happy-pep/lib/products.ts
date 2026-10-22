@@ -11,10 +11,14 @@ export type Product = {
   description: string;
   sizes: Size[];
   lot: string;
-  // Link to the batch COA PDF. Leave empty until it's uploaded.
-  coaUrl: string;
+  // Batch Certificate of Analysis. Leave fields empty until the real COA is in.
+  coa: { url: string; lab: string; date: string; purity: string };
+  // Optional card badge, e.g. "Bestseller". Only use it if it's true.
+  badge?: string;
   cap: string;
 };
+
+const NO_COA = { url: "", lab: "", date: "", purity: "" };
 
 export const products: Product[] = [
   {
@@ -28,7 +32,7 @@ export const products: Product[] = [
       { label: "10mg", price: 59, inStock: true },
     ],
     lot: "HP-BPC-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
@@ -42,8 +46,8 @@ export const products: Product[] = [
       { label: "10mg", price: 79, inStock: true },
     ],
     lot: "HP-TB5-2410",
-    coaUrl: "",
-    cap: "#0A2BC4",
+    coa: NO_COA,
+    cap: "#0125C4",
   },
   {
     slug: "ghk-cu",
@@ -56,7 +60,7 @@ export const products: Product[] = [
       { label: "100mg", price: 59, inStock: true },
     ],
     lot: "HP-GHK-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#5B7BFF",
   },
   {
@@ -67,7 +71,7 @@ export const products: Product[] = [
       "BPC-157 and TB-500 combined in one sealed vial as a lyophilized powder. Each component verified by HPLC and mass spec.",
     sizes: [{ label: "10mg", price: 89, inStock: true }],
     lot: "HP-BLD-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
@@ -78,8 +82,8 @@ export const products: Product[] = [
       "Nicotinamide adenine dinucleotide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC.",
     sizes: [{ label: "500mg", price: 89, inStock: true }],
     lot: "HP-NAD-2410",
-    coaUrl: "",
-    cap: "#0A2BC4",
+    coa: NO_COA,
+    cap: "#0125C4",
   },
   {
     slug: "ipamorelin",
@@ -92,7 +96,7 @@ export const products: Product[] = [
       { label: "10mg", price: 59, inStock: true },
     ],
     lot: "HP-IPA-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#5B7BFF",
   },
   {
@@ -103,7 +107,7 @@ export const products: Product[] = [
       "Synthetic peptide (without DAC) supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
     sizes: [{ label: "5mg", price: 45, inStock: true }],
     lot: "HP-CJC-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
@@ -114,8 +118,8 @@ export const products: Product[] = [
       "Synthetic tetrapeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
     sizes: [{ label: "10mg", price: 49, inStock: true }],
     lot: "HP-EPI-2410",
-    coaUrl: "",
-    cap: "#0A2BC4",
+    coa: NO_COA,
+    cap: "#0125C4",
   },
   {
     slug: "selank",
@@ -125,7 +129,7 @@ export const products: Product[] = [
       "Synthetic heptapeptide supplied as a lyophilized powder in a sealed vial. 99%+ purity by HPLC, identity confirmed by mass spec.",
     sizes: [{ label: "10mg", price: 55, inStock: false }],
     lot: "HP-SEL-2410",
-    coaUrl: "",
+    coa: NO_COA,
     cap: "#5B7BFF",
   },
 ];
@@ -136,6 +140,28 @@ export const getProduct = (slug: string) => products.find((p) => p.slug === slug
 
 export function priceOf(slug: string, size: string) {
   return getProduct(slug)?.sizes.find((s) => s.label === size)?.price ?? 0;
+}
+
+// Price per mg, for "best value" callouts. Null for sizes not in mg.
+export function perMg(s: Size) {
+  const mg = parseFloat(s.label);
+  return s.label.endsWith("mg") && mg > 0 ? s.price / mg : null;
+}
+
+// The size with the lowest price per mg, if it beats the smallest size by 10%+.
+export function bestValue(p: Product) {
+  const sized = p.sizes.filter((s) => s.inStock && perMg(s) !== null);
+  if (sized.length < 2) return null;
+  const sorted = [...sized].sort((a, b) => perMg(a)! - perMg(b)!);
+  const best = sorted[0];
+  const worst = sorted.at(-1)!;
+  const save = 1 - perMg(best)! / perMg(worst)!;
+  return save >= 0.1 ? { label: best.label, save } : null;
+}
+
+// Start on the best-value size when there is one, else the first in stock.
+export function defaultSize(p: Product) {
+  return bestValue(p)?.label ?? (p.sizes.find((s) => s.inStock) ?? p.sizes[0]).label;
 }
 
 export const money = (n: number) =>

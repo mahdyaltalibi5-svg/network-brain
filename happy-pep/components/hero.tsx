@@ -3,6 +3,7 @@
 import { motion, type Variants } from "framer-motion";
 import { useEntered } from "./gate";
 import { Countdown } from "./countdown";
+import { ZipChecker } from "./delivery";
 import { Button } from "./button";
 import { Smile } from "./smile";
 import { Vial } from "./vial";
@@ -13,12 +14,6 @@ const rise: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 24 } },
 };
-
-const CHIPS = [
-  { icon: "⚡", label: "Same-day Utah" },
-  { icon: "📦", label: "5-day USA guarantee" },
-  { icon: "💧", label: "Free BAC water" },
-];
 
 export function Hero() {
   // Hold the entrance until the age gate has lifted.
@@ -57,14 +52,9 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          <motion.ul variants={rise} className="mt-6 flex flex-wrap gap-2">
-            {CHIPS.map((c) => (
-              <li key={c.label} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-[13px] font-semibold ring-1 ring-white/15">
-                <span aria-hidden>{c.icon}</span>
-                {c.label}
-              </li>
-            ))}
-          </motion.ul>
+          <motion.div variants={rise} className="mt-5 max-w-md">
+            <ZipChecker dark />
+          </motion.div>
         </div>
 
         <motion.div variants={rise} className="relative mx-auto hidden w-full max-w-sm md:block" aria-hidden>
@@ -84,9 +74,9 @@ export function Hero() {
       {/* The hero's bottom edge is a big smile into the store. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden>
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="block h-16 w-full md:h-24">
-          <path d="M0 0 Q720 160 1440 0 V120 H0 Z" fill="#F4F6FF" />
+          <path d="M0 0 Q720 160 1440 0 V120 H0 Z" fill="#3EF5B9" />
         </svg>
-        {entered && <Smile draw delay={0.3} className="absolute bottom-3 left-1/2 w-24 -translate-x-1/2 md:bottom-6 md:w-32" width={8} />}
+        {entered && <Smile draw delay={0.3} color="#0125C4" className="absolute bottom-3 left-1/2 w-24 -translate-x-1/2 md:bottom-6 md:w-32" width={8} />}
       </div>
     </section>
   );

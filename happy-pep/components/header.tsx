@@ -91,11 +91,14 @@ export function Header() {
             <Logo />
           </Link>
           <div className="flex items-center gap-2 sm:gap-6">
-            <Link href="/#shop" className="hidden text-sm font-semibold text-white/80 transition-colors hover:text-white sm:block">
+            <Link href="/shop" className="hidden text-sm font-semibold text-white/80 transition-colors hover:text-white sm:block">
               Shop
             </Link>
             <Link href="/coas" className="hidden text-sm font-semibold text-white/80 transition-colors hover:text-white sm:block">
               COAs
+            </Link>
+            <Link href="/about" className="hidden text-sm font-semibold text-white/80 transition-colors hover:text-white sm:block">
+              About
             </Link>
             <Link href="/shipping" className="hidden text-sm font-semibold text-white/80 transition-colors hover:text-white sm:block">
               Shipping

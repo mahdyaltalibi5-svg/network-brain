@@ -7,16 +7,16 @@ import { isInStock, products } from "@/lib/products";
 
 const MAX_FEATURED = 8;
 
-export function Store() {
+export function Store({ compact = false }: { compact?: boolean }) {
   // Out-of-stock items never sit above the fold: in-stock first, capped at 8.
   const inStock = products.filter(isInStock);
   const featured = inStock.slice(0, MAX_FEATURED);
   const rest = [...inStock.slice(MAX_FEATURED), ...products.filter((p) => !isInStock(p))];
 
   return (
-    <section id="shop" className="scroll-mt-28 bg-pep-cloud pb-20 pt-10 md:pt-14">
+    <section id="shop" className={`scroll-mt-28 bg-pep-cloud pb-20 ${compact ? "pt-5 md:pt-10" : "pt-10 md:pt-14"}`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Reveal className="mb-8 text-center">
+        <Reveal className={compact ? "sr-only" : "mb-8 text-center"}>
           <RevealItem>
             <h2 className="font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">The shop</h2>
           </RevealItem>

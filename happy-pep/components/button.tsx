@@ -12,7 +12,7 @@ const sweep: Variants = {
 };
 
 const tones = {
-  mint: { cls: "bg-pep-mint text-pep-blue", smile: "#0A2BC4" },
+  mint: { cls: "bg-pep-mint text-pep-blue", smile: "#0125C4" },
   blue: { cls: "bg-pep-blue text-white", smile: "#3EF5B9" },
   ghost: { cls: "bg-white/0 text-current ring-2 ring-current/25", smile: "#3EF5B9" },
 };

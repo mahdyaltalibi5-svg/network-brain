@@ -8,6 +8,9 @@ import { Button } from "@/components/button";
 import { spring } from "@/components/reveal";
 import { getProduct, money, priceOf } from "@/lib/products";
 import { startPayment, type Customer } from "@/lib/checkout";
+import { pct, pricing } from "@/lib/pricing";
+import { DeliveryPromise, useZip } from "@/components/delivery";
+import { Unlocks } from "@/components/cart-drawer";
 import { track } from "@/lib/pixel";
 
 const field =
@@ -16,7 +19,9 @@ const field =
 const EXCLUDED = ["AK", "HI"];
 
 export default function CheckoutPage() {
-  const { lines, subtotal, ready } = useCart();
+  const { lines, ready, open } = useCart();
+  const p = pricing(lines);
+  const zip = useZip();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const tracked = useRef(false);
@@ -24,7 +29,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (tracked.current || lines.length === 0) return;
     tracked.current = true;
-    track("InitiateCheckout", toContents(lines));
+    track("InitiateCheckout", toContents(lines), pricing(lines).total);
   }, [lines]);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -37,7 +42,7 @@ export default function CheckoutPage() {
     }
     setBusy(true);
     try {
-      window.location.href = await startPayment(lines, data);
+      window.location.assign(await startPayment(lines, data, p));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
       setBusy(false);
@@ -50,7 +55,7 @@ export default function CheckoutPage() {
     return (
       <section className="mx-auto flex max-w-md flex-col items-center gap-5 px-4 py-28 text-center">
         <h1 className="font-display text-4xl font-semibold">Your cart is empty.</h1>
-        <Button tone="blue" href="/#shop">
+        <Button tone="blue" href="/shop">
           Shop now
         </Button>
       </section>
@@ -76,7 +81,7 @@ export default function CheckoutPage() {
             <div className="grid grid-cols-[1.4fr_0.7fr_1fr] gap-3">
               <input name="city" required autoComplete="address-level2" placeholder="City" className={field} />
               <input name="state" required autoComplete="address-level1" placeholder="State" maxLength={2} className={`${field} uppercase`} />
-              <input name="zip" required autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{5}" placeholder="ZIP" className={field} />
+              <input name="zip" required autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{5}" placeholder="ZIP" defaultValue={zip} key={zip} className={field} />
             </div>
           </fieldset>
 
@@ -94,7 +99,7 @@ export default function CheckoutPage() {
           {error && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p>}
 
           <Button tone="blue" type="submit" disabled={busy} className="w-full">
-            {busy ? "One sec…" : `Pay ${money(subtotal)}`}
+            {busy ? "One sec…" : `Pay ${money(p.total)}`}
           </Button>
 
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-semibold text-pep-ink/60">
@@ -126,11 +131,36 @@ export default function CheckoutPage() {
               <span className="font-semibold">$0.00 ✓</span>
             </li>
           </ul>
-          <div className="mt-5 flex items-baseline justify-between border-t border-pep-ink/10 pt-4">
-            <span className="text-pep-ink/70">Subtotal</span>
-            <span className="font-display text-2xl font-semibold">{money(subtotal)}</span>
+          <div className="mt-5 space-y-2 border-t border-pep-ink/10 pt-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-pep-ink/70">Subtotal</span>
+              <span>{money(p.subtotal)}</span>
+            </div>
+            {p.discount > 0 && (
+              <div className="flex justify-between font-semibold text-pep-blue">
+                <span>Stack savings ({pct(p.off)})</span>
+                <span>−{money(p.discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-pep-ink/70">Shipping</span>
+              <span className={p.freeShipping ? "font-semibold text-pep-blue" : ""}>{p.freeShipping ? "FREE" : "At payment"}</span>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-pep-ink/50">Shipping and tax calculated at payment.</p>
+          <div className="mt-3 flex items-baseline justify-between border-t border-pep-ink/10 pt-3">
+            <span className="text-pep-ink/70">Total</span>
+            <span className="font-display text-2xl font-semibold">{money(p.total)}</span>
+          </div>
+          <p className="mt-1 text-xs text-pep-ink/50">Tax calculated at payment.</p>
+          <DeliveryPromise className="mt-4" />
+          {(p.nextTier || !p.freeShipping) && (
+            <div className="mt-4">
+              <Unlocks p={p} />
+              <button type="button" onClick={open} className="mt-2 w-full text-center text-sm font-semibold text-pep-blue underline underline-offset-2">
+                Add more to save
+              </button>
+            </div>
+          )}
         </motion.aside>
       </div>
     </section>

@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { Logo } from "./logo";
+import { EmailSignup } from "./sections";
+import { cities } from "@/lib/cities";
 import { disclaimer, site } from "@/lib/site";
 
 const LINKS = [
+  { href: "/shop", label: "Shop" },
+  { href: "/about", label: "About" },
   { href: "/shipping", label: "Shipping Policy" },
   { href: "/refunds", label: "Refunds" },
   { href: "/terms", label: "Terms" },
@@ -24,12 +28,25 @@ export function Footer() {
             <a href={`mailto:${site.email}`} className="mt-1 block text-sm text-white/80 underline underline-offset-2">
               {site.email}
             </a>
+            <EmailSignup />
           </div>
           <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="text-white/70 transition-colors hover:text-pep-mint">
                   {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Same-day delivery in</p>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {cities.map((c) => (
+              <li key={c.slug}>
+                <Link href={`/utah/${c.slug}`} className="text-white/60 transition-colors hover:text-pep-mint">
+                  {c.name}
                 </Link>
               </li>
             ))}

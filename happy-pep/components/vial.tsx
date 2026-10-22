@@ -18,7 +18,7 @@ export function Vial({ name, size, cap = "#3EF5B9", className = "" }: { name: st
         </linearGradient>
       </defs>
       <circle cx="100" cy="100" r="88" fill={`url(#bg${id})`} />
-      <ellipse cx="100" cy="176" rx="34" ry="6" fill="#0A2BC4" opacity="0.12" />
+      <ellipse cx="100" cy="176" rx="34" ry="6" fill="#0125C4" opacity="0.12" />
       {/* cap */}
       <rect x="76" y="34" width="48" height="24" rx="8" fill={cap} />
       <rect x="80" y="56" width="40" height="8" rx="3" fill="#C9D2F5" />
@@ -28,7 +28,7 @@ export function Vial({ name, size, cap = "#3EF5B9", className = "" }: { name: st
       <rect x="76" y="70" width="5" height="94" rx="2.5" fill="#FFFFFF" opacity="0.8" />
       {/* label */}
       <rect x="82" y="96" width="44" height="54" rx="8" fill="#FFFFFF" />
-      <text x="104" y="112" textAnchor="middle" fontFamily="var(--font-fredoka), sans-serif" fontWeight="600" fontSize="8" fill="#0A2BC4">
+      <text x="104" y="112" textAnchor="middle" fontFamily="var(--font-fredoka), sans-serif" fontWeight="600" fontSize="8" fill="#0125C4">
         happy pep
       </text>
       <path d="M95 116 Q104 122 113 116" stroke="#3EF5B9" strokeWidth="2.5" strokeLinecap="round" fill="none" />

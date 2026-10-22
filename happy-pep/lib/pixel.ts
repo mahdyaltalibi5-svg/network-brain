@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-export function track(event: TtqEvent, contents: Content[]) {
-  const value = contents.reduce((sum, c) => sum + c.price * c.quantity, 0);
+// `value` defaults to the sum of contents; pass the discounted total when there is one.
+export function track(event: TtqEvent, contents: Content[], value = contents.reduce((sum, c) => sum + c.price * c.quantity, 0)) {
   window.ttq?.track(event, { contents, content_type: "product", value, currency: "USD" });
 }

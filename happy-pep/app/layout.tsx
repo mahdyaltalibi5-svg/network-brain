@@ -4,23 +4,25 @@ import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { gateScript } from "@/components/gate";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], weight: ["500", "600", "700"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://happypep.com"),
+  metadataBase: new URL(site.url),
   title: "Happy Pep · Same-day research peptides in Utah",
   description: "Third-party tested research peptides. Same-day delivery in Utah, 5 days anywhere in the USA, and free BAC water with every order.",
   openGraph: {
     title: "Happy Pep",
     description: "Same-day in Utah. 5 days everywhere else. Free BAC water with every order.",
-    images: ["/happy-pep-logo.webp"],
   },
 };
 
-export const viewport: Viewport = { themeColor: "#0A2BC4" };
+export const viewport: Viewport = { themeColor: "#0125C4" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -36,6 +38,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
           </div>
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

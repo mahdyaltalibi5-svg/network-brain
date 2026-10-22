@@ -12,10 +12,14 @@ export default function Coas() {
           <li key={p.slug} id={p.slug} className="flex scroll-mt-32 items-center justify-between gap-4 rounded-3xl bg-white px-5 py-4">
             <div>
               <p className="font-display text-lg font-semibold text-pep-ink">{p.name}</p>
-              <p className="text-sm text-pep-ink/50">Lot {p.lot}</p>
+              <p className="text-sm text-pep-ink/50">
+                Lot {p.lot}
+                {p.coa.purity && ` · ${p.coa.purity} purity`}
+                {p.coa.lab && ` · ${p.coa.lab}`}
+              </p>
             </div>
-            {p.coaUrl ? (
-              <a href={p.coaUrl} target="_blank" rel="noreferrer" className="shrink-0 rounded-full bg-pep-blue px-4 py-2 text-sm font-semibold !text-white !no-underline">
+            {p.coa.url ? (
+              <a href={p.coa.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-full bg-pep-blue px-4 py-2 text-sm font-semibold !text-white !no-underline">
                 View COA
               </a>
             ) : (
