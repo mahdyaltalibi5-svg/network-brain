@@ -7,6 +7,7 @@ import { MotionConfig } from "framer-motion";
 import { CartProvider } from "./cart";
 import { CartDrawer } from "./cart-drawer";
 import { GateProvider } from "./gate";
+import { SalesDock } from "./sales-dock";
 import { setLenis } from "@/lib/scroll";
 import { captureSource } from "@/lib/source";
 import { site } from "@/lib/site";
@@ -44,6 +45,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <GateProvider>
           {children}
           <CartDrawer />
+          <SalesDock />
         </GateProvider>
       </CartProvider>
       <SmoothScroll />
