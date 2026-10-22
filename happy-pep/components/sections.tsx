@@ -86,17 +86,25 @@ export function HowItWorks() {
   );
 }
 
-// Footer email capture. Renders only once a provider form URL is set in lib/site.ts.
+// Newsletter band at the top of the footer. Renders only once a provider
+// form URL is set in lib/site.ts.
 export function EmailSignup() {
   if (!site.emailSignupAction) return null;
   return (
-    <form action={site.emailSignupAction} method="post" target="_blank" className="mt-8 max-w-md">
-      <p className="font-display text-xl font-semibold">Get 10% off your first order</p>
-      <p className="mt-1 text-sm text-white/60">Restocks and new lots, first. No spam.</p>
-      <div className="mt-3 flex gap-2 rounded-full bg-white/10 p-1.5 ring-1 ring-white/15">
-        <input name="email" type="email" required placeholder="you@email.com" className="h-11 min-w-0 flex-1 bg-transparent px-4 text-white outline-none placeholder:text-white/50" />
-        <button className="h-11 rounded-full bg-pep-mint px-5 font-display font-semibold text-pep-blue transition-transform active:scale-[0.97]">Join</button>
+    <div className="mb-14 grid gap-6 rounded-[28px] bg-pep-blue p-8 md:grid-cols-2 md:items-center md:p-10">
+      <div>
+        <p className="font-display text-3xl font-semibold leading-tight">
+          Join the list. <span className="text-pep-mint">Save 10%.</span>
+        </p>
+        <p className="mt-2 text-white/70">Restock alerts, new lots and COA updates, first. No spam.</p>
       </div>
-    </form>
+      <form action={site.emailSignupAction} method="post" target="_blank">
+        <div className="flex gap-2 rounded-full bg-white/10 p-1.5 ring-1 ring-white/20">
+          <input name="email" type="email" required placeholder="you@email.com" aria-label="Email" className="h-12 min-w-0 flex-1 bg-transparent px-4 text-white outline-none placeholder:text-white/50" />
+          <button className="h-12 rounded-full bg-pep-mint px-6 font-display font-semibold text-pep-blue transition-transform active:scale-[0.97]">Subscribe</button>
+        </div>
+        <p className="mt-2 px-2 text-xs text-white/50">By subscribing you agree to receive emails from Happy Pep. Unsubscribe anytime.</p>
+      </form>
+    </div>
   );
 }

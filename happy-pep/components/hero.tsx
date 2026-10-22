@@ -6,11 +6,10 @@ import { Countdown } from "./countdown";
 import { ZipChecker } from "./delivery";
 import { Button } from "./button";
 import { Smile } from "./smile";
-import { ProductImage } from "./product-image";
-import { getProduct } from "@/lib/products";
+import { VialCarousel } from "./vial-carousel";
 import { scrollToId } from "@/lib/scroll";
 
-const group: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } } };
+const group: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } };
 const rise: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 24 } },
@@ -22,53 +21,44 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-pep-blue text-white">
-      {/* soft glow */}
-      <div className="pointer-events-none absolute -right-40 -top-40 size-[36rem] rounded-full bg-[#2E52FF] opacity-60 blur-3xl" aria-hidden />
+      {/* Spotlight behind the vials, matched to the photo backdrop so they float. */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-[22%] size-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-90 blur-2xl sm:top-[26%]"
+        style={{ background: "radial-gradient(closest-side, #0036E6 0%, #002ED8 45%, transparent 100%)" }}
+        aria-hidden
+      />
 
       <motion.div
-        className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-28 pt-10 sm:px-6 md:grid-cols-[1.25fr_1fr] md:pb-36 md:pt-20"
+        className="relative mx-auto max-w-6xl px-4 pb-28 pt-8 text-center sm:px-6 md:pb-36 md:pt-12"
         variants={group}
         initial="hidden"
         animate={entered ? "show" : "hidden"}
       >
-        <div>
-          <motion.div variants={rise}>
-            <Countdown />
-          </motion.div>
+        <motion.p variants={rise} className="font-display text-xs font-semibold uppercase tracking-[0.32em] text-pep-mint sm:text-sm">
+          Research-grade peptides<span className="hidden sm:inline"> · Shipped from Utah</span>
+        </motion.p>
 
-          <motion.h1 variants={rise} className="mt-6 font-display text-[2.9rem] font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-            Same-day in Utah.
-            <span className="relative mt-1 block text-pep-mint">
-              5 days everywhere else.
-            </span>
-          </motion.h1>
+        <motion.div variants={rise} className="mt-2">
+          <VialCarousel />
+        </motion.div>
 
-          <motion.p variants={rise} className="mt-5 max-w-md text-lg text-white/80">
-            Third-party tested research peptides. Free BAC water with every order.
-          </motion.p>
+        <motion.h1 variants={rise} className="mx-auto mt-6 max-w-3xl font-display text-[2.6rem] font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
+          Same-day in Utah. <span className="block text-pep-mint">5 days everywhere else.</span>
+        </motion.h1>
 
-          <motion.div variants={rise} className="mt-8">
-            <Button tone="mint" onClick={() => scrollToId("shop")} className="w-full sm:w-auto sm:px-12">
-              Shop now
-            </Button>
-          </motion.div>
+        <motion.p variants={rise} className="mx-auto mt-4 max-w-xl text-lg text-white/80">
+          Third-party tested research peptides with a COA for every lot. Free BAC water with every order.
+        </motion.p>
 
-          <motion.div variants={rise} className="mt-5 max-w-md">
-            <ZipChecker dark />
-          </motion.div>
-        </div>
+        <motion.div variants={rise} className="mt-7 flex flex-col items-center gap-4">
+          <Button tone="mint" onClick={() => scrollToId("shop")} className="w-full sm:w-auto sm:px-12">
+            Shop research peptides
+          </Button>
+          <Countdown />
+        </motion.div>
 
-        <motion.div variants={rise} className="relative mx-auto hidden w-full max-w-sm md:block" aria-hidden>
-          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-            <ProductImage product={getProduct("rt")!} size="10mg" priority sizes="384px" className="w-full !rounded-[32px] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.6)] ring-1 ring-white/20" />
-          </motion.div>
-          <motion.div
-            className="absolute -bottom-8 -left-14 w-44"
-            animate={{ y: [0, 8, 0], rotate: [-8, -5, -8] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ProductImage product={getProduct("bc")!} size="10mg" sizes="176px" className="w-full !rounded-3xl shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-white/20" />
-          </motion.div>
+        <motion.div variants={rise} className="mx-auto mt-5 max-w-md text-left">
+          <ZipChecker dark />
         </motion.div>
       </motion.div>
 

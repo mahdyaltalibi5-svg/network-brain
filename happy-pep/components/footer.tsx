@@ -4,44 +4,87 @@ import { EmailSignup } from "./sections";
 import { cities } from "@/lib/cities";
 import { disclaimer, site } from "@/lib/site";
 
-const LINKS = [
-  { href: "/shop", label: "Shop" },
-  { href: "/about", label: "About" },
-  { href: "/shipping", label: "Shipping Policy" },
-  { href: "/refunds", label: "Refunds" },
-  { href: "/terms", label: "Terms" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/coas", label: "COAs" },
-  { href: "/contact", label: "Contact" },
+const COLUMNS = [
+  {
+    title: "Shop",
+    links: [
+      { href: "/shop", label: "All peptides" },
+      { href: "/coas", label: "COAs" },
+      { href: "/about", label: "About" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { href: "/contact", label: "Contact" },
+      { href: "/#faq", label: "FAQ" },
+      { href: "/shipping", label: "Shipping" },
+      { href: "/refunds", label: "Refunds" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/terms", label: "Terms of Service" },
+      { href: "/privacy", label: "Privacy Policy" },
+      { href: "/terms", label: "Research Use Only" },
+    ],
+  },
 ];
 
 export function Footer() {
   return (
     <footer className="bg-pep-ink pb-10 pt-14 text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+        <EmailSignup />
+
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.3fr]">
           <div>
             <Link href="/" aria-label="Happy Pep home" className="text-4xl">
               <Logo />
             </Link>
-            <p className="mt-3 text-sm text-white/60">Research peptides, shipped from Utah.</p>
-            <a href={`mailto:${site.email}`} className="mt-1 block text-sm text-white/80 underline underline-offset-2">
-              {site.email}
-            </a>
-            <EmailSignup />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
+              Research peptides for laboratory use only. Third-party tested, with a certificate of analysis for every lot. Shipped from Utah.
+            </p>
           </div>
-          <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href} className="text-white/70 transition-colors hover:text-pep-mint">
-                  {l.label}
-                </Link>
+
+          {COLUMNS.map((c) => (
+            <div key={c.title}>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">{c.title}</p>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                {c.links.map((l) => (
+                  <li key={l.label}>
+                    <Link href={l.href} className="text-white/75 transition-colors hover:text-pep-mint">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">Contact</p>
+            <ul className="mt-4 space-y-2.5 text-sm text-white/75">
+              <li>
+                <a href={`mailto:${site.email}`} className="break-all transition-colors hover:text-pep-mint">
+                  ✉ {site.email}
+                </a>
               </li>
-            ))}
-          </ul>
+              {site.phone && (
+                <li>
+                  <a href={`tel:${site.phone}`} className="transition-colors hover:text-pep-mint">
+                    ☎ {site.phone}
+                  </a>
+                </li>
+              )}
+              {site.supportHours && <li>◷ {site.supportHours}</li>}
+            </ul>
+          </div>
         </div>
-        <div className="mt-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Same-day delivery in</p>
+
+        <div className="mt-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">Same-day delivery in</p>
           <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
             {cities.map((c) => (
               <li key={c.slug}>

@@ -16,17 +16,20 @@ export function Store({ compact = false }: { compact?: boolean }) {
   return (
     <section id="shop" className={`scroll-mt-28 bg-pep-cloud pb-20 ${compact ? "pt-5 md:pt-10" : "pt-10 md:pt-14"}`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Reveal className={compact ? "sr-only" : "mb-8 text-center"}>
+        <Reveal className={compact ? "sr-only" : "mb-10 text-center"}>
           <RevealItem>
-            <h2 className="font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">The shop</h2>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Research catalog</p>
           </RevealItem>
           <RevealItem>
-            <p className="mt-2 text-pep-ink/60">Pick your peptides. BAC water&apos;s on us.</p>
+            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Featured peptides</h2>
+          </RevealItem>
+          <RevealItem>
+            <p className="mx-auto mt-3 max-w-lg text-pep-ink/60">Every lot third-party tested with a COA. Free BAC water with every order. For research use only.</p>
           </RevealItem>
         </Reveal>
 
         <motion.ul
-          className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "0px 0px -10% 0px" }}
@@ -41,7 +44,7 @@ export function Store({ compact = false }: { compact?: boolean }) {
           <>
             <h3 className="mb-4 mt-14 font-display text-2xl font-semibold text-pep-ink">More from the lab</h3>
             <motion.ul
-              className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4"
+              className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3"
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: "0px 0px -10% 0px" }}

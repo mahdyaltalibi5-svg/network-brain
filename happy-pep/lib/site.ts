@@ -20,6 +20,13 @@ export const site = {
     { min: 2, off: 0.1 },
     { min: 3, off: 0.15 },
   ],
+  // Retail value shown (struck through) on the free BAC water promise card.
+  bacWaterValue: 12,
+  // Optional contact details for the footer. Empty strings are hidden.
+  phone: "",
+  supportHours: "",
+  // Your public review pages. Empty hides the "Review us" buttons.
+  reviewLinks: { google: "", trustpilot: "" },
   // Optional founder block on /about. Leave name empty to hide it.
   founder: { name: "", role: "Founder", photo: "", quote: "" },
   // Email signup form action URL (Klaviyo, Mailchimp, etc.). Empty hides the signup.

@@ -27,21 +27,21 @@ export function ProductCard({ product }: { product: Product }) {
             <span className="absolute left-2 top-2 rounded-full bg-pep-mint px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-pep-blue sm:text-[11px]">
               + Free BAC water
             </span>
-            {product.badge && (
-              <span className="absolute right-2 top-2 rounded-full bg-white text-pep-blue px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-[11px]">
-                {product.badge}
+            {(product.badge || best?.label === size) && (
+              <span className="absolute bottom-2 left-2 rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-pep-blue sm:text-[11px]">
+                {product.badge ?? "★ Best value"}
               </span>
             )}
           </div>
-          <h3 className="mt-3 font-display text-lg font-semibold leading-tight text-pep-ink sm:text-xl">{product.name}</h3>
-          <p className="truncate text-xs text-pep-ink/50">{product.kind}</p>
+          <p className="mt-3 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-pep-blue sm:text-[11px]">{product.kind}</p>
+          <h3 className="mt-0.5 font-display text-lg font-semibold leading-tight text-pep-ink sm:text-xl">{product.name}</h3>
         </Link>
 
         <div className="mt-3 flex flex-1 flex-col justify-end gap-3">
           <SizePills small sizes={product.sizes} value={size} onChange={setSize} />
           <div className="flex items-baseline justify-between gap-2">
+            <span className="text-[11px] text-pep-ink/50 sm:text-xs">Purity ≥99%</span>
             <span className="font-display text-xl font-semibold text-pep-blue">{money(current.price)}</span>
-            {best?.label === size && <span className="text-[11px] font-semibold text-pep-blue/80">★ Best value</span>}
           </div>
           <AddToCart slug={product.slug} size={size} disabled={!current.inStock} />
         </div>

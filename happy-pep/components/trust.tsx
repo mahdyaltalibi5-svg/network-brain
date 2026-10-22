@@ -8,42 +8,77 @@ import { Smile } from "./smile";
 import { reviews } from "@/lib/reviews";
 import { site } from "@/lib/site";
 
-export function Tested() {
+const ICONS = {
+  tag: "M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9Zm5-5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z",
+  flask: "M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3M7 15h10",
+  shield: "M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3Zm-3.5 9 2.5 2.5 5-5",
+  doc: "M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Zm0 0v5h5M9 14l2 2 4-4",
+  bolt: "M13 2 4 14h7l-1 8 9-12h-7l1-8Z",
+  chat: "M4 5h16v11H8l-4 4V5Zm4 5h8M8 13h5",
+};
+
+const WHY: { icon: keyof typeof ICONS; title: string; body: string }[] = [
+  { icon: "tag", title: "Simple pricing", body: "The price you see is the price. Stack discounts and free shipping apply on their own, no codes to hunt for." },
+  { icon: "flask", title: "99%+ purity", body: "Every lot is checked by HPLC for purity and mass spec for identity before it ships." },
+  { icon: "shield", title: "Third-party tested", body: "Testing is done by independent labs, not by us, so the results are worth something." },
+  { icon: "doc", title: "COA on every lot", body: "Each product links to its batch certificate. Lot number on the vial, results one tap away." },
+  { icon: "bolt", title: "Same-day in Utah", body: `Order before ${site.cutoffHour} PM MT and it's at your door today in our Utah zones. Everywhere else ships same day.` },
+  { icon: "chat", title: "Real human support", body: "Questions about an order or a lot get answered by a person who knows the products." },
+];
+
+function Icon({ d }: { d: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d={d} />
+    </svg>
+  );
+}
+
+// "Why Happy Pep": six reasons, icon cards.
+export function WhyUs() {
   return (
     <section className="bg-white py-20">
-      <Reveal className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 md:grid-cols-2">
-        <RevealItem>
-          <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-pep-blue">Quality</p>
-          <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Tested. Every batch.</h2>
-          <p className="mt-4 max-w-md text-lg text-pep-ink/70">
-            Independent third-party labs check every lot by HPLC and mass spec. Each product links straight to its batch COA.
-          </p>
-          <Link href="/coas" className="group mt-6 inline-flex flex-col font-display text-lg font-semibold text-pep-blue">
-            See the COAs →
-            <Smile className="w-16 opacity-0 transition-opacity group-hover:opacity-100" width={10} />
-          </Link>
-        </RevealItem>
-        <RevealItem className="grid grid-cols-3 gap-3">
-          {[
-            { big: "99%+", small: "HPLC purity" },
-            { big: "MS", small: "identity confirmed" },
-            { big: "1:1", small: "COA per lot" },
-          ].map((s) => (
-            <div key={s.small} className="rounded-3xl bg-pep-cloud p-4 text-center sm:p-6">
-              <p className="font-display text-3xl font-semibold text-pep-blue sm:text-4xl">{s.big}</p>
-              <p className="mt-1 text-xs text-pep-ink/60 sm:text-sm">{s.small}</p>
-            </div>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <Reveal className="text-center">
+          <RevealItem>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Why Happy Pep</p>
+          </RevealItem>
+          <RevealItem>
+            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">
+              Proof, not promises<span className="text-pep-mint">.</span>
+            </h2>
+          </RevealItem>
+          <RevealItem>
+            <p className="mx-auto mt-3 max-w-xl text-pep-ink/65">Independent testing, published results and fast local fulfillment, on every order.</p>
+          </RevealItem>
+        </Reveal>
+        <Reveal as="ul" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {WHY.map((w) => (
+            <RevealItem as="li" key={w.title} className="rounded-3xl bg-pep-cloud p-7 text-center">
+              <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-pep-blue text-pep-mint">
+                <Icon d={ICONS[w.icon]} />
+              </span>
+              <h3 className="mt-5 font-display text-xl font-semibold text-pep-ink">{w.title}</h3>
+              <Smile className="mx-auto mt-1 w-8" width={12} />
+              <p className="mt-2 text-sm leading-relaxed text-pep-ink/65">{w.body}</p>
+            </RevealItem>
           ))}
-        </RevealItem>
-      </Reveal>
+        </Reveal>
+        <p className="mt-8 text-center">
+          <Link href="/coas" className="font-display text-lg font-semibold text-pep-blue underline-offset-4 hover:underline">
+            See every COA →
+          </Link>
+        </p>
+      </div>
     </section>
   );
 }
 
 const PROMISES = [
-  { icon: "⚡", title: "Same-day Utah", terms: `Order before ${site.cutoffHour} PM MT, Mon–Fri, and it's at your door today.` },
-  { icon: "📦", title: "5 days or free shipping", terms: "Anywhere in the lower 48, 5 business days from ship, or we refund your shipping." },
-  { icon: "💧", title: "Free BAC water", terms: "Bacteriostatic water comes in every order. No code, no minimum." },
+  { tag: "Every order", title: "Free BAC Water", was: `$${site.bacWaterValue} value`, big: "FREE", body: "Bacteriostatic water in every box. No code, no minimum." },
+  { tag: `Orders $${site.freeShippingMin}+`, title: "Free Shipping", was: `$${site.shippingRate} value`, big: "FREE", body: `Free over $${site.freeShippingMin}. Flat $${site.shippingRate} below that.` },
+  { tag: "Utah zones", title: "Same-Day Delivery", was: `Order by ${site.cutoffHour} PM MT`, big: "TODAY", body: "At your door the same day, Monday to Friday." },
+  { tag: "Guaranteed", title: `Arrives in ${site.guaranteeDays} Days`, was: "or shipping's", big: "FREE", body: `Anywhere in the lower 48. Late? We refund your shipping.` },
 ];
 
 export function OurPromise() {
@@ -52,20 +87,23 @@ export function OurPromise() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal className="text-center">
           <RevealItem>
-            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">Our promise</h2>
+            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+              The Happy Pep <span className="text-pep-mint">Promise</span>
+            </h2>
           </RevealItem>
           <RevealItem>
-            <Smile className="mx-auto mt-2 w-20" width={10} />
+            <p className="mx-auto mt-3 max-w-xl text-white/75">Same-day in Utah, {site.guaranteeDays} days everywhere else, and free BAC water in every box.</p>
           </RevealItem>
         </Reveal>
-        <Reveal as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
+        <Reveal as="ul" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {PROMISES.map((p) => (
-            <RevealItem as="li" key={p.title} className="rounded-3xl bg-white/10 p-7 ring-1 ring-white/15">
-              <span className="grid size-14 place-items-center rounded-2xl bg-pep-mint text-2xl" aria-hidden>
-                {p.icon}
-              </span>
-              <h3 className="mt-5 font-display text-2xl font-semibold">{p.title}</h3>
-              <p className="mt-2 text-white/75">{p.terms}</p>
+            <RevealItem as="li" key={p.title} className="flex flex-col items-center rounded-3xl bg-white p-7 text-center text-pep-ink">
+              <span className="rounded-full bg-pep-mint/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-pep-blue">● {p.tag}</span>
+              <h3 className="mt-4 font-display text-2xl font-semibold leading-tight">{p.title}</h3>
+              <p className={`mt-3 text-sm text-pep-ink/45 ${p.was.includes("value") ? "line-through" : ""}`}>{p.was}</p>
+              <p className="font-display text-5xl font-semibold leading-none text-pep-blue">{p.big}</p>
+              <Smile className="mt-2 w-14" width={10} />
+              <p className="mt-3 text-sm text-pep-ink/65">{p.body}</p>
             </RevealItem>
           ))}
         </Reveal>
@@ -79,29 +117,58 @@ export function OurPromise() {
   );
 }
 
-// Hidden until real reviews are added in lib/reviews.ts.
+function ReviewButtons() {
+  const { google, trustpilot } = site.reviewLinks;
+  if (!google && !trustpilot) return null;
+  return (
+    <div className="mt-10 text-center">
+      <p className="font-semibold text-pep-ink">Had a good experience?</p>
+      <div className="mt-3 flex flex-wrap justify-center gap-3">
+        {google && (
+          <a href={google} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
+            ★ Review us on Google ↗
+          </a>
+        )}
+        {trustpilot && (
+          <a href={trustpilot} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue">
+            ★ Trustpilot ↗
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Real reviews only (lib/reviews.ts). Hidden until there's something to show.
 export function Reviews() {
-  if (reviews.length === 0) return null;
+  const hasLinks = Boolean(site.reviewLinks.google || site.reviewLinks.trustpilot);
+  if (reviews.length === 0 && !hasLinks) return null;
   return (
     <section className="bg-pep-cloud py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-center font-display text-4xl font-semibold tracking-tight text-pep-ink">Happy customers</h2>
-        <Reveal as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
-          {reviews.map((r) => (
-            <RevealItem as="li" key={r.url + r.name} className="rounded-3xl bg-white p-6">
-              <p className="text-pep-mint" aria-label={`${r.rating} out of 5 stars`}>
-                {"★".repeat(r.rating)}
-              </p>
-              <p className="mt-3 text-pep-ink/80">“{r.text}”</p>
-              <p className="mt-4 text-sm font-semibold text-pep-ink">
-                {r.name} ·{" "}
-                <a href={r.url} target="_blank" rel="noreferrer" className="text-pep-blue underline underline-offset-2">
-                  {r.source}
-                </a>
-              </p>
-            </RevealItem>
-          ))}
-        </Reveal>
+        {reviews.length > 0 && (
+          <>
+            <p className="text-center font-display text-xs font-semibold uppercase tracking-[0.3em] text-pep-blue">Reviews</p>
+            <h2 className="mt-2 text-center font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">The Happy Pep experience</h2>
+            <Reveal as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
+              {reviews.map((r) => (
+                <RevealItem as="li" key={r.url + r.name} className="flex flex-col rounded-3xl bg-white p-6">
+                  <p className="text-pep-blue" aria-label={`${r.rating} out of 5 stars`}>
+                    {"★".repeat(r.rating)}
+                  </p>
+                  <p className="mt-3 flex-1 text-pep-ink/80">“{r.text}”</p>
+                  <p className="mt-4 text-sm font-semibold text-pep-ink">
+                    {r.name} ·{" "}
+                    <a href={r.url} target="_blank" rel="noreferrer" className="text-pep-blue underline underline-offset-2">
+                      {r.source}
+                    </a>
+                  </p>
+                </RevealItem>
+              ))}
+            </Reveal>
+          </>
+        )}
+        <ReviewButtons />
       </div>
     </section>
   );
@@ -127,7 +194,7 @@ const FAQS = [
 export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section className="bg-white py-20">
+    <section id="faq" className="scroll-mt-28 bg-white py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <h2 className="text-center font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Questions?</h2>
         <Reveal as="ul" className="mt-10 space-y-3">

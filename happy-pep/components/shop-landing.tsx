@@ -6,7 +6,7 @@ import { Countdown } from "./countdown";
 import { ZipChecker } from "./delivery";
 import { Store } from "./store";
 import { HowItWorks, TrustMarquee } from "./sections";
-import { Faq, OurPromise, Reviews } from "./trust";
+import { Faq, OurPromise, Reviews, WhyUs } from "./trust";
 import { pct } from "@/lib/pricing";
 import { site } from "@/lib/site";
 
@@ -54,6 +54,7 @@ export function ShopLanding({ city }: { city?: string }) {
       <Store compact />
       <HowItWorks />
       <OurPromise />
+      <WhyUs />
       <Reviews />
       <Faq />
     </>
