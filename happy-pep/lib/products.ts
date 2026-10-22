@@ -1,34 +1,43 @@
 // The catalog. Keep descriptions factual (identity, form, purity): no health,
 // dosing or results claims. Photos live in public/products (square, 1000px).
 
-export type Size = { label: string; price: number; inStock: boolean; image?: string };
+// Certificate of Analysis for one batch. Fill these in from the lab report.
+export type Coa = { batch: string; tested: string; purity: string; lab: string; url: string };
+
+export type Size = {
+  label: string;
+  price: number;
+  inStock: boolean;
+  image?: string;
+  // This size's current batch COA. Omit until the real report is in.
+  coa?: Coa;
+};
+
+export const CATEGORIES = ["GLP analogs", "Short-chain peptides", "Peptide analogs", "Copper peptides"] as const;
 
 export type Product = {
   slug: string;
   name: string;
   kind: string;
+  category: (typeof CATEGORIES)[number];
   description: string;
   sizes: Size[];
   // Product photo (square). A size's own image wins when that size is selected.
   image?: string;
-  lot: string;
-  // Batch Certificate of Analysis. Leave fields empty until the real COA is in.
-  coa: { url: string; lab: string; date: string; purity: string };
   // Optional card badge, e.g. "Bestseller". Only use it if it's true.
   badge?: string;
   // Cap color for the illustrated fallback vial (used when there's no photo).
   cap: string;
 };
 
-const NO_COA = { url: "", lab: "", date: "", purity: "" };
-
 const desc = (form = "Research peptide") =>
-  `${form} supplied as a lyophilized powder in a sealed vial. Third-party tested for purity (HPLC) and identity (mass spec); batch COA linked above.`;
+  `${form} supplied as a lyophilized powder in a sealed vial. Third-party tested for purity (HPLC) and identity (mass spec), with a batch Certificate of Analysis.`;
 
 // PRICES ARE PLACEHOLDERS: set your real prices before launch.
 export const products: Product[] = [
   {
     slug: "rt",
+    category: "GLP analogs",
     name: "RT",
     kind: "Research peptide",
     description: desc(),
@@ -37,66 +46,61 @@ export const products: Product[] = [
       { label: "20mg", price: 169, inStock: true, image: "/products/rt-20mg.webp" },
     ],
     image: "/products/rt-10mg.webp",
-    lot: "HP-RT-2410",
-    coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
     slug: "tr",
+    category: "GLP analogs",
     name: "TR",
     kind: "Research peptide",
     description: desc(),
     sizes: [{ label: "10mg", price: 79, inStock: true }],
     image: "/products/tr-10mg.webp",
-    lot: "HP-TR-2410",
-    coa: NO_COA,
     cap: "#0125C4",
   },
   {
     slug: "glp-1",
+    category: "GLP analogs",
     name: "GLP-1",
     kind: "Research peptide",
     description: desc(),
     sizes: [{ label: "5mg", price: 59, inStock: true }],
     image: "/products/glp-1-5mg.webp",
-    lot: "HP-GLP-2410",
-    coa: NO_COA,
     cap: "#5B7BFF",
   },
   {
     slug: "bc",
+    category: "Short-chain peptides",
     name: "BC",
     kind: "Research peptide",
     description: desc(),
     sizes: [{ label: "10mg", price: 59, inStock: true }],
     image: "/products/bc-10mg.webp",
-    lot: "HP-BC-2410",
-    coa: NO_COA,
     cap: "#3EF5B9",
   },
   {
     slug: "tesa",
+    category: "Peptide analogs",
     name: "TESA",
     kind: "Research peptide",
     description: desc(),
     sizes: [{ label: "10mg", price: 119, inStock: true }],
     image: "/products/tesa-10mg.webp",
-    lot: "HP-TESA-2410",
-    coa: NO_COA,
     cap: "#0125C4",
   },
   {
     slug: "ghk-cu",
+    category: "Copper peptides",
     name: "GHK-Cu",
     kind: "Copper tripeptide",
     description: desc("Copper-complexed tripeptide"),
     sizes: [{ label: "10mg", price: 39, inStock: true }],
     image: "/products/ghk-cu-10mg.webp",
-    lot: "HP-GHK-2410",
-    coa: NO_COA,
     cap: "#5B7BFF",
   },
 ];
+
+export const coaFor = (p: Product, size: string) => p.sizes.find((s) => s.label === size)?.coa;
 
 export const imageFor = (p: Product, size?: string) => p.sizes.find((s) => s.label === size)?.image ?? p.image;
 

@@ -15,7 +15,7 @@ const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 // html[data-age="ok"], which hides the gate in CSS so it never flashes.
 export const gateScript = `try{var t=+localStorage.getItem("${KEY}");if((t&&Date.now()-t<${THIRTY_DAYS})||sessionStorage.getItem("${KEY}"))document.documentElement.dataset.age="ok"}catch(e){}`;
 
-const EXEMPT = ["/terms", "/privacy"];
+const EXEMPT = ["/terms", "/privacy", "/research-use"];
 
 const noop = () => () => {};
 

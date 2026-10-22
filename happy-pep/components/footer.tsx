@@ -11,13 +11,14 @@ const COLUMNS = [
       { href: "/shop", label: "All peptides" },
       { href: "/coas", label: "COAs" },
       { href: "/about", label: "About" },
+      { href: "/work-with-us", label: "Work with us" },
     ],
   },
   {
     title: "Support",
     links: [
       { href: "/contact", label: "Contact" },
-      { href: "/#faq", label: "FAQ" },
+      { href: "/faq", label: "FAQ" },
       { href: "/shipping", label: "Shipping" },
       { href: "/refunds", label: "Refunds" },
     ],
@@ -27,7 +28,8 @@ const COLUMNS = [
     links: [
       { href: "/terms", label: "Terms of Service" },
       { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Research Use Only" },
+      { href: "/refunds", label: "Refund Policy" },
+      { href: "/research-use", label: "Research Use Only" },
     ],
   },
 ];
@@ -95,8 +97,21 @@ export function Footer() {
             ))}
           </ul>
         </div>
-        <p className="mt-10 border-t border-white/10 pt-6 text-xs leading-relaxed text-white/50">{disclaimer}</p>
-        <p className="mt-3 text-xs text-white/40">© Happy Pep</p>
+        <div className="mt-10 border-t border-white/10 pt-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-pep-mint">FDA &amp; regulatory notice</p>
+          <div className="mt-3 max-w-3xl space-y-2 text-xs leading-relaxed text-white/50">
+            <p>{disclaimer}</p>
+            <p>
+              Happy Pep sells research chemicals. We are not a pharmacy or compounding facility, and nothing on this site is medical advice. Products are
+              not drugs, foods, supplements or cosmetics.
+            </p>
+            <p>
+              By purchasing, you confirm you are 21 or older, that products will be used only for lawful in-vitro research, and that you are responsible for
+              complying with the laws where you live. Products may not be available in every jurisdiction.
+            </p>
+          </div>
+        </div>
+        <p className="mt-6 text-xs text-white/40">© Happy Pep. All rights reserved.</p>
       </div>
     </footer>
   );

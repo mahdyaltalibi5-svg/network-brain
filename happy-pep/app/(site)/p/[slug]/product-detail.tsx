@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AddToCart, SizePills } from "@/components/add-to-cart";
 import { Qty } from "@/components/cart-drawer";
-import { CoaButton } from "@/components/coa-modal";
+import { CoaCards } from "@/components/coa";
+import { WhyUs } from "@/components/trust";
 import { DeliveryPromise } from "@/components/delivery";
 import { ProductCard } from "@/components/product-card";
 import { spring } from "@/components/reveal";
@@ -44,6 +45,40 @@ function StickyBuyBar({ product, size, qty, visible }: { product: Product; size:
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+// Volume tiers: tap one to set the quantity. The discount applies cart-wide.
+function TierCards({ qty, onPick }: { qty: number; onPick: (n: number) => void }) {
+  const tiers = [{ min: 1, off: 0 }, ...site.stackTiers];
+  const activeIdx = tiers.reduce((a, t, i) => (qty >= t.min ? i : a), 0);
+  return (
+    <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Quantity discount">
+      {tiers.map((t, i) => {
+        const active = i === activeIdx;
+        const best = i === tiers.length - 1;
+        return (
+          <button
+            key={t.min}
+            role="radio"
+            aria-checked={active}
+            onClick={() => onPick(t.min)}
+            className={`relative rounded-2xl px-2 py-3 text-center transition-colors ${active ? "bg-pep-blue text-white" : "bg-white text-pep-ink ring-1 ring-pep-ink/10 hover:ring-pep-blue"}`}
+          >
+            {best && (
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-pep-mint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-pep-blue">
+                ★ Best value
+              </span>
+            )}
+            <span className="block text-sm font-semibold">
+              {t.min}
+              {best ? "+" : ""} vial{t.min > 1 ? "s" : ""}
+            </span>
+            <span className={`block font-display text-lg font-semibold ${active ? "text-pep-mint" : "text-pep-blue"}`}>{t.off ? `${pct(t.off)} off` : "Standard"}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -90,18 +125,17 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.06 }}>
             <Link href="/shop" className="text-sm font-semibold text-pep-blue">
-              ← Back to shop
+              ← All peptides
             </Link>
-            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.15em] text-pep-ink/50">{product.kind}</p>
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-pep-blue">{product.category}</p>
             <h1 className="mt-1 font-display text-5xl font-semibold tracking-tight text-pep-ink">{product.name}</h1>
 
-            <div className="mt-4 flex items-baseline gap-3">
-              <p className="font-display text-3xl font-semibold text-pep-blue">{money(current.price)}</p>
+            <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="font-display text-4xl font-semibold text-pep-blue">{money(current.price)}</p>
               {unit && <p className="text-sm text-pep-ink/50">{money(Math.round(unit * 100) / 100)}/mg</p>}
+              <p className="text-sm text-pep-ink/50">· Purity ≥99%</p>
             </div>
-            <div className="mt-1">
-              <CoaButton product={product} />
-            </div>
+            <DeliveryPromise className="mt-3" />
 
             <div className="mt-6">
               <p className="mb-2 text-sm font-semibold text-pep-ink/70">Size</p>
@@ -114,41 +148,50 @@ export function ProductDetail({ product }: { product: Product }) {
               )}
             </div>
 
-            <div ref={buyRef} className="mt-6 flex items-center gap-3">
+            <div className="mt-6">
+              <p className="mb-3 text-sm font-semibold text-pep-ink/70">Stack &amp; save <span className="font-normal text-pep-ink/45">· applies to your whole cart</span></p>
+              <TierCards qty={qty} onPick={setQty} />
+            </div>
+
+            <div ref={buyRef} className="mt-4 flex items-center gap-3">
               <Qty value={qty} onChange={(n) => setQty(Math.max(1, n))} label={product.name} />
               <div className="flex-1">
                 <AddToCart slug={product.slug} size={size} qty={qty} big openCart disabled={!current.inStock} />
               </div>
             </div>
 
-            <DeliveryPromise className="mt-4" />
+            <Link href="/work-with-us" className="mt-3 flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-pep-blue ring-1 ring-pep-blue/25 hover:bg-pep-blue/5">
+              Bulk &amp; lab orders · mix &amp; match · ask for pricing →
+            </Link>
 
-            <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm text-pep-ink">
-              <span aria-hidden>🧪</span>
-              <span>
-                <b>Stack &amp; save:</b> {firstTier.min}+ vials = {pct(firstTier.off)} off · free shipping over {money(site.freeShippingMin)}
-              </span>
-            </div>
-
-            <ul className="mt-3 grid grid-cols-3 gap-2 text-center text-xs font-semibold text-pep-ink/70">
+            <ul className="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-semibold text-pep-ink/70">
               <li className="rounded-2xl bg-white px-2 py-3">💧 Free BAC water</li>
               <li className="rounded-2xl bg-white px-2 py-3">🧪 COA every lot</li>
               <li className="rounded-2xl bg-white px-2 py-3">🔒 Secure checkout</li>
             </ul>
 
-            <p className="mt-8 leading-relaxed text-pep-ink/75">{product.description}</p>
-            <p className="mt-4 rounded-2xl border border-pep-ink/10 px-4 py-3 text-sm font-semibold text-pep-ink/70">
-              For research use only. Not for human consumption.
-            </p>
+            <div className="mt-6 rounded-3xl bg-white p-5 ring-1 ring-pep-ink/8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pep-blue">Research overview</p>
+              <p className="mt-2 leading-relaxed text-pep-ink/75">{product.description}</p>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-pep-ink/50">For in-vitro research use only. Not for human or veterinary use.</p>
+            </div>
+
+            <div className="mt-6">
+              <CoaCards product={product} />
+            </div>
           </motion.div>
         </div>
       </section>
 
+      <WhyUs />
+
       {related.length > 0 && (
-        <section className="bg-white py-14">
+        <section className="bg-pep-cloud py-14">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <h2 className="font-display text-3xl font-semibold text-pep-ink">Stack it &amp; save {pct(firstTier.off)}</h2>
-            <p className="mt-1 text-pep-ink/60">Add any {firstTier.min - 1} more vial{firstTier.min > 2 ? "s" : ""} to your order and the discount applies automatically.</p>
+            <h2 className="font-display text-3xl font-semibold text-pep-ink">Frequently bought together</h2>
+            <p className="mt-1 text-pep-ink/60">
+              Add {firstTier.min - 1} more vial{firstTier.min > 2 ? "s" : ""} and {pct(firstTier.off)} comes off your whole cart automatically.
+            </p>
             <motion.ul
               className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4"
               initial="hidden"
@@ -160,6 +203,10 @@ export function ProductDetail({ product }: { product: Product }) {
                 <ProductCard key={p.slug} product={p} />
               ))}
             </motion.ul>
+            <p className="mt-10 border-t border-pep-ink/10 pt-6 text-center text-xs text-pep-ink/50">
+              <b className="text-pep-blue">For research use only.</b> This product is intended solely for in-vitro laboratory research. It is not a drug, food or
+              cosmetic and must not be used as such.
+            </p>
           </div>
         </section>
       )}

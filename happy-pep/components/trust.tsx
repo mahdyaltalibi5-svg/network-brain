@@ -7,6 +7,7 @@ import { Reveal, RevealItem } from "./reveal";
 import { Smile } from "./smile";
 import { reviews } from "@/lib/reviews";
 import { site } from "@/lib/site";
+import { TOP_FAQ, type FaqItem } from "@/lib/faq";
 
 const ICONS = {
   tag: "M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9Zm5-5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z",
@@ -174,65 +175,61 @@ export function Reviews() {
   );
 }
 
-const FAQS = [
-  {
-    q: "How does same-day Utah delivery work?",
-    a: `Order before ${site.cutoffHour}:00 PM Mountain Time, Monday to Friday, and we deliver the same day in ${site.sameDayZones.join(", ")}.`,
-  },
-  {
-    q: "What's the 5-day guarantee?",
-    a: "Everywhere else in the lower 48, your order arrives within 5 business days of shipping, or we refund your shipping cost. Excludes AK, HI and PO boxes.",
-  },
-  { q: "Is BAC water really free?", a: "Yes. Bacteriostatic water is added to every order automatically at $0." },
-  { q: "Where can I find test results?", a: "Every product page links to its batch COA, and all of them live on the COAs page." },
-  {
-    q: "Who can buy?",
-    a: "You must be 21 or older. All products are sold for laboratory research use only and are not for human or veterinary use.",
-  },
-];
+export function FaqList({ items, firstOpen = true }: { items: FaqItem[]; firstOpen?: boolean }) {
+  const [open, setOpen] = useState<number | null>(firstOpen ? 0 : null);
+  return (
+    <Reveal as="ul" className="space-y-3">
+      {items.map((f, i) => {
+        const isOpen = open === i;
+        return (
+          <RevealItem as="li" key={f.q} className="overflow-hidden rounded-3xl bg-pep-cloud">
+            <button
+              onClick={() => setOpen(isOpen ? null : i)}
+              aria-expanded={isOpen}
+              className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left font-display text-lg font-semibold text-pep-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-pep-mint/60"
+            >
+              {f.q}
+              <motion.span
+                animate={{ rotate: isOpen ? 45 : 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="grid size-8 shrink-0 place-items-center rounded-full bg-pep-blue text-xl leading-none text-white"
+                aria-hidden
+              >
+                +
+              </motion.span>
+            </button>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                >
+                  <p className="px-6 pb-6 text-pep-ink/70">{f.a}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </RevealItem>
+        );
+      })}
+    </Reveal>
+  );
+}
 
 export function Faq() {
-  const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="scroll-mt-28 bg-white py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <h2 className="text-center font-display text-4xl font-semibold tracking-tight text-pep-ink sm:text-5xl">Questions?</h2>
-        <Reveal as="ul" className="mt-10 space-y-3">
-          {FAQS.map((f, i) => {
-            const isOpen = open === i;
-            return (
-              <RevealItem as="li" key={f.q} className="overflow-hidden rounded-3xl bg-pep-cloud">
-                <button
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left font-display text-lg font-semibold text-pep-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-pep-mint/60"
-                >
-                  {f.q}
-                  <motion.span
-                    animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className="grid size-8 shrink-0 place-items-center rounded-full bg-pep-blue text-xl leading-none text-white"
-                    aria-hidden
-                  >
-                    +
-                  </motion.span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 260, damping: 30 }}
-                    >
-                      <p className="px-6 pb-6 text-pep-ink/70">{f.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </RevealItem>
-            );
-          })}
-        </Reveal>
+        <div className="mt-10">
+          <FaqList items={TOP_FAQ} />
+        </div>
+        <p className="mt-8 text-center">
+          <Link href="/faq" className="font-display text-lg font-semibold text-pep-blue underline-offset-4 hover:underline">
+            All questions →
+          </Link>
+        </p>
       </div>
     </section>
   );
