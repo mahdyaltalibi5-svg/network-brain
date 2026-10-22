@@ -930,12 +930,13 @@ tl.to(state, { frame: COUNT - 1, duration: 10, ease: 'none' }, V0)
   .to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
   .to('.scroll-cue', { opacity: 0, duration: .3 }, 0);
 const drift = (to, t) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, t);
-drift(1, at(3.4)); drift(-1, at(4.9)); drift(1, at(6.6)); drift(-1, at(8.4));
-panel('shirt', at(4.0), 1.1);
-panel('vest', at(5.3), 1.0);
-panel('jacket', at(7.2), 1.3);
+// Captions follow the clip: shirt forms ~3.7s, waistcoat ~5s, jacket pieces fly in ~6-8s, suit settles ~8.5s.
+drift(1, at(3.2)); drift(-1, at(4.6)); drift(1, at(5.8)); drift(-1, at(7.8));
+panel('shirt', at(3.7), 1.0);
+panel('vest', at(5.0), .8);
+panel('jacket', at(6.1), 1.4);
 // The film ends on the finished suit; a short hold, then the pin releases and the site follows.
-panel('complete', at(8.6));
+panel('complete', at(8.4));
 tl.to({}, { duration: .2 }, at(10.6));
 
 // Nav turns solid once past the film
