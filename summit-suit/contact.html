@@ -30,10 +30,10 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jost.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="alternate" type="application/rss+xml" title="Summit Customs Journal" href="/feed.xml">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -78,7 +78,7 @@
 <header class="nav" id="nav">
   <a class="logo" href="/" aria-label="Summit Customs home"><img src="/img/mark.png" width="260" height="116" alt="Summit Customs mountain logo"><span>SUMMIT<span class="long"> CUSTOMS</span></span></a>
   <nav class="nav-r" aria-label="Main">
-    <div class="dd"><a class="lnk" href="/services">Garments</a><div class="dd-menu"><a href="/suits">Suits</a><a href="/sport-coats">Sport Coats</a><a href="/tuxedos">Tuxedos</a><a href="/shoes">Footwear</a><a href="/fabrics">Fabrics</a><a href="/services">All Services</a></div></div><a class="lnk" href="/collection">Collection</a><a class="lnk" href="/capsule-wardrobe">Capsules</a><a class="lnk" href="/gallery">Gallery</a><a class="lnk" href="/about">About</a><a class="lnk" href="/contact" aria-current="page">Contact</a>
+    <div class="dd"><a class="lnk" href="/services">Garments</a><div class="dd-menu"><a href="/suits">Suits</a><a href="/sport-coats">Sport Coats</a><a href="/tuxedos">Tuxedos</a><a href="/wedding-suits">Wedding Suits</a><a href="/shoes">Footwear</a><a href="/fabrics">Fabrics</a><a href="/services">All Services</a></div></div><a class="lnk" href="/collection">Collection</a><a class="lnk" href="/capsule-wardrobe">Capsules</a><a class="lnk" href="/journal">Journal</a><div class="dd"><a class="lnk" href="/about">About</a><div class="dd-menu"><a href="/about">About Kobe</a><a href="/image-consulting">Image Consulting</a><a href="/gallery">Gallery</a><a href="/service-areas">Areas We Serve</a><a href="/faq">FAQ</a></div></div><a class="lnk" href="/contact" aria-current="page">Contact</a>
     <a class="btn" href="https://summitcustomsuits.com/book">Book<span class="long"> a Consultation</span></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i></button>
   </nav>
@@ -89,10 +89,12 @@
     <a href="/suits">Suits</a>
     <a href="/sport-coats">Sport Coats</a>
     <a href="/tuxedos">Tuxedos</a>
+    <a href="/wedding-suits">Wedding Suits</a>
     <a href="/shoes">Footwear</a>
     <a href="/fabrics">Fabrics</a>
     <a href="/collection">Collection</a>
     <a href="/capsule-wardrobe">Capsule Wardrobe</a>
+    <a href="/journal">Journal</a>
     <a href="/gallery">Gallery</a>
     <a href="/about">About Kobe</a>
     <a href="/contact" aria-current="page">Contact</a>
@@ -155,6 +157,7 @@
       <li><a href="/suits">Bespoke Suits</a></li>
       <li><a href="/sport-coats">Sport Coats</a></li>
       <li><a href="/tuxedos">Tuxedos</a></li>
+      <li><a href="/wedding-suits">Wedding Suits</a></li>
       <li><a href="/shoes">Footwear</a></li>
       <li><a href="/fabrics">Fabrics</a></li>
       <li><a href="/collection">The Collection</a></li>
@@ -164,10 +167,13 @@
     <h2>Atelier</h2>
     <ul>
       <li><a href="/services">Services</a></li>
+      <li><a href="/image-consulting">Image Consulting</a></li>
       <li><a href="/capsule-wardrobe">Capsule Wardrobes</a></li>
+      <li><a href="/journal">Journal</a></li>
       <li><a href="/gallery">Gallery</a></li>
       <li><a href="/about">About Kobe</a></li>
-      <li><a href="https://summitcustomsuits.com/book">Book</a></li>
+      <li><a href="/service-areas">Areas We Serve</a></li>
+      <li><a href="/faq">FAQ</a></li>
       <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>

@@ -15,7 +15,7 @@ if (!document.getElementById('film')) {
 }
 
 // Headings rise line by line inside their reveal blocks
-document.querySelectorAll('.rv .h2, .rv .quote, .phero h1').forEach(h => {
+document.querySelectorAll('.rv .h2, .rv .quote').forEach(h => {
   h.innerHTML = h.innerHTML.split(/<br\s*\/?>/i).map(l => `<span class="ln"><span>${l}</span></span>`).join('');
 });
 
@@ -76,8 +76,6 @@ if (lb) {
 // Section reveals
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
-// Page heroes reveal straight away
-requestAnimationFrame(() => document.querySelectorAll('.phero').forEach(el => el.classList.add('in')));
 
 // Closing title, letter by letter
 const title = document.getElementById('ctaTitle');

@@ -4,10 +4,12 @@ shared header, menu, footer and overlays in sync with them.
 
 Run:  python3 summit-suit-src/build.py
 """
-import json, os, re, html
+import json, os, re, html, sys
 from urllib.parse import quote
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, ROOT)
+from content import ARTICLES, AREAS, FAQ
 OUT = os.path.join(ROOT, '..', 'summit-suit')
 SITE = 'https://summitcustomsuits.com'
 ASSET_HOST = 'https://summit-customs-suits.vercel.app'  # where og-image etc. live until the domain moves
@@ -23,18 +25,20 @@ def book(occasion=None, notes=None):
     return BOOK + ('?' + '&'.join(q) if q else '')
 
 # ------------------------------------------------------------------ shared chrome
-NAV = [('Garments', '/services', [('Suits', '/suits'), ('Sport Coats', '/sport-coats'), ('Tuxedos', '/tuxedos'),
+NAV = [('Garments', '/services', [('Suits', '/suits'), ('Sport Coats', '/sport-coats'), ('Tuxedos', '/tuxedos'), ('Wedding Suits', '/wedding-suits'),
                                   ('Footwear', '/shoes'), ('Fabrics', '/fabrics'), ('All Services', '/services')]),
-       ('Collection', '/collection', None), ('Capsules', '/capsule-wardrobe', None), ('Gallery', '/gallery', None),
-       ('About', '/about', None), ('Contact', '/contact', None)]
-MENU = [('Home', '/'), ('Suits', '/suits'), ('Sport Coats', '/sport-coats'), ('Tuxedos', '/tuxedos'), ('Footwear', '/shoes'),
-        ('Fabrics', '/fabrics'), ('Collection', '/collection'), ('Capsule Wardrobe', '/capsule-wardrobe'),
-        ('Gallery', '/gallery'), ('About Kobe', '/about'), ('Contact', '/contact')]
+       ('Collection', '/collection', None), ('Capsules', '/capsule-wardrobe', None), ('Journal', '/journal', None),
+       ('About', '/about', [('About Kobe', '/about'), ('Image Consulting', '/image-consulting'), ('Gallery', '/gallery'),
+                            ('Areas We Serve', '/service-areas'), ('FAQ', '/faq')]),
+       ('Contact', '/contact', None)]
+MENU = [('Home', '/'), ('Suits', '/suits'), ('Sport Coats', '/sport-coats'), ('Tuxedos', '/tuxedos'), ('Wedding Suits', '/wedding-suits'),
+        ('Footwear', '/shoes'), ('Fabrics', '/fabrics'), ('Collection', '/collection'), ('Capsule Wardrobe', '/capsule-wardrobe'),
+        ('Journal', '/journal'), ('Gallery', '/gallery'), ('About Kobe', '/about'), ('Contact', '/contact')]
 
 def header(active):
     items = []
     for label, href, sub in NAV:
-        cur = ' aria-current="page"' if active in ([href] + [h for _, h in (sub or [])]) else ''
+        cur = ' aria-current="page"' if active in ([href] + [h for _, h in (sub or [])]) or (href == '/journal' and active.startswith('/journal/')) else ''
         if sub:
             links = ''.join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for l, h in sub)
             items.append(f'<div class="dd"><a class="lnk" href="{href}"{cur}>{label}</a><div class="dd-menu">{links}</div></div>')
@@ -71,6 +75,7 @@ FOOTER = f'''<footer>
       <li><a href="/suits">Bespoke Suits</a></li>
       <li><a href="/sport-coats">Sport Coats</a></li>
       <li><a href="/tuxedos">Tuxedos</a></li>
+      <li><a href="/wedding-suits">Wedding Suits</a></li>
       <li><a href="/shoes">Footwear</a></li>
       <li><a href="/fabrics">Fabrics</a></li>
       <li><a href="/collection">The Collection</a></li>
@@ -80,10 +85,13 @@ FOOTER = f'''<footer>
     <h2>Atelier</h2>
     <ul>
       <li><a href="/services">Services</a></li>
+      <li><a href="/image-consulting">Image Consulting</a></li>
       <li><a href="/capsule-wardrobe">Capsule Wardrobes</a></li>
+      <li><a href="/journal">Journal</a></li>
       <li><a href="/gallery">Gallery</a></li>
       <li><a href="/about">About Kobe</a></li>
-      <li><a href="{BOOK}">Book</a></li>
+      <li><a href="/service-areas">Areas We Serve</a></li>
+      <li><a href="/faq">FAQ</a></li>
       <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>
@@ -120,7 +128,10 @@ SCRIPTS = '''<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsa
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="/assets/site.js"></script>'''
 
-def head(slug, title, desc, crumbs, schema=()):
+FONTS = '''<link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jost.woff2" as="font" type="font/woff2" crossorigin>'''
+
+def head(slug, title, desc, crumbs, schema=(), og_type='website', og_image=None):
     url = SITE + ('/' + slug if slug else '/')
     bc = {'@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': i + 1, 'name': n, 'item': SITE + h} for i, (n, h) in enumerate([('Home', '/')] + crumbs)]}
@@ -140,28 +151,26 @@ def head(slug, title, desc, crumbs, schema=()):
 <meta name="geo.placename" content="Salt Lake City">
 <meta name="geo.position" content="40.7645;-111.8879">
 <meta name="ICBM" content="40.7645, -111.8879">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="Summit Customs">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="{t}">
 <meta property="og:description" content="{d}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{ASSET_HOST}/og-image.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="{og_image or ASSET_HOST + '/og-image.jpg'}">
+{'' if og_image else '<meta property="og:image:width" content="1200">' + chr(10) + '<meta property="og:image:height" content="630">'}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">
 <meta name="twitter:description" content="{d}">
-<meta name="twitter:image" content="{ASSET_HOST}/og-image.jpg">
+<meta name="twitter:image" content="{og_image or ASSET_HOST + '/og-image.jpg'}">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+{FONTS}
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="alternate" type="application/rss+xml" title="Summit Customs Journal" href="/feed.xml">
 <script type="application/ld+json">
 {json.dumps(graph, indent=1, ensure_ascii=False)}
 </script>
@@ -171,10 +180,12 @@ def head(slug, title, desc, crumbs, schema=()):
 <a class="skip" href="#main">Skip to content</a>
 '''
 
-def page(slug, title, desc, crumbs, body, schema=(), extra_js=''):
+def page(slug, title, desc, crumbs, body, schema=(), extra_js='', **head_kw):
     active = '/' + slug
-    doc = head(slug, title, desc, crumbs, schema) + header(active) + '\n<main id="main">\n' + body + '\n</main>\n\n' + FOOTER + '\n\n' + SCRIPTS + '\n' + extra_js + '\n</body>\n</html>\n'
-    with open(os.path.join(OUT, (slug or 'index') + '.html'), 'w') as f:
+    doc = head(slug, title, desc, crumbs, schema, **head_kw) + header(active) + '\n<main id="main">\n' + body + '\n</main>\n\n' + FOOTER + '\n\n' + SCRIPTS + '\n' + extra_js + '\n</body>\n</html>\n'
+    path = os.path.join(OUT, (slug or 'index') + '.html')
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
         f.write(doc)
     return slug
 
@@ -620,7 +631,7 @@ groups_html = ''.join(f'''<section class="fgroup rv" aria-labelledby="fg{i}">
   </section>''' for i, (name, mill, codes) in enumerate(FAB_GROUPS))
 built.append(page('fabrics',
   'Suit Fabrics: 2026 Spring/Summer Cloth Catalog | Summit Customs',
-  'Browse the Summit Customs 2026 Spring/Summer suit fabric catalog: Marlane, Angelico and Olimpias cloths from premium Italian mills, available for custom suits in Salt Lake City.',
+  'Browse the Summit Customs 2026 Spring/Summer suit fabric catalog: Marlane, Angelico and Olimpias cloths from Italian mills, for custom suits in Salt Lake City.',
   [('Garments', '/services'), ('Fabrics', '/fabrics')],
   hero([('Garments', '/services'), ('Fabrics', '/fabrics')], '2026 Spring / Summer', 'Select your<br><em>cloth.</em>',
        'Italian contemporary cloths from a premium mill selection, available for your next suit. Browse the current catalog, then confirm your selection with Kobe during your consultation.',
@@ -777,6 +788,193 @@ built.append(page('privacy',
 </section>''',
   [webpage('privacy', 'WebPage', 'Privacy Policy')]))
 
+# Wedding suits -------------------------------------------------------
+WED_FAQ = [('How far ahead should I order a custom wedding suit?', 'Start 4 to 6 months before the wedding. The suit typically takes 5 to 8 weeks from consultation to final fitting, and the extra time leaves room for decisions and a final fitting close to the date.'),
+           ('Can you dress the groomsmen and family too?', 'Yes. We dress grooms, groomsmen, fathers and family. Have everyone measured at least three months before the date so all the pieces are made together.'),
+           ('Should the groom wear a suit or a tuxedo?', 'For a formal evening reception, a tuxedo. For daytime, outdoor and mountain weddings, a three-piece suit is a favourite; the waistcoat keeps the look sharp when the jacket comes off.'),
+           ('Do you offer rush wedding suits?', 'Rush orders are available in select circumstances. Call (801) 866-9718 as early as you can.'),
+           ('Can the consultation be done by video?', 'Yes. The first consultation can be in person in Salt Lake City or by video, which helps when the wedding party is spread out.')]
+def faq_block(items, eyebrow='Questions', h2='Before you<br><em>begin.</em>', lede=''):
+    return f'''<section class="sec faq" aria-label="Frequently asked questions">
+  <div class="rv">
+    <div class="eyebrow">{eyebrow}</div>
+    <h2 class="h2">{h2}</h2>
+    {f'<p class="lede">{lede}</p>' if lede else ''}
+  </div>
+  <div class="rv">
+    {''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q, a in items)}
+  </div>
+</section>'''
+def faq_schema(slug, items):
+    strip = lambda s: html.unescape(re.sub(r'<[^>]+>', '', s))
+    return {'@type': 'FAQPage', '@id': f'{SITE}/{slug}#faq', 'mainEntity': [
+        {'@type': 'Question', 'name': strip(q), 'acceptedAnswer': {'@type': 'Answer', 'text': strip(a)}} for q, a in items]}
+
+built.append(page('wedding-suits',
+  'Custom Wedding Suits & Tuxedos in Salt Lake City | Summit Customs',
+  'Custom wedding suits and tuxedos for grooms, groomsmen and family in Salt Lake City and Park City. Made to measure for the whole party. Start 4 to 6 months out.',
+  [('Garments', '/services'), ('Wedding Suits', '/wedding-suits')],
+  hero([('Garments', '/services'), ('Wedding Suits', '/wedding-suits')], 'The Wedding', 'The day you<br><em>will see forever.</em>',
+       'Every photograph from your wedding will show what you wore. A suit or tuxedo cut for you, in a cloth chosen for the season and the setting, is the one thing you never have to worry about on the day.',
+       img('rooftop', 'Wedding party in custom suits in tan, beige and navy check on a rooftop terrace', 640, 853, eager=True),
+       [('Book a Wedding Consultation', book('Wedding Suit'), 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+  f'''
+<section class="sec">
+  {heads('Who We Dress', 'The groom,<br><em>and everyone beside him.</em>')}
+  {feats([('01', 'The Groom', 'The suit or tuxedo that sets the tone for the day. Cut to your measurements, with the details (a waistcoat, a lining, a lapel) that make it yours in every photograph.'),
+          ('02', 'The Groomsmen', 'Coordinated without looking like a rental fleet. One cloth or a considered palette, each man fitted individually, all pieces made together.'),
+          ('03', 'Fathers &amp; Family', 'Fathers of the bride and groom, ring bearers, and family members who want to look like they belong in the photographs.')])}
+</section>
+
+<section class="sec split" aria-labelledby="wd-choice">
+  <figure class="rv">{img('kobe-event', 'Kobe Apponsah in a black tuxedo and western hat at an outdoor evening event', 640, 853)}</figure>
+  <div class="rv">
+    <div class="eyebrow">Suit or Tuxedo</div>
+    <h2 class="h2" id="wd-choice">Dressed for<br><em>the setting.</em></h2>
+    <p class="lede">For a formal evening reception, a <a class="more" href="/tuxedos">bespoke tuxedo</a> in black or midnight navy, with satin or grosgrain peak or shawl lapels. A garment you own for every black-tie event that follows.</p>
+    <p class="lede">For daytime, outdoor and mountain weddings from Salt Lake City to Park City, a three-piece suit is a favourite. The waistcoat keeps the look sharp when the jacket comes off for the dancing.</p>
+  </div>
+</section>
+
+<section class="sec">
+  {heads('The Timeline', 'Start early.<br><em>Arrive calm.</em>', 'A custom suit typically takes 5 to 8 weeks. For a wedding we recommend starting 4 to 6 months out. <a class="more" href="/journal/wedding-suit-timeline">Read the full timeline</a>')}
+  {steps([('4&ndash;6 mo', 'Consultation', 'Venue, season, time of day and palette. Suit or tuxedo, and how the groom stands apart.'),
+          ('4 mo', 'Cloth &amp; details', 'Choose cloth for the season and setting, then the details the camera will see.'),
+          ('3 mo', 'Measurements', 'Final measurements for the groom and the party, so every piece is made together.'),
+          ('2&ndash;6 wk', 'Fitting &amp; collection', 'Refinements, collection, and a plan for the day.')])}
+</section>
+''' + faq_block(WED_FAQ, 'Wedding Questions', 'Before the<br><em>big day.</em>') +
+  cta('Your wedding.<br><em>Your suit.</em>', 'Book a complimentary consultation for the groom or the whole party, in person in Salt Lake City or by video.', 'Wedding Suit', 'Book a Wedding Consultation'),
+  [webpage('wedding-suits', 'WebPage', 'Custom Wedding Suits'),
+   service_schema('Custom wedding suits and groom tuxedos', 'wedding-suits', 'Made-to-measure wedding suits and tuxedos for grooms, groomsmen and family in Salt Lake City and Park City, Utah.', 'Wedding suit tailoring'),
+   faq_schema('wedding-suits', WED_FAQ)]))
+
+# Image consulting ----------------------------------------------------
+IMG_FAQ = [('What is image consulting?', 'Image consulting is a personal strategy for how you present yourself: what you wear, how it fits, and what it communicates in the rooms that matter to you. At Summit Customs it is built around your work, your occasions and your goals.'),
+           ('Do I have to buy clothes to work with you?', 'No. The goal is to understand what you need, not to sell you the most. Many clients start with a conversation about what they already own.'),
+           ('Can image consulting be done by video?', 'The first consultation can be held in person in Salt Lake City or by video.')]
+built.append(page('image-consulting',
+  'Image Consulting in Salt Lake City | Summit Customs',
+  "Men's image consulting in Salt Lake City: wardrobe strategy, closet audits and personal styling with Kobe Apponsah, built around your work and your occasions.",
+  [('About', '/about'), ('Image Consulting', '/image-consulting')],
+  hero([('About', '/about'), ('Image Consulting', '/image-consulting')], 'Image Consulting &middot; Salt Lake City', 'Be perceived<br><em>differently.</em>',
+       "The men who win the room don't just speak well; they look like they belong there before they say a word. Image consulting is the strategy behind that.",
+       img('kobe-portrait', 'Portrait of Kobe Apponsah, image consultant and founder of Summit Customs', 640, 336, eager=True)) +
+  f'''
+<section class="sec">
+  {heads('What It Covers', 'Strategy before<br><em>shopping.</em>', 'Every recommendation begins with your life and your needs. Nothing generic, no trends, and no pressure to buy.')}
+  {feats([('01', 'Wardrobe Strategy', 'A clear plan for what your wardrobe needs to do: the meetings, events and travel on your calendar, and the pieces that serve them. Often the starting point for a <a class="more" href="/capsule-wardrobe">capsule wardrobe</a>.'),
+          ('02', 'Closet Audit', 'An honest look at what you already own: what works, what to tailor, what to retire, and what is missing.'),
+          ('03', 'Personal Styling', 'Colour, proportion, fit and the details that suit your build and your role, so getting dressed becomes one less decision.')])}
+</section>
+
+<section class="sec promise" aria-labelledby="ic-h">
+  <div class="rv">
+    <div class="eyebrow">The Philosophy</div>
+    <h2 class="quote" id="ic-h">Style is never about fashion. <em>It&rsquo;s about clarity.</em></h2>
+    <p class="lede">Clarity about who you are, where you're going, and how you want to be received. You work directly with Kobe from the first conversation, with the discretion our clients expect.</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar rv"><i>01</i><h3>Personal</h3><p>Built around you and the life you are living.</p></div>
+    <div class="pillar rv"><i>02</i><h3>Practical</h3><p>A plan you can act on, not a mood board.</p></div>
+    <div class="pillar rv"><i>03</i><h3>Discreet</h3><p>One to one, by appointment.</p></div>
+    <div class="pillar rv"><i>04</i><h3>Connected</h3><p>When a garment is needed, it is <a class="more" href="/services">made for you</a>.</p></div>
+  </div>
+</section>
+''' + faq_block(IMG_FAQ) +
+  cta('Start with<br><em>a conversation.</em>', 'Thirty minutes, in person in Salt Lake City or by video. No pressure, just strategy.', 'Image Consulting'),
+  [webpage('image-consulting', 'WebPage', 'Image Consulting'),
+   service_schema('Image consulting and wardrobe strategy', 'image-consulting', "Men's image consulting, wardrobe strategy, closet audits and personal styling in Salt Lake City, Utah.", 'Image consulting'),
+   faq_schema('image-consulting', IMG_FAQ)]))
+
+# Service areas -------------------------------------------------------
+built.append(page('service-areas',
+  'Custom Suits Across Utah: SLC, Park City, Lehi | Summit Customs',
+  'Custom suits and tuxedos for clients across Utah: Salt Lake City, Park City, Lehi, Provo, Sandy, Draper, Ogden and Bountiful, plus video consultations.',
+  [('About', '/about'), ('Areas We Serve', '/service-areas')],
+  hero([('About', '/about'), ('Areas We Serve', '/service-areas')], 'Areas We Serve', 'From downtown<br><em>to the Wasatch.</em>',
+       'Our atelier is in downtown Salt Lake City. Our clients come from across the Wasatch Front and beyond, and the first consultation can always be held by video.', None) +
+  f'''
+<section class="sec">
+  <div class="areas">{''.join(f'<article class="area rv" id="{i}"><span class="eyebrow">{d}</span><h2 class="h3">{n}</h2><p>{t}</p></article>' for i, n, d, t in AREAS)}</div>
+  <p class="note rv">Visit us at <a href="{GMAP}" target="_blank" rel="noopener" style="color:var(--gold-2)">215 S State St, Suite 575, Salt Lake City, UT 84111</a>, by appointment, Monday to Saturday, 10am to 6pm MST. Drive times are approximate. <a href="/contact" style="color:var(--gold-2)">Map and directions</a>.</p>
+</section>
+''' + cta('Wherever you are,<br><em>start here.</em>', 'Book a complimentary consultation in Salt Lake City or by video.'),
+  [webpage('service-areas', 'WebPage', 'Areas We Serve'),
+   {'@type': 'Service', '@id': SITE + '/service-areas#service', 'name': 'Custom suits and bespoke tailoring', 'provider': BIZ,
+    'areaServed': [{'@type': 'City', 'name': n} for n in ['Salt Lake City', 'Park City', 'Lehi', 'Provo', 'Orem', 'Sandy', 'Draper', 'South Jordan', 'Ogden', 'Layton', 'Bountiful']] + [{'@type': 'State', 'name': 'Utah'}]}]))
+
+# FAQ -----------------------------------------------------------------
+FAQ_ALL = [qa for _, items in FAQ for qa in items]
+def linkify(a):
+    return (a.replace('/fabrics.', '<a href="/fabrics">our fabric catalog</a>.').replace('See /shoes.', 'See <a href="/shoes">the footwear collection</a>.')
+             .replace('See our guide to custom suit cost.', 'See our <a href="/journal/how-much-does-a-custom-suit-cost">guide to custom suit cost</a>.')
+             .replace('summitcustomsuits.com/book', f'<a href="{BOOK}">summitcustomsuits.com/book</a>'))
+built.append(page('faq',
+  'Custom Suit FAQ: Cost, Timing & Fittings | Summit Customs',
+  'Answers to common questions about custom suits at Summit Customs in Salt Lake City: the free consultation, timelines, fittings, fabrics, pricing and weddings.',
+  [('About', '/about'), ('FAQ', '/faq')],
+  hero([('About', '/about'), ('FAQ', '/faq')], 'Questions &amp; Answers', 'Everything,<br><em>answered.</em>',
+       'The questions we hear most about custom tailoring at Summit Customs. Anything else, call <a href="tel:+18018669718">(801) 866-9718</a>.', None) +
+  ''.join(f'''
+<section class="sec faq" aria-labelledby="fq{i}">
+  <div class="rv"><div class="eyebrow">{i + 1:02d}</div><h2 class="h2" id="fq{i}">{name}</h2></div>
+  <div class="rv">{''.join(f'<details><summary>{q}</summary><p>{linkify(a)}</p></details>' for q, a in items)}</div>
+</section>''' for i, (name, items) in enumerate(FAQ)) +
+  cta('Still curious?<br><em>Ask Kobe.</em>', 'The first consultation is complimentary. Thirty minutes, in person or by video.'),
+  [webpage('faq', 'FAQPage', 'Custom Suit FAQ', {'mainEntity': [
+      {'@type': 'Question', 'name': html.unescape(q), 'acceptedAnswer': {'@type': 'Answer', 'text': html.unescape(a)}} for q, a in FAQ_ALL]})]))
+
+# Journal -------------------------------------------------------------
+PUB = '2026-10-23'
+def words_of(s): return len(re.findall(r"[A-Za-z][\w'’-]*", re.sub(r'<[^>]+>', ' ', html.unescape(s))))
+A_BY = {a['slug']: a for a in ARTICLES}
+def art_card(a, i=None):
+    return f'''<a class="card art-card rv" href="/journal/{a['slug']}">
+      {f'<span class="num">{i:02d}</span>' if i else ''}
+      <figure>{img(a['img'], a['alt'], 640, a['ih'], '(max-width:900px) 100vw, 33vw')}</figure>
+      <div class="cap"><h3>{html.unescape(a['name'])}</h3><p>{a['desc'][:105].rsplit(' ', 1)[0].rstrip(',:')}&hellip;</p><span class="go">Read</span></div>
+    </a>'''
+for a in ARTICLES:
+    slug = 'journal/' + a['slug']
+    wc = words_of(a['body']) + sum(words_of(q + ' ' + x) for q, x in a['faqs'])
+    mins = max(3, round(wc / 220))
+    image = f"{ASSET_HOST}/img/{a['img']}-1100.webp"
+    body = hero([('Journal', '/journal'), (html.unescape(a['name']), '/' + slug)], 'The Journal', a['h1'], a['lede'],
+                img(a['img'], a['alt'], 640, a['ih'], '(max-width:900px) 100vw, 50vw', eager=True),
+                [('Book a Free Consultation', BOOK, 'fill'), ('All articles', '/journal', '')]) + f'''
+<article class="sec art" aria-label="{html.escape(html.unescape(a['name']))}">
+  <p class="byline rv">By Summit Customs, Salt Lake City &middot; <time datetime="{PUB}">October 23, 2026</time> &middot; {mins} min read</p>
+  <div class="prose rv">{a['body']}</div>
+</article>
+''' + faq_block(a['faqs'], 'Quick Answers', 'In short.') + f'''
+<section class="sec" aria-labelledby="rel-h">
+  {heads('Keep Reading', 'From the<br><em>journal.</em>')}
+  <div class="cards">{''.join(art_card(A_BY[r]) for r in a['related'])}</div>
+</section>
+''' + cta('Ready when<br><em>you are.</em>', 'Book a complimentary 30-minute consultation in Salt Lake City or by video. No obligation.')
+    built.append(page(slug, a['title'], a['desc'], [('Journal', '/journal'), (html.unescape(a['name']), '/' + slug)], body,
+      [{'@type': 'BlogPosting', '@id': f'{SITE}/{slug}#article', 'headline': html.unescape(a['name']), 'description': a['desc'],
+        'image': image, 'datePublished': PUB, 'dateModified': PUB, 'author': {'@type': 'Organization', 'name': 'Summit Customs', '@id': BIZ['@id'], 'url': SITE + '/'},
+        'publisher': BIZ, 'mainEntityOfPage': f'{SITE}/{slug}', 'keywords': a['kw'], 'wordCount': wc, 'inLanguage': 'en-US',
+        'isPartOf': {'@id': SITE + '/journal#blog'}, 'about': BIZ},
+       faq_schema(slug, a['faqs'])], og_type='article', og_image=image))
+
+built.append(page('journal',
+  'Custom Suit Guides from a Salt Lake City Tailor | Summit Customs',
+  'Custom suit guides from Summit Customs in Salt Lake City: cost, bespoke vs made-to-measure, wedding timelines, black tie, fabrics for Utah and suit care.',
+  [('Journal', '/journal')],
+  hero([('Journal', '/journal')], 'The Journal', 'Notes on<br><em>dressing well.</em>',
+       'Straight answers to the questions our clients ask most, from what a custom suit costs to how to care for one.', None,
+       [('Start with the cost guide', '/journal/how-much-does-a-custom-suit-cost', 'fill'), ('Book a Consultation', BOOK, '')]) + f'''
+<section class="sec" aria-label="Articles">
+  <div class="cards">{''.join(art_card(a, i + 1) for i, a in enumerate(ARTICLES))}</div>
+</section>
+''' + cta('Prefer to<br><em>talk it through?</em>', 'Thirty minutes, in person in Salt Lake City or by video. No obligation.'),
+  [webpage('journal', 'CollectionPage', 'The Journal'),
+   {'@type': 'Blog', '@id': SITE + '/journal#blog', 'name': 'The Summit Customs Journal', 'url': SITE + '/journal', 'publisher': BIZ, 'inLanguage': 'en-US',
+    'blogPost': [{'@id': f"{SITE}/journal/{a['slug']}#article"} for a in ARTICLES]}]))
+
 # 404 --------------------------------------------------------------
 doc = head('404', 'Page Not Found | Summit Customs', 'This page could not be found. Explore custom suits, sport coats and tuxedos from Summit Customs in Salt Lake City.', []).replace(
     '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">', '<meta name="robots" content="noindex">')
@@ -794,13 +992,78 @@ INTERNAL = ['suits', 'sport-coats', 'tuxedos', 'shoes', 'fabrics', 'collection',
 for p in INTERNAL:
     h = h.replace(f'href="https://summitcustomsuits.com/{p}"', f'href="/{p}"')
 h = re.sub(r'href="https://summitcustomsuits.com/shoes/([a-z-]+)"', r'href="/shoes#\1"', h)
+# self-hosted fonts, feed link, and an absolute path for the portrait frame preload
+h = re.sub(r'<link rel="preconnect" href="https://fonts.googleapis.com">\s*<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\s*<link href="https://fonts.googleapis.com/css2[^"]*" rel="stylesheet">',
+           lambda m: FONTS + '\n<link rel="alternate" type="application/rss+xml" title="Summit Customs Journal" href="/feed.xml">', h)
+h = h.replace('href="frames-m/f_000.webp"', 'href="/frames-m/f_000.webp"')
+# business schema: every city we serve, and the new service pages
+CITIES = ['Salt Lake City', 'Park City', 'Lehi', 'Provo', 'Orem', 'Sandy', 'Draper', 'South Jordan', 'Ogden', 'Layton', 'Bountiful']
+m = re.search(r'(<script type="application/ld\+json">)(.*?)(</script>)', h, re.S)
+g = json.loads(m.group(2))
+for n in g['@graph']:
+    if n.get('@id') == SITE + '/#business':
+        n['areaServed'] = [{'@type': 'City', 'name': c} for c in CITIES] + [{'@type': 'State', 'name': 'Utah'}]
+        for o in n['hasOfferCatalog']['itemListElement']:
+            if o['itemOffered']['name'].startswith('Wedding'): o['itemOffered']['url'] = SITE + '/wedding-suits'
+            if o['itemOffered']['name'].startswith('Image consulting'): o['itemOffered']['url'] = SITE + '/image-consulting'
+        names = [o['itemOffered']['name'] for o in n['hasOfferCatalog']['itemListElement']]
+        if not any(x.startswith('Image consulting') for x in names):
+            n['hasOfferCatalog']['itemListElement'].append({'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': 'Image consulting and wardrobe strategy', 'url': SITE + '/image-consulting'}})
+        n['priceRange'] = '$$$'
+        n['currenciesAccepted'] = 'USD'
+h = h[:m.start(2)] + '\n' + json.dumps(g, indent=2, ensure_ascii=False) + '\n' + h[m.end(2):]
+# FAQ answers and a journal strip link the strongest page to the new ones
+h = h.replace('Book early: allow 5 to 8 weeks before the date.</p>', 'Book early: allow 5 to 8 weeks before the date. <a href="/wedding-suits" style="color:var(--gold-2)">See wedding suits</a>.</p>')
+JOURNAL = '<section class="sec" id="journal" aria-labelledby="jr-h">\n  ' + heads('The Journal', 'Straight<br><em>answers.</em>', 'Guides to custom suits from our Salt Lake City atelier. <a class="more" href="/journal">All articles</a>').replace('<h2 class="h2">', '<h2 class="h2" id="jr-h">') + \
+    '\n  <div class="cards">' + ''.join(art_card(A_BY[s]) for s in ['how-much-does-a-custom-suit-cost', 'wedding-suit-timeline', 'bespoke-vs-made-to-measure']) + '</div>\n</section>\n\n'
+h = re.sub(r'<section class="sec" id="journal".*?</section>\n\n', '', h, flags=re.S)
+h = h.replace('<section class="sec faq" id="faq"', JOURNAL + '<section class="sec faq" id="faq"', 1)
 open(HOME, 'w').write(h)
 
-# ------------------------------------------------------------------ sitemap
-urls = [('', '1.0')] + [(s, '0.9' if s in ('suits', 'services', 'collection') else '0.8' if s in ('sport-coats', 'tuxedos', 'about', 'contact') else '0.6') for s in built if s != 'privacy'] + [('privacy', '0.2')]
-sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-for s, pr in urls:
-    sm.append(f'  <url><loc>{SITE}/{s}</loc><lastmod>2026-10-23</lastmod><priority>{pr}</priority></url>')
+# ------------------------------------------------------------------ sitemap (with images), feed, llms.txt
+def page_images(slug):
+    src = open(os.path.join(OUT, (slug or 'index') + '.html')).read()
+    main = src.split('<main', 1)[-1].split('</main>', 1)[0] if '<main' in src else src.split('<footer', 1)[0]
+    out = []
+    for m in re.finditer(r'<img [^>]*?src="(/img/[^"]+)"[^>]*?alt="([^"]+)"', main):
+        u = m.group(1).replace('-640.webp', '-1100.webp')
+        if u not in [x for x, _ in out]: out.append((u, m.group(2)))
+    return out[:20]
+PRIO = {'': '1.0', 'suits': '0.9', 'services': '0.9', 'collection': '0.9', 'wedding-suits': '0.9', 'tuxedos': '0.8', 'sport-coats': '0.8',
+        'about': '0.8', 'contact': '0.8', 'journal': '0.7', 'image-consulting': '0.8', 'faq': '0.7', 'service-areas': '0.7', 'privacy': '0.2'}
+urls = [''] + [s for s in built if s != 'privacy'] + ['privacy']
+sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
+n_img = 0
+for s in urls:
+    pr = PRIO.get(s, '0.6')
+    imgs = ''.join(f'<image:image><image:loc>{ASSET_HOST}{u}</image:loc></image:image>' for u, _ in page_images(s))
+    n_img += imgs.count('<image:image>')
+    sm.append(f'  <url><loc>{SITE}/{s}</loc><lastmod>2026-10-23</lastmod><priority>{pr}</priority>{imgs}</url>')
 sm.append('</urlset>')
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write('\n'.join(sm) + '\n')
-print('built', ', '.join(built), '+ 404, index chrome, sitemap')
+
+rss = ['<?xml version="1.0" encoding="UTF-8"?>', '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>',
+       '<title>The Summit Customs Journal</title>', f'<link>{SITE}/journal</link>', f'<atom:link href="{SITE}/feed.xml" rel="self" type="application/rss+xml"/>',
+       '<description>Guides to custom suits from Summit Customs, bespoke tailoring in Salt Lake City, Utah.</description>', '<language>en-us</language>']
+for a in ARTICLES:
+    rss.append(f"<item><title>{html.escape(html.unescape(a['name']))}</title><link>{SITE}/journal/{a['slug']}</link><guid>{SITE}/journal/{a['slug']}</guid>"
+               f"<pubDate>Fri, 23 Oct 2026 09:00:00 -0600</pubDate><description>{html.escape(a['desc'])}</description></item>")
+rss.append('</channel></rss>')
+open(os.path.join(OUT, 'feed.xml'), 'w').write('\n'.join(rss) + '\n')
+
+def title_of(s):
+    t = re.search(r'<title>(.*?)</title>', open(os.path.join(OUT, (s or 'index') + '.html')).read()).group(1)
+    return html.unescape(t)
+llms = ['# Summit Customs', '',
+        '> Bespoke and made-to-measure suits, sport coats, tuxedos, wedding suits, custom shirts, footwear and image consulting in Salt Lake City, Utah. Founded by Kobe Apponsah.', '',
+        '- Address: 215 S State St, Suite 575, Salt Lake City, UT 84111', '- Phone: (801) 866-9718', '- Email: kobe@summitcustomsuits.com',
+        '- Hours: by appointment, Monday to Saturday, 10am to 6pm Mountain Time', f'- Book: {BOOK} (complimentary 30-minute consultation, in person or by video)',
+        '- Typical timeline: 5 to 8 weeks from consultation to final fitting', '- Cloth: 4,000+ cloths including Dormeuil, Scabal, Vitale Barberis Canonico and Holland & Sherry',
+        '- Google rating: 5.0', '- Instagram: https://www.instagram.com/summitcustomsuits/', '', '## Pages', '']
+for s in [''] + [x for x in built if not x.startswith('journal/')]:
+    llms.append(f'- [{title_of(s)}]({SITE}/{s})')
+llms += ['', '## Journal', '']
+for a in ARTICLES:
+    llms.append(f"- [{html.unescape(a['name'])}]({SITE}/journal/{a['slug']}): {a['desc']}")
+open(os.path.join(OUT, 'llms.txt'), 'w').write('\n'.join(llms) + '\n')
+print('built', len(built), 'pages:', ', '.join(built), f'+ 404, index chrome, sitemap ({len(urls)} urls, {n_img} images), feed, llms.txt')
