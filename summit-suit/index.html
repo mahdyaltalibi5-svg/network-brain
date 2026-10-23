@@ -31,12 +31,12 @@
 <meta name="twitter:description" content="Bespoke suits, sport coats and tuxedos built around you. Book a complimentary consultation with Kobe Apponsah.">
 <meta name="twitter:image" content="https://summit-customs-suits.vercel.app/og-image.jpg">
 
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="/apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 
-<link rel="preload" as="image" href="frames/f_000.webp" fetchpriority="high" media="(orientation: landscape)">
+<link rel="preload" as="image" href="/frames/f_000.webp" fetchpriority="high" media="(orientation: landscape)">
 <link rel="preload" as="image" href="frames-m/f_000.webp" fetchpriority="high" media="(orientation: portrait)">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -347,307 +347,33 @@
 }
 </script>
 
-<style>
-:root{
-  --ink:#000; --ink-2:#0a0a0b; --ink-3:#121214; --line:rgba(255,255,255,.08);
-  --bone:#ece8e1; --mute:#b0aca4; --dim:#8f8a81;
-  --gold:#c9a96e; --gold-2:#e4cfa3; --gold-soft:rgba(201,169,110,.35);
-  --serif:"Cormorant Garamond",Georgia,serif; --sans:"Jost",system-ui,sans-serif;
-  --gut:clamp(16px,6vw,96px);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--ink);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{background:var(--ink);color:var(--bone);font-family:var(--sans);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-img{display:block;max-width:100%;height:auto}
-.skip{position:absolute;left:-9999px;top:8px;z-index:99;background:var(--gold);color:#000;padding:10px 14px}
-.skip:focus{left:8px}
-
-/* nav */
-.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(16px,4vw,56px);transition:background .4s,padding .4s}
-.nav.solid{background:rgba(0,0,0,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding-top:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
-.logo{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.42em;font-weight:400;color:var(--gold-2)}
-.logo img{width:46px;height:auto}
-.logo span{white-space:nowrap}
-.nav-r{display:flex;align-items:center;gap:30px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
-.nav-r a:hover{color:var(--bone)}
-.btn{display:inline-block;border:1px solid var(--gold-soft);color:var(--bone);padding:14px 22px;font-size:12px;letter-spacing:.26em;text-transform:uppercase;transition:background .3s,border-color .3s,color .3s}
-.btn:hover{background:rgba(201,169,110,.12);border-color:var(--gold)}
-.btn.fill{background:var(--gold);border-color:var(--gold);color:#0b0b0b;font-weight:400}
-.btn.fill:hover{background:var(--gold-2)}
-@media (max-width:900px){.nav-r .lnk{display:none}}
-@media (max-width:760px){.nav .long{display:none}.nav{padding:14px 16px}.nav .btn{padding:10px 14px;font-size:11px}.logo{letter-spacing:.32em;font-size:12px}.logo img{width:38px}}
-.progress{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:50;background:rgba(255,255,255,.06)}
-.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#fff);transform-origin:0 50%;transform:scaleX(0)}
-
-/* film */
-#film{position:relative;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
-#seq{position:absolute;inset:0;width:100%;height:100%;display:block}
-.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.65) 100%)}
-#film::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18vh;background:linear-gradient(180deg,transparent,#000);pointer-events:none;z-index:4}
-.loader{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);transition:opacity .6s}
-.hero{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:5;pointer-events:none}
-.hero .inner{transform:translateY(-2vh)}
-.hero .display{font-family:var(--serif);font-weight:300;font-size:clamp(56px,10.5vw,170px);line-height:.86;letter-spacing:-.015em;text-shadow:0 0 50px rgba(0,0,0,.85),0 0 12px rgba(0,0,0,.6)}
-.hero .display span{display:block}
-.hero h1{margin-bottom:26px}
-.scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:12px}
-.scroll-cue i{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);animation:cue 2s ease-in-out infinite}
-@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-.panel{position:absolute;top:50%;transform:translateY(-50%);width:min(400px,27vw);z-index:5;opacity:0}
-.panel.l{left:clamp(16px,4vw,72px)}
-.panel.r{right:clamp(16px,4vw,72px);text-align:right}
-.panel.r p{margin-left:auto}
-.panel h2{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5.2vw,86px);line-height:.95;letter-spacing:-.01em;margin-bottom:22px}
-.panel p{font-size:17px;line-height:1.65;color:var(--mute);max-width:34ch;margin-bottom:24px}
-.panel h2,.panel p{text-shadow:0 2px 24px rgba(0,0,0,.8)}
-.spec{font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);padding-top:14px;border-top:1px solid rgba(201,169,110,.22);display:inline-block}
-.spec b{font-weight:400;color:var(--bone);margin-left:10px}
-@media (max-width:760px){
-  .panel{top:auto;bottom:6svh;transform:none;width:auto;left:16px!important;right:16px!important;text-align:left!important}
-  .panel p{margin-left:0!important;font-size:16px;margin-bottom:16px}
-  .panel h2{font-size:clamp(36px,10.5vw,52px);margin-bottom:12px}
-  .panel::before{content:"";position:absolute;inset:-70px -16px -6svh;background:linear-gradient(180deg,transparent,rgba(0,0,0,.88) 42%);z-index:-1}
-}
-
-/* shared section type */
-.eyebrow{font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;font-weight:400}
-em{font-style:italic;color:var(--gold-2)}
-.sec{padding:clamp(72px,8.5vw,124px) var(--gut);position:relative}
-.sec-head{max-width:760px;margin-bottom:clamp(36px,4.5vw,60px)}
-.sec-head.c{margin-left:auto;margin-right:auto;text-align:center}
-.h2{font-family:var(--serif);font-weight:300;font-size:clamp(44px,6.4vw,100px);line-height:.95;letter-spacing:-.01em}
-.lede{font-size:clamp(17px,1.35vw,19.5px);line-height:1.7;color:var(--mute);max-width:56ch;margin-top:22px}
-.sec-head.c .lede{margin-left:auto;margin-right:auto}
-.more{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-2);margin-top:28px}
-.more::after{content:"";width:28px;height:1px;background:currentColor;transition:width .3s}
-.more:hover::after{width:44px}
-.js .rv{opacity:0;transform:translateY(28px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
-.js .rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
-
-/* intro */
-.intro{padding-top:clamp(40px,6vw,88px);display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(40px,7vw,120px);align-items:end;border-bottom:1px solid var(--line)}
-.intro .ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
-.stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
-.stat{padding:28px 0 26px;border-bottom:1px solid var(--line)}
-.stat:nth-child(odd){padding-right:20px;border-right:1px solid var(--line)}
-.stat:nth-child(even){padding-left:24px}
-.stat b{display:block;font-family:var(--serif);font-weight:300;font-size:clamp(38px,4.4vw,60px);line-height:1;color:var(--bone)}
-.stat span{display:block;margin-top:10px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);line-height:1.6}
-@media (max-width:900px){.intro{grid-template-columns:1fr}}
-
-/* garments */
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,28px)}
-.card{position:relative;display:block;overflow:hidden;background:var(--ink-3)}
-.card figure{aspect-ratio:2/3;overflow:hidden}
-.card img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transition:filter 1s;filter:saturate(.9)}
-.card:hover img{filter:saturate(1)}
-.card .cap{position:absolute;inset:auto 0 0 0;padding:90px 26px 26px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}
-.card h3{font-family:var(--serif);font-weight:300;font-size:clamp(34px,3vw,46px);line-height:1}
-.card p{font-size:16.5px;line-height:1.6;color:var(--mute);margin-top:10px;max-width:34ch}
-.card .num{position:absolute;top:22px;left:24px;font-size:12px;letter-spacing:.3em;color:var(--gold-2);z-index:2}
-.also{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--line);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
-.also b{color:var(--gold);font-weight:400}
-.also a:hover{color:var(--bone)}
-@media (max-width:900px){.cards{grid-template-columns:1fr}.card figure{aspect-ratio:4/5}}
-
-/* occasions */
-.occ{border-top:1px solid var(--line)}
-.occ-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line)}
-.occ-grid article{padding:34px 28px 10px 0}
-.occ-grid article+article{padding-left:28px;border-left:1px solid var(--line)}
-.occ-grid h3{font-family:var(--serif);font-weight:400;font-size:clamp(28px,2.4vw,36px);line-height:1.05;margin-bottom:14px}
-.occ-grid p{font-size:16.5px;line-height:1.65;color:var(--mute)}
-.occ-grid .more{margin-top:20px}
-@media (max-width:1000px){.occ-grid{grid-template-columns:1fr 1fr}.occ-grid article:nth-child(3){padding-left:0;border-left:0}.occ-grid article:nth-child(n+3){border-top:1px solid var(--line)}}
-@media (max-width:560px){.occ-grid{grid-template-columns:1fr}.occ-grid article,.occ-grid article+article{padding:28px 0 8px;border-left:0}.occ-grid article+article{border-top:1px solid var(--line)}}
-
-/* promise */
-.promise{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.quote{font-family:var(--serif);font-weight:300;font-size:clamp(38px,5vw,76px);line-height:1.05;max-width:20ch}
-.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:clamp(48px,7vw,90px);border-top:1px solid var(--line)}
-.pillar{padding:30px 26px 6px 0}
-.pillar+.pillar{padding-left:26px;border-left:1px solid var(--line)}
-.pillar i{font-style:normal;font-family:var(--serif);font-size:18px;color:var(--gold)}
-.pillar h3{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:400;margin:16px 0 12px}
-.pillar p{font-size:16.5px;line-height:1.65;color:var(--mute)}
-@media (max-width:900px){.pillars{grid-template-columns:1fr 1fr}.pillar:nth-child(3){padding-left:0;border-left:0}.pillar:nth-child(n+3){border-top:1px solid var(--line)}}
-@media (max-width:520px){.pillars{grid-template-columns:1fr}.pillar,.pillar+.pillar{padding:24px 0 6px;border-left:0}.pillar+.pillar{border-top:1px solid var(--line)}}
-
-/* gallery */
-.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.4vw,20px)}
-.gallery figure{margin:0;aspect-ratio:4/5;overflow:hidden;position:relative;background:var(--ink-3)}
-.gallery img{width:100%;height:100%;object-fit:cover;object-position:50% 25%}
-.gallery figcaption{position:absolute;inset:auto 0 0 0;padding:40px 18px 16px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));opacity:0;transition:opacity .4s}
-.gallery figure:hover figcaption{opacity:1}
-@media (max-width:900px){.gallery{grid-template-columns:1fr 1fr}}
-
-/* process */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,60px);counter-reset:s}
-.step{border-top:1px solid var(--gold-soft);padding-top:28px}
-.step .n{font-family:var(--serif);font-weight:300;font-size:clamp(54px,6vw,86px);line-height:1;color:rgba(201,169,110,.55)}
-.step h3{font-family:var(--serif);font-weight:400;font-size:clamp(30px,2.6vw,38px);margin:18px 0 6px}
-.step .tag{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.step p{font-size:17px;line-height:1.7;color:var(--mute)}
-@media (max-width:900px){.steps{grid-template-columns:1fr}}
-
-/* cloth */
-.cloth{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,110px);align-items:center;background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cloth figure{aspect-ratio:1;overflow:hidden}
-.cloth figure img{width:100%;height:100%;object-fit:cover}
-.mills{display:flex;flex-wrap:wrap;gap:12px 10px;margin-top:30px}
-.mills li{list-style:none;border:1px solid var(--line);padding:10px 16px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
-@media (max-width:900px){.cloth{grid-template-columns:1fr}.cloth figure{aspect-ratio:4/3}}
-
-/* footwear */
-.shoes{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,22px)}
-.shoe{background:#efece6;color:#1a1714;display:block}
-.shoe figure{aspect-ratio:1;overflow:hidden}
-.shoe img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
-.shoe:hover img{transform:scale(1.05)}
-.shoe div{padding:16px 18px 18px;border-top:1px solid rgba(0,0,0,.08)}
-.shoe h3{font-family:var(--serif);font-weight:400;font-size:25px;line-height:1.1}
-.shoe span{display:block;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:#7a6a55;margin-top:6px}
-@media (max-width:900px){.shoes{grid-template-columns:1fr 1fr}}
-@media (max-width:560px){.shoe div{padding:12px 12px 14px}.shoe h3{font-size:19px}.shoe span{font-size:10.5px;letter-spacing:.12em}}
-
-/* kobe */
-.kobe{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(40px,7vw,110px);align-items:center}
-.kobe figure{position:relative}
-.kobe figure img{width:100%;aspect-ratio:4/5;object-fit:cover}
-.kobe figure::after{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--gold-soft);z-index:-1}
-.kobe .role{font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-top:14px}
-.kobe blockquote{font-family:var(--serif);font-weight:300;font-size:clamp(36px,4.2vw,62px);line-height:1.05;margin:34px 0 28px}
-.kobe p{font-size:clamp(17px,1.3vw,19px);line-height:1.75;color:var(--mute);max-width:54ch;margin-bottom:16px}
-@media (max-width:900px){.kobe{grid-template-columns:1fr}.kobe figure{max-width:480px}}
-
-/* faq */
-.faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(40px,7vw,110px);border-top:1px solid var(--line)}
-.faq details{border-bottom:1px solid var(--line)}
-.faq details:first-child{border-top:1px solid var(--line)}
-.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:26px 0;font-family:var(--serif);font-size:clamp(24px,2.2vw,30px);font-weight:400}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";font-family:var(--sans);font-weight:300;font-size:22px;color:var(--gold);transition:transform .3s}
-.faq details[open] summary::after{transform:rotate(45deg)}
-.faq details p{font-size:17.5px;line-height:1.7;color:var(--mute);padding:0 0 26px;max-width:62ch}
-@media (max-width:900px){.faq{grid-template-columns:1fr}}
-
-/* cta + footer */
-.cta{min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 16px 80px;background:radial-gradient(60% 50% at 50% 40%,#101216,#000 75%)}
-.cta .crest{width:170px;margin:0 auto 26px}
-.cta h2{font-family:var(--serif);font-weight:300;font-size:clamp(52px,9vw,140px);line-height:.92;margin:6px 0 30px}
-.cta h2 .ch{display:inline-block}
-.cta p{color:var(--mute);font-size:clamp(17px,1.4vw,20px);line-height:1.7;max-width:46ch;margin:0 auto 40px}
-.cta .ctas{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
-.cta .direct{margin-top:34px;font-size:14px;letter-spacing:.12em;color:var(--dim);line-height:2}
-.cta .direct a{color:var(--bone)}
-footer{border-top:1px solid var(--line);padding:64px var(--gut) 40px;display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:40px;font-size:15.5px;color:var(--mute)}
-footer .brand img{width:150px;margin-bottom:22px}
-footer .brand p{line-height:1.75;max-width:34ch}
-footer h2{font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);font-weight:400;margin-bottom:18px}
-footer li{list-style:none;margin-bottom:11px}
-footer a:hover{color:var(--bone)}
-footer address{font-style:normal;line-height:1.9}
-footer .copy{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13px;letter-spacing:.08em;color:var(--dim);padding-top:28px;border-top:1px solid rgba(255,255,255,.05)}
-@media (max-width:900px){footer{grid-template-columns:1fr 1fr}footer .brand{grid-column:1/-1}}
-
-/* google badge */
-.gbadge{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:30px;padding:12px 18px;border:1px solid var(--line);font-size:13px;letter-spacing:.06em;color:var(--mute);transition:border-color .3s}
-.gbadge:hover{border-color:var(--gold-soft)}
-.gbadge .stars{color:var(--gold);letter-spacing:.18em;font-size:14px}
-.gbadge b{font-weight:400;color:var(--bone)}
-.gbadge span:last-child{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-2)}
-
-/* elevation layer */
-:focus-visible{outline:1px solid var(--gold);outline-offset:4px}
-body::after{content:"";position:fixed;inset:0;z-index:70;pointer-events:none;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.js .ln{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em}
-.js .ln>span{display:block;transform:translateY(110%);transition:transform 1.15s cubic-bezier(.2,.75,.15,1)}
-.js .in .ln>span{transform:none}
-.js .in .ln:nth-child(2)>span{transition-delay:.1s}
-.js .in .ln:nth-child(3)>span{transition-delay:.2s}
-@media (prefers-reduced-motion:reduce){.js .ln>span{transform:none;transition:none}}
-
-.marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:clamp(18px,2.4vw,30px) 0;background:var(--ink)}
-.marquee .track{display:flex;align-items:center;width:max-content;animation:mq 46s linear infinite}
-.marquee span{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,3.6vw,54px);color:var(--bone);white-space:nowrap;padding:0 clamp(18px,2.2vw,34px)}
-.marquee i{width:clamp(22px,2.4vw,34px);height:clamp(10px,1.1vw,15px);background:url(img/mark.png) center/contain no-repeat;opacity:.8;flex:none}
-@keyframes mq{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){.marquee .track{animation:none}}
-
-.card figure{transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
-.card:hover figure{transform:scale(1.035)}
-.card .go{display:inline-flex;align-items:center;gap:12px;margin-top:18px;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-2)}
-.card .go::after{content:"";width:22px;height:1px;background:currentColor;transition:width .4s}
-.card:hover .go::after{width:46px}
-.gallery figure{cursor:zoom-in}
-.gallery figure img{transition:filter .6s}
-.gallery figure:hover img{filter:brightness(1.08)}
-
-.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
-.swatches figure{margin:0}
-.swatches img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-.swatches figure:hover img{transform:scale(1.04)}
-.swatches figcaption{margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-
-footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size:clamp(88px,23vw,400px);line-height:.78;letter-spacing:.04em;text-align:center;margin:clamp(20px,4vw,60px) 0 -.06em;background:linear-gradient(180deg,rgba(228,207,163,.5),rgba(201,169,110,.04) 88%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
-
-.menu-btn{display:none;width:44px;height:40px;margin-left:4px;background:none;border:1px solid var(--gold-soft);cursor:pointer;position:relative}
-.menu-btn i{position:absolute;left:12px;right:12px;height:1px;background:var(--bone);transition:transform .35s,top .35s}
-.menu-btn i:first-child{top:15px}.menu-btn i:last-child{top:23px}
-.menu-open .menu-btn i:first-child{top:19px;transform:rotate(45deg)}
-.menu-open .menu-btn i:last-child{top:19px;transform:rotate(-45deg)}
-#menu{position:fixed;inset:0;z-index:49;background:#000;display:flex;flex-direction:column;justify-content:center;gap:48px;padding:100px clamp(20px,6vw,60px) 40px;opacity:0;visibility:hidden;transition:opacity .45s,visibility .45s}
-#menu nav{display:flex;flex-direction:column;gap:6px}
-#menu nav a{font-family:var(--serif);font-weight:300;font-size:clamp(40px,10vw,64px);line-height:1.1;color:var(--bone);transform:translateY(16px);opacity:0;transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .6s}
-#menu .menu-foot{display:flex;flex-direction:column;gap:12px;max-width:360px}
-#menu .menu-foot .btn{text-align:center}
-.menu-open #menu{opacity:1;visibility:visible}
-.menu-open #menu nav a{transform:none;opacity:1}
-.menu-open #menu nav a:nth-child(2){transition-delay:.04s}.menu-open #menu nav a:nth-child(3){transition-delay:.08s}.menu-open #menu nav a:nth-child(4){transition-delay:.12s}.menu-open #menu nav a:nth-child(5){transition-delay:.16s}.menu-open #menu nav a:nth-child(6){transition-delay:.2s}
-.menu-open{overflow:hidden}
-@media (max-width:900px){.menu-btn{display:block}}
-
-.mbar{position:fixed;left:0;right:0;bottom:0;z-index:48;display:none;grid-template-columns:1.6fr 1fr;gap:1px;background:var(--line);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.7,.2,1);padding-bottom:env(safe-area-inset-bottom);background-color:#000}
-.mbar a{display:block;text-align:center;padding:18px 8px;font-size:11.5px;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase;background:#0b0b0c;color:var(--bone)}
-.mbar a:first-child{background:var(--gold);color:#0b0b0b;font-weight:400}
-.past .mbar{transform:none}
-@media (max-width:760px){.mbar{display:grid}.progress{display:none}footer{padding-bottom:90px}}
-
-.lb{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:60px 16px}
-.lb[hidden]{display:none}
-.lb img{max-width:min(1100px,92vw);max-height:80vh;width:auto;height:auto;object-fit:contain}
-.lb-cap{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
-.lb button{position:absolute;background:none;border:1px solid var(--gold-soft);color:var(--bone);width:48px;height:48px;font-size:22px;cursor:pointer}
-.lb button:hover{border-color:var(--gold)}
-.lb-x{top:18px;right:18px}.lb-p{left:18px;top:50%;transform:translateY(-50%)}.lb-n{right:18px;top:50%;transform:translateY(-50%)}
-@media (max-width:760px){.lb-p,.lb-n{top:auto;bottom:60px;transform:none}}
-</style>
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 <script>document.documentElement.classList.add('js')</script>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="nav" id="nav">
-  <a class="logo" href="#top" aria-label="Summit Customs home"><img src="img/mark.png" width="260" height="116" alt="Summit Customs mountain logo"><span>SUMMIT<span class="long"> CUSTOMS</span></span></a>
+  <a class="logo" href="/" aria-label="Summit Customs home"><img src="/img/mark.png" width="260" height="116" alt="Summit Customs mountain logo"><span>SUMMIT<span class="long"> CUSTOMS</span></span></a>
   <nav class="nav-r" aria-label="Main">
-    <a class="lnk" href="#garments">Garments</a>
-    <a class="lnk" href="#work">The Work</a>
-    <a class="lnk" href="#process">Process</a>
-    <a class="lnk" href="#kobe">About</a>
+    <div class="dd"><a class="lnk" href="/services">Garments</a><div class="dd-menu"><a href="/suits">Suits</a><a href="/sport-coats">Sport Coats</a><a href="/tuxedos">Tuxedos</a><a href="/shoes">Footwear</a><a href="/fabrics">Fabrics</a><a href="/services">All Services</a></div></div><a class="lnk" href="/collection">Collection</a><a class="lnk" href="/capsule-wardrobe">Capsules</a><a class="lnk" href="/gallery">Gallery</a><a class="lnk" href="/about">About</a><a class="lnk" href="/contact">Contact</a>
     <a class="btn" href="https://summitcustomsuits.com/book">Book<span class="long"> a Consultation</span></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i></button>
   </nav>
 </header>
 <div id="menu" aria-hidden="true">
   <nav aria-label="Mobile">
-    <a href="#garments">Garments</a>
-    <a href="#occasions">Occasions</a>
-    <a href="#work">The Work</a>
-    <a href="#process">Process</a>
-    <a href="#kobe">About Kobe</a>
-    <a href="#faq">Questions</a>
+    <a href="/" aria-current="page">Home</a>
+    <a href="/suits">Suits</a>
+    <a href="/sport-coats">Sport Coats</a>
+    <a href="/tuxedos">Tuxedos</a>
+    <a href="/shoes">Footwear</a>
+    <a href="/fabrics">Fabrics</a>
+    <a href="/collection">Collection</a>
+    <a href="/capsule-wardrobe">Capsule Wardrobe</a>
+    <a href="/gallery">Gallery</a>
+    <a href="/about">About Kobe</a>
+    <a href="/contact">Contact</a>
   </nav>
   <div class="menu-foot">
     <a class="btn fill" href="https://summitcustomsuits.com/book">Book a Free Consultation</a>
@@ -659,7 +385,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 <main id="main">
 <section id="film" aria-label="The anatomy of a bespoke suit">
   <canvas id="seq" role="img" aria-label="A bespoke charcoal three-piece suit assembling piece by piece: shirt, tie, waistcoat, then jacket"></canvas>
-  <noscript><img src="frames/f_198.webp" width="2200" height="1244" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
+  <noscript><img src="/frames/f_198.webp" width="2200" height="1244" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
   <div class="vignette"></div>
 
   <div class="hero" id="top">
@@ -725,28 +451,28 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <p class="lede">Every piece is made to measure. Choose the foundation, the cloth, and the details, and Kobe shapes the garment around how you actually live and work.</p>
   </div>
   <div class="cards">
-    <a class="card rv" href="https://summitcustomsuits.com/suits">
+    <a class="card rv" href="/suits">
       <span class="num">01</span>
-      <figure><img src="img/suit-640.webp" srcset="img/suit-640.webp 640w, img/suit-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah fitting a client in a navy bespoke suit jacket with pink shirt in Salt Lake City"></figure>
+      <figure><img src="/img/suit-640.webp" srcset="/img/suit-640.webp 640w, /img/suit-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah fitting a client in a navy bespoke suit jacket with pink shirt in Salt Lake City"></figure>
       <div class="cap"><h3>The Suit</h3><p>Two or three pieces, cut from one cloth around your measurements. The foundation of your wardrobe.</p><span class="go">Explore</span></div>
     </a>
-    <a class="card rv" href="https://summitcustomsuits.com/sport-coats">
+    <a class="card rv" href="/sport-coats">
       <span class="num">02</span>
-      <figure><img src="img/sportcoat-640.webp" srcset="img/sportcoat-640.webp 640w, img/sportcoat-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Navy bespoke sport coat worn over a grey turtleneck with tailored trousers"></figure>
+      <figure><img src="/img/sportcoat-640.webp" srcset="/img/sportcoat-640.webp 640w, /img/sportcoat-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Navy bespoke sport coat worn over a grey turtleneck with tailored trousers"></figure>
       <div class="cap"><h3>The Sport Coat</h3><p>A jacket built to stand alone, in a different cloth and a different character. The most versatile garment in a working wardrobe.</p><span class="go">Explore</span></div>
     </a>
-    <a class="card rv" href="https://summitcustomsuits.com/tuxedos">
+    <a class="card rv" href="/tuxedos">
       <span class="num">03</span>
-      <figure><img src="img/tuxedo-640.webp" srcset="img/tuxedo-640.webp 640w, img/tuxedo-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah wearing a bespoke midnight tuxedo with silk peak lapels and bow tie"></figure>
+      <figure><img src="/img/tuxedo-640.webp" srcset="/img/tuxedo-640.webp 640w, /img/tuxedo-1100.webp 1100w" sizes="(max-width:900px) 100vw, 33vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah wearing a bespoke midnight tuxedo with silk peak lapels and bow tie"></figure>
       <div class="cap"><h3>The Tuxedo</h3><p>Black tie done correctly. Peak or shawl lapels in barathea or grosgrain. A garment you own, not rent.</p><span class="go">Explore</span></div>
     </a>
   </div>
   <div class="also rv">
     <b>Also made to measure</b>
     <span>Dress trousers</span><span>Overcoats</span><span>Custom shirts</span>
-    <a href="https://summitcustomsuits.com/shoes">Bespoke footwear</a>
-    <a href="https://summitcustomsuits.com/capsule-wardrobe">Capsule wardrobes</a>
-    <a href="https://summitcustomsuits.com/collection">The Ascent &middot; The Summit &middot; The Standard</a>
+    <a href="/shoes">Bespoke footwear</a>
+    <a href="/capsule-wardrobe">Capsule wardrobes</a>
+    <a href="/collection">The Ascent &middot; The Summit &middot; The Standard</a>
   </div>
 </section>
 
@@ -758,9 +484,9 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
   </div>
   <div class="occ-grid">
     <article class="rv"><h3>Weddings &amp; Grooms</h3><p>A three-piece suit or a bespoke tuxedo for the groom and his party: layering, formality, and a silhouette made for the photographs that last.</p><a class="more" href="https://summitcustomsuits.com/book?occasion=Bespoke%20Suit">Plan a wedding commission</a></article>
-    <article class="rv"><h3>The Boardroom</h3><p>Two-piece and three-piece suits in English and Italian cloth, formal enough for a boardroom and refined enough for the evening after.</p><a class="more" href="https://summitcustomsuits.com/suits">Bespoke suits</a></article>
-    <article class="rv"><h3>Black Tie</h3><p>Peak or shawl lapels faced in satin or grosgrain, jet black or midnight navy barathea. A tuxedo you own, ready for every gala and evening event.</p><a class="more" href="https://summitcustomsuits.com/tuxedos">Bespoke tuxedos</a></article>
-    <article class="rv"><h3>Every Day</h3><p>A sport coat conceived to stand alone, worn with tailored trousers or denim. The most versatile garment in a working wardrobe.</p><a class="more" href="https://summitcustomsuits.com/sport-coats">Sport coats</a></article>
+    <article class="rv"><h3>The Boardroom</h3><p>Two-piece and three-piece suits in English and Italian cloth, formal enough for a boardroom and refined enough for the evening after.</p><a class="more" href="/suits">Bespoke suits</a></article>
+    <article class="rv"><h3>Black Tie</h3><p>Peak or shawl lapels faced in satin or grosgrain, jet black or midnight navy barathea. A tuxedo you own, ready for every gala and evening event.</p><a class="more" href="/tuxedos">Bespoke tuxedos</a></article>
+    <article class="rv"><h3>Every Day</h3><p>A sport coat conceived to stand alone, worn with tailored trousers or denim. The most versatile garment in a working wardrobe.</p><a class="more" href="/sport-coats">Sport coats</a></article>
   </div>
 </section>
 
@@ -785,16 +511,16 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <p class="lede">A bespoke garment is only as good as it looks and feels when worn. Real fittings, real finished pieces, and the professionals who wear them.</p>
   </div>
   <div class="gallery">
-    <figure class="rv"><img src="img/client-trio-640.webp" srcset="img/client-trio-640.webp 640w, img/client-trio-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Three Summit Customs clients in custom suits: navy, charcoal and light grey"><figcaption>Three commissions, one standard</figcaption></figure>
-    <figure class="rv"><img src="img/tan-fitting-640.webp" srcset="img/tan-fitting-640.webp 640w, img/tan-fitting-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client trying on a custom tan suit during a fitting in a Salt Lake City studio"><figcaption>Tan suit &middot; Fitting</figcaption></figure>
-    <figure class="rv"><img src="img/rooftop-640.webp" srcset="img/rooftop-640.webp 640w, img/rooftop-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Clients wearing custom tailoring in tan, beige and navy check on a rooftop terrace"><figcaption>Rooftop &middot; Finished pieces</figcaption></figure>
-    <figure class="rv"><img src="img/client-linings-640.webp" srcset="img/client-linings-640.webp 640w, img/client-linings-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Clients revealing the custom patterned linings inside their bespoke suit jackets"><figcaption>Custom linings</figcaption></figure>
-    <figure class="rv"><img src="img/plaid-coat-640.webp" srcset="img/plaid-coat-640.webp 640w, img/plaid-coat-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="1107" loading="lazy" decoding="async" alt="Client wearing a green plaid custom sport coat with dark navy trousers"><figcaption>Plaid sport coat</figcaption></figure>
-    <figure class="rv"><img src="img/grey-suit-640.webp" srcset="img/grey-suit-640.webp 640w, img/grey-suit-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client in a light grey custom suit on a balcony overlooking the mountains"><figcaption>Light grey suit</figcaption></figure>
-    <figure class="rv"><img src="img/kobe-event-640.webp" srcset="img/kobe-event-640.webp 640w, img/kobe-event-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Kobe Apponsah in a black tuxedo and western hat at an outdoor event with a guest"><figcaption>Black tie, outdoors</figcaption></figure>
-    <figure class="rv"><img src="img/kobe-portrait-640.webp" srcset="img/kobe-portrait-640.webp 640w, img/kobe-portrait-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="336" loading="lazy" decoding="async" alt="Kobe Apponsah in a midnight bespoke tuxedo with satin peak lapels and bow tie"><figcaption>Midnight tuxedo</figcaption></figure>
+    <figure class="rv"><img src="/img/client-trio-640.webp" srcset="/img/client-trio-640.webp 640w, /img/client-trio-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Three Summit Customs clients in custom suits: navy, charcoal and light grey"><figcaption>Three commissions, one standard</figcaption></figure>
+    <figure class="rv"><img src="/img/tan-fitting-640.webp" srcset="/img/tan-fitting-640.webp 640w, /img/tan-fitting-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client trying on a custom tan suit during a fitting in a Salt Lake City studio"><figcaption>Tan suit &middot; Fitting</figcaption></figure>
+    <figure class="rv"><img src="/img/rooftop-640.webp" srcset="/img/rooftop-640.webp 640w, /img/rooftop-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Clients wearing custom tailoring in tan, beige and navy check on a rooftop terrace"><figcaption>Rooftop &middot; Finished pieces</figcaption></figure>
+    <figure class="rv"><img src="/img/client-linings-640.webp" srcset="/img/client-linings-640.webp 640w, /img/client-linings-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="960" loading="lazy" decoding="async" alt="Clients revealing the custom patterned linings inside their bespoke suit jackets"><figcaption>Custom linings</figcaption></figure>
+    <figure class="rv"><img src="/img/plaid-coat-640.webp" srcset="/img/plaid-coat-640.webp 640w, /img/plaid-coat-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="1107" loading="lazy" decoding="async" alt="Client wearing a green plaid custom sport coat with dark navy trousers"><figcaption>Plaid sport coat</figcaption></figure>
+    <figure class="rv"><img src="/img/grey-suit-640.webp" srcset="/img/grey-suit-640.webp 640w, /img/grey-suit-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Client in a light grey custom suit on a balcony overlooking the mountains"><figcaption>Light grey suit</figcaption></figure>
+    <figure class="rv"><img src="/img/kobe-event-640.webp" srcset="/img/kobe-event-640.webp 640w, /img/kobe-event-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="853" loading="lazy" decoding="async" alt="Kobe Apponsah in a black tuxedo and western hat at an outdoor event with a guest"><figcaption>Black tie, outdoors</figcaption></figure>
+    <figure class="rv"><img src="/img/kobe-portrait-640.webp" srcset="/img/kobe-portrait-640.webp 640w, /img/kobe-portrait-1100.webp 1100w" sizes="(max-width:900px) 50vw, 25vw" width="640" height="336" loading="lazy" decoding="async" alt="Kobe Apponsah in a midnight bespoke tuxedo with satin peak lapels and bow tie"><figcaption>Midnight tuxedo</figcaption></figure>
   </div>
-  <a class="more" href="https://summitcustomsuits.com/gallery">See the full gallery</a>
+  <a class="more" href="/gallery">See the full gallery</a>
 </section>
 
 <section class="sec" id="process" aria-labelledby="process-h" style="border-top:1px solid var(--line)">
@@ -811,7 +537,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 </section>
 
 <section class="sec cloth" aria-labelledby="cloth-h">
-  <figure class="rv"><img src="img/lapel-640.webp" srcset="img/lapel-640.webp 640w, img/lapel-1100.webp 1024w" sizes="(max-width:900px) 100vw, 50vw" width="640" height="640" loading="lazy" decoding="async" alt="Close-up of a black bespoke tuxedo with silk lapel, pleated dress shirt and white pocket square"></figure>
+  <figure class="rv"><img src="/img/lapel-640.webp" srcset="/img/lapel-640.webp 640w, /img/lapel-1100.webp 1024w" sizes="(max-width:900px) 100vw, 50vw" width="640" height="640" loading="lazy" decoding="async" alt="Close-up of a black bespoke tuxedo with silk lapel, pleated dress shirt and white pocket square"></figure>
   <div class="rv">
     <div class="eyebrow">The Cloth</div>
     <h2 class="h2" id="cloth-h">4,000 cloths.<br><em>One choice.</em></h2>
@@ -819,8 +545,8 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <ul class="mills" aria-label="Mills">
       <li>Dormeuil</li><li>Scabal</li><li>Vitale Barberis Canonico</li><li>Holland &amp; Sherry</li><li>Marlane</li><li>Marzotto</li><li>Fratelli Tallia di Delfino</li>
     </ul>
-    <div class="swatches"><figure><img src="img/swatch/57505.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy solid suit cloth from Marlane"><figcaption>Marlane &middot; Navy</figcaption></figure><figure><img src="img/swatch/57506.webp" width="360" height="360" loading="lazy" decoding="async" alt="Grey solid suit cloth from Marlane"><figcaption>Marlane &middot; Grey</figcaption></figure><figure><img src="img/swatch/57511.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy check suit cloth from Marlane"><figcaption>Marlane &middot; Navy Check</figcaption></figure><figure><img src="img/swatch/57531.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown check suit cloth from Marlane"><figcaption>Marlane &middot; Brown Check</figcaption></figure><figure><img src="img/swatch/27016.webp" width="360" height="360" loading="lazy" decoding="async" alt="Blue check jacket cloth from E. Thomas"><figcaption>E. Thomas &middot; Blue Check</figcaption></figure><figure><img src="img/swatch/27008.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown textured jacket cloth from Fratelli Tallia di Delfino"><figcaption>Tallia di Delfino &middot; Brown</figcaption></figure></div>
-    <a class="more" href="https://summitcustomsuits.com/fabrics">Browse all fabric swatches</a>
+    <div class="swatches"><figure><img src="/img/swatch/57505.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy solid suit cloth from Marlane"><figcaption>Marlane &middot; Navy</figcaption></figure><figure><img src="/img/swatch/57506.webp" width="360" height="360" loading="lazy" decoding="async" alt="Grey solid suit cloth from Marlane"><figcaption>Marlane &middot; Grey</figcaption></figure><figure><img src="/img/swatch/57511.webp" width="360" height="360" loading="lazy" decoding="async" alt="Navy check suit cloth from Marlane"><figcaption>Marlane &middot; Navy Check</figcaption></figure><figure><img src="/img/swatch/57531.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown check suit cloth from Marlane"><figcaption>Marlane &middot; Brown Check</figcaption></figure><figure><img src="/img/swatch/27016.webp" width="360" height="360" loading="lazy" decoding="async" alt="Blue check jacket cloth from E. Thomas"><figcaption>E. Thomas &middot; Blue Check</figcaption></figure><figure><img src="/img/swatch/27008.webp" width="360" height="360" loading="lazy" decoding="async" alt="Brown textured jacket cloth from Fratelli Tallia di Delfino"><figcaption>Tallia di Delfino &middot; Brown</figcaption></figure></div>
+    <a class="more" href="/fabrics">Browse all fabric swatches</a>
   </div>
 </section>
 
@@ -831,16 +557,16 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <p class="lede">Made-to-order bespoke footwear, handcrafted to your specifications: last, leather, sole, and finish. Goodyear welted, full-grain calf, hand-burnished patinas, no two pairs identical.</p>
   </div>
   <div class="shoes">
-    <a class="shoe rv" href="https://summitcustomsuits.com/shoes/patina-oxford"><figure><img src="img/shoe-oxford-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Patina cap-toe Oxford dress shoe in tobacco and olive, Goodyear welted"></figure><div><h3>Patina Cap-Toe Oxford</h3><span>Tobacco &amp; olive</span></div></a>
-    <a class="shoe rv" href="https://summitcustomsuits.com/shoes/patina-horsebit-loafer"><figure><img src="img/shoe-horsebit-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Patina horsebit loafer in amber and cognac with gold hardware"></figure><div><h3>Patina Horsebit Loafer</h3><span>Amber &amp; cognac</span></div></a>
-    <a class="shoe rv" href="https://summitcustomsuits.com/shoes/bordeaux-wholecut"><figure><img src="img/shoe-wholecut-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Bordeaux whole-cut Oxford with brogue medallion toe"></figure><div><h3>Bordeaux Whole-Cut</h3><span>Bordeaux &amp; black</span></div></a>
-    <a class="shoe rv" href="https://summitcustomsuits.com/shoes"><figure><img src="img/shoe-monk-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Double monk strap cap-toe shoe in medium brown box calf"></figure><div><h3>Double Monk Cap-Toe</h3><span>Medium brown box calf</span></div></a>
+    <a class="shoe rv" href="/shoes#patina-oxford"><figure><img src="/img/shoe-oxford-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Patina cap-toe Oxford dress shoe in tobacco and olive, Goodyear welted"></figure><div><h3>Patina Cap-Toe Oxford</h3><span>Tobacco &amp; olive</span></div></a>
+    <a class="shoe rv" href="/shoes#patina-horsebit-loafer"><figure><img src="/img/shoe-horsebit-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Patina horsebit loafer in amber and cognac with gold hardware"></figure><div><h3>Patina Horsebit Loafer</h3><span>Amber &amp; cognac</span></div></a>
+    <a class="shoe rv" href="/shoes#bordeaux-wholecut"><figure><img src="/img/shoe-wholecut-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Bordeaux whole-cut Oxford with brogue medallion toe"></figure><div><h3>Bordeaux Whole-Cut</h3><span>Bordeaux &amp; black</span></div></a>
+    <a class="shoe rv" href="/shoes"><figure><img src="/img/shoe-monk-640.webp" width="640" height="640" loading="lazy" decoding="async" alt="Double monk strap cap-toe shoe in medium brown box calf"></figure><div><h3>Double Monk Cap-Toe</h3><span>Medium brown box calf</span></div></a>
   </div>
-  <a class="more" href="https://summitcustomsuits.com/shoes">View all footwear</a>
+  <a class="more" href="/shoes">View all footwear</a>
 </section>
 
 <section class="sec kobe" id="kobe" aria-labelledby="kobe-h" style="border-top:1px solid var(--line)">
-  <figure class="rv"><img src="img/kobe-tractor-640.webp" srcset="img/kobe-tractor-640.webp 640w, img/kobe-tractor-1100.webp 1067w" sizes="(max-width:900px) 100vw, 45vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah, founder of Summit Customs, in a black tuxedo and western hat beside a red vintage tractor"></figure>
+  <figure class="rv"><img src="/img/kobe-tractor-640.webp" srcset="/img/kobe-tractor-640.webp 640w, /img/kobe-tractor-1100.webp 1067w" sizes="(max-width:900px) 100vw, 45vw" width="640" height="960" loading="lazy" decoding="async" alt="Kobe Apponsah, founder of Summit Customs, in a black tuxedo and western hat beside a red vintage tractor"></figure>
   <div class="rv">
     <div class="eyebrow">Meet the Founder</div>
     <h2 class="h2" id="kobe-h">Kobe Apponsah</h2>
@@ -848,7 +574,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <blockquote>&ldquo;I don&rsquo;t believe in trends.<br><em>I believe in standards.</em>&rdquo;</blockquote>
     <p>Summit Customs was built for men who understand that presence is power, and that how you show up determines how you're received. A background in high-level sales taught Kobe one thing quickly: the men who win the room don't just speak well; they look like they belong there before they say a word.</p>
     <p>From custom suiting to wardrobe refinement, every detail is intentional. No upselling. No trends. No generic advice. Just deeply personal strategy built around you and the life you're living.</p>
-    <a class="more" href="https://summitcustomsuits.com/about">Read Kobe's story</a>
+    <a class="more" href="/about">Read Kobe's story</a>
   </div>
 </section>
 
@@ -869,13 +595,13 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
     <details><summary>Do you keep my measurements on file?</summary><p>Yes. Your measurements, cloth choices, and pattern are kept on file, so every future order starts exactly where the last one left off.</p></details>
     <details><summary>Do you make wedding suits and tuxedos for grooms?</summary><p>Yes. Three-piece suits are a favourite for weddings, and bespoke tuxedos are cut with peak or shawl lapels in satin or grosgrain, in black or midnight navy. Book early: allow 5 to 8 weeks before the date.</p></details>
     <details><summary>How do I get started?</summary><p>Book a complimentary 30-minute consultation online or call (801) 866-9718. Meet Kobe in person in Salt Lake City or by video, talk through what you need, and decide from there. There is no obligation.</p></details>
-    <details><summary>What is a capsule wardrobe?</summary><p>A considered foundation of pieces designed to work together, for example one bespoke suit, three sport coats, and three custom shirts. You can <a href="https://summitcustomsuits.com/capsule-wardrobe" style="color:var(--gold-2)">build your capsule online</a> before your consultation and refine it with Kobe.</p></details>
+    <details><summary>What is a capsule wardrobe?</summary><p>A considered foundation of pieces designed to work together, for example one bespoke suit, three sport coats, and three custom shirts. You can <a href="/capsule-wardrobe" style="color:var(--gold-2)">build your capsule online</a> before your consultation and refine it with Kobe.</p></details>
   </div>
 </section>
 
 <section class="cta" id="cta" aria-labelledby="ctaTitle">
   <div>
-    <img class="crest" src="img/logo.webp" width="640" height="507" loading="lazy" decoding="async" alt="Summit Customs logo">
+    <img class="crest" src="/img/logo.webp" width="640" height="507" loading="lazy" decoding="async" alt="Summit Customs logo">
     <h2 id="ctaTitle">Tailoring<br><em>for the few.</em></h2>
     <p>Every Summit suit is cut for one person only. It begins with a conversation: thirty minutes, in person or by video, about where you're going and what you need your wardrobe to do.</p>
     <div class="ctas">
@@ -892,29 +618,29 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 
 <footer>
   <div class="brand">
-    <img src="img/logo.webp" width="640" height="507" loading="lazy" decoding="async" alt="Summit Customs bespoke tailoring, Salt Lake City">
+    <img src="/img/logo.webp" width="640" height="507" loading="lazy" decoding="async" alt="Summit Customs bespoke tailoring, Salt Lake City">
     <p>Bespoke suits, sport coats, and tuxedos for the man who refuses to compromise. Custom tailoring and image consulting in Salt Lake City, Utah.</p>
   </div>
   <nav aria-label="Garments">
     <h2>Garments</h2>
     <ul>
-      <li><a href="https://summitcustomsuits.com/suits">Bespoke Suits</a></li>
-      <li><a href="https://summitcustomsuits.com/sport-coats">Sport Coats</a></li>
-      <li><a href="https://summitcustomsuits.com/tuxedos">Tuxedos</a></li>
-      <li><a href="https://summitcustomsuits.com/shoes">Footwear</a></li>
-      <li><a href="https://summitcustomsuits.com/fabrics">Fabrics</a></li>
-      <li><a href="https://summitcustomsuits.com/collection">The Collection</a></li>
+      <li><a href="/suits">Bespoke Suits</a></li>
+      <li><a href="/sport-coats">Sport Coats</a></li>
+      <li><a href="/tuxedos">Tuxedos</a></li>
+      <li><a href="/shoes">Footwear</a></li>
+      <li><a href="/fabrics">Fabrics</a></li>
+      <li><a href="/collection">The Collection</a></li>
     </ul>
   </nav>
   <nav aria-label="Atelier">
     <h2>Atelier</h2>
     <ul>
-      <li><a href="https://summitcustomsuits.com/services">Services</a></li>
-      <li><a href="https://summitcustomsuits.com/capsule-wardrobe">Capsule Wardrobes</a></li>
-      <li><a href="https://summitcustomsuits.com/gallery">Gallery</a></li>
-      <li><a href="https://summitcustomsuits.com/about">About Kobe</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/capsule-wardrobe">Capsule Wardrobes</a></li>
+      <li><a href="/gallery">Gallery</a></li>
+      <li><a href="/about">About Kobe</a></li>
       <li><a href="https://summitcustomsuits.com/book">Book</a></li>
-      <li><a href="https://summitcustomsuits.com/contact">Contact</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>
   <div>
@@ -929,7 +655,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
       <a href="https://search.google.com/local/writereview?placeid=ChIJ6_VVx3v1UocRr6uhoW6oEFE" rel="noopener" target="_blank">&#9733; Review us on Google</a>
     </address>
   </div>
-  <div class="copy"><span>&copy; 2026 Summit Customs. All rights reserved.</span><span>Bespoke tailoring &middot; Salt Lake City, Utah &middot; <a href="https://summitcustomsuits.com/privacy">Privacy</a></span></div>
+  <div class="copy"><span>&copy; 2026 Summit Customs. All rights reserved.</span><span>Bespoke tailoring &middot; Salt Lake City, Utah &middot; <a href="/privacy">Privacy</a></span></div>
   <div class="mega" aria-hidden="true">SUMMIT</div>
 </footer>
 
@@ -938,7 +664,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
   <a href="tel:+18018669718">Call</a>
 </div>
 
-<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Gallery photo" hidden>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo" hidden>
   <img alt="">
   <p class="lb-cap"></p>
   <button class="lb-x" type="button" aria-label="Close">&times;</button>
@@ -956,7 +682,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 const COUNT = 199;
 const PORTRAIT = innerWidth < innerHeight;
 const DIR = PORTRAIT ? 'frames-m' : 'frames';
-const src = i => `${DIR}/f_${String(i).padStart(3, '0')}.webp`;
+const src = i => `/${DIR}/f_${String(i).padStart(3, '0')}.webp`;
 const frames = new Array(COUNT);
 const canvas = document.getElementById('seq'), ctx = canvas.getContext('2d');
 const state = { frame: 0, shift: 0 };
@@ -1033,7 +759,6 @@ function draw() {
 resize(); addEventListener('resize', resize);
 
 gsap.registerPlugin(ScrollTrigger);
-gsap.to('.progress i', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
 
 // Timeline units: the film plays from 0.8 to 9.05 (one unit per second of footage).
 const V0 = .8, at = sec => V0 + sec;
@@ -1060,74 +785,10 @@ tl.to({}, { duration: .2 }, at(8.0));
 
 // Nav turns solid once past the film
 // (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
-const past = on => { document.getElementById('nav').classList.toggle('solid', on); document.body.classList.toggle('past', on); };
-ScrollTrigger.create({ start: () => tl.scrollTrigger.end + 1, onEnter: () => past(true), onLeaveBack: () => past(false) });
+ScrollTrigger.create({ start: () => tl.scrollTrigger.end + 1, onEnter: () => window.summitPast(true), onLeaveBack: () => window.summitPast(false) });
 
-// Headings rise line by line inside their reveal blocks
-document.querySelectorAll('.rv .h2, .rv .quote').forEach(h => {
-  h.innerHTML = h.innerHTML.split(/<br\s*\/?>/i).map(l => `<span class="ln"><span>${l}</span></span>`).join('');
-});
-
-// Gentle parallax on photography
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.querySelectorAll('.card figure img, .gallery figure img, .cloth figure img').forEach(img => {
-    gsap.fromTo(img, { yPercent: -5, scale: 1.12 }, { yPercent: 5, scale: 1.12, ease: 'none',
-      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
-  });
-}
-
-// Mobile menu
-const menuBtn = document.querySelector('.menu-btn'), menu = document.getElementById('menu');
-const setMenu = open => {
-  document.body.classList.toggle('menu-open', open);
-  menuBtn.setAttribute('aria-expanded', open); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  menu.setAttribute('aria-hidden', !open);
-};
-menuBtn.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
-
-// Gallery viewer
-const lb = document.getElementById('lb'), lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
-const shots = [...document.querySelectorAll('.gallery figure')];
-let cur = 0, lastFocus = null;
-const show = i => {
-  cur = (i + shots.length) % shots.length;
-  const im = shots[cur].querySelector('img');
-  lbImg.src = im.src.replace('-640.', '-1100.'); lbImg.alt = im.alt;
-  lbCap.textContent = shots[cur].querySelector('figcaption').textContent;
-};
-const openLb = i => { lastFocus = document.activeElement; show(i); lb.hidden = false; document.body.style.overflow = 'hidden'; lb.querySelector('.lb-x').focus(); };
-const closeLb = () => { lb.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); };
-shots.forEach((f, i) => { f.tabIndex = 0; f.setAttribute('role', 'button'); f.addEventListener('click', () => openLb(i)); f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); } }); });
-lb.querySelector('.lb-x').addEventListener('click', closeLb);
-lb.querySelector('.lb-p').addEventListener('click', () => show(cur - 1));
-lb.querySelector('.lb-n').addEventListener('click', () => show(cur + 1));
-lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
-addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (!lb.hidden) closeLb(); else if (document.body.classList.contains('menu-open')) setMenu(false); }
-  if (lb.hidden) return;
-  if (e.key === 'ArrowLeft') show(cur - 1);
-  if (e.key === 'ArrowRight') show(cur + 1);
-});
-
-// Section reveals
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
-
-// Closing title, letter by letter
-const title = document.getElementById('ctaTitle');
-(function split(node) {
-  [...node.childNodes].forEach(n => {
-    if (n.nodeType === 3) {
-      const f = document.createDocumentFragment();
-      [...n.textContent].forEach(ch => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch === ' ' ? ' ' : ch; f.appendChild(s); });
-      n.replaceWith(f);
-    } else if (n.nodeType === 1 && n.tagName !== 'BR') split(n);
-  });
-})(title);
-title.setAttribute('aria-label', 'Tailoring for the few.');
-gsap.from('#ctaTitle .ch', { opacity: 0, y: 40, filter: 'blur(12px)', stagger: .035, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: '#cta', start: 'top 65%' } });
 })();
 </script>
+<script src="/assets/site.js"></script>
 </body>
 </html>

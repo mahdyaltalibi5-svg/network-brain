@@ -1,0 +1,287 @@
+{
+ "57501": {
+  "img": "57501",
+  "colour": "BLUE",
+  "pattern": "Stripe"
+ },
+ "57502": {
+  "img": "57502",
+  "colour": "GRAY",
+  "pattern": "Stripe"
+ },
+ "57503": {
+  "img": "57503",
+  "colour": "GREEN",
+  "pattern": "Textured"
+ },
+ "57504": {
+  "img": "57504",
+  "colour": "BEIGE",
+  "pattern": "Textured"
+ },
+ "57505": {
+  "img": "57505",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57506": {
+  "img": "57506",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57507": {
+  "img": "57507",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57508": {
+  "img": "57508",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57509": {
+  "img": "57509",
+  "colour": "NAVY",
+  "pattern": "Stripe"
+ },
+ "57510": {
+  "img": "57510",
+  "colour": "BEIGE",
+  "pattern": "Stripe"
+ },
+ "57511": {
+  "img": "57511",
+  "colour": "NAVY",
+  "pattern": "Check"
+ },
+ "57512": {
+  "img": "57512",
+  "colour": "BEIGE",
+  "pattern": "Check"
+ },
+ "57518": {
+  "img": "57518",
+  "colour": "GRAY",
+  "pattern": "Check"
+ },
+ "57572": {
+  "img": "6042",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57573": {
+  "img": "6043",
+  "colour": "BLUE",
+  "pattern": "Solid"
+ },
+ "57574": {
+  "img": "6044",
+  "colour": "BLUE",
+  "pattern": "Solid"
+ },
+ "57575": {
+  "img": "6045",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57576": {
+  "img": "6046",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57521": {
+  "img": "56483",
+  "colour": "BLUE",
+  "pattern": "Solid"
+ },
+ "57522": {
+  "img": "56484",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57523": {
+  "img": "5033",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57524": {
+  "img": "5034",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57525": {
+  "img": "56485",
+  "colour": "BEIGE",
+  "pattern": "Solid"
+ },
+ "57526": {
+  "img": "5037",
+  "colour": "BEIGE",
+  "pattern": "Solid"
+ },
+ "57527": {
+  "img": "5035",
+  "colour": "BROWN",
+  "pattern": "Solid"
+ },
+ "57528": {
+  "img": "5036",
+  "colour": "GREEN",
+  "pattern": "Solid"
+ },
+ "57529": {
+  "img": "57529",
+  "colour": "NAVY",
+  "pattern": "Check"
+ },
+ "57530": {
+  "img": "57530",
+  "colour": "GREEN",
+  "pattern": "Check"
+ },
+ "57531": {
+  "img": "57531",
+  "colour": "BROWN",
+  "pattern": "Check"
+ },
+ "57532": {
+  "img": "57532",
+  "colour": "NAVY",
+  "pattern": "Stripe"
+ },
+ "57533": {
+  "img": "57533",
+  "colour": "BROWN",
+  "pattern": "Stripe"
+ },
+ "57534": {
+  "img": "57534",
+  "colour": "BLUE",
+  "pattern": "Stripe"
+ },
+ "57535": {
+  "img": "57535",
+  "colour": "GRAY",
+  "pattern": "Stripe"
+ },
+ "57536": {
+  "img": "57536",
+  "colour": "NAVY",
+  "pattern": "Stripe"
+ },
+ "57537": {
+  "img": "57537",
+  "colour": "BEIGE",
+  "pattern": "Check"
+ },
+ "57538": {
+  "img": "57538",
+  "colour": "GRAY",
+  "pattern": "Check"
+ },
+ "57539": {
+  "img": "57539",
+  "colour": "BLUE",
+  "pattern": "Check"
+ },
+ "57541": {
+  "img": "57541",
+  "colour": "NAVY",
+  "pattern": "Shadow"
+ },
+ "57542": {
+  "img": "57542",
+  "colour": "BLACK",
+  "pattern": "Shadow"
+ },
+ "57543": {
+  "img": "57543",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57544": {
+  "img": "57544",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ },
+ "57545": {
+  "img": "57545",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57546": {
+  "img": "57546",
+  "colour": "GRAY",
+  "pattern": "Solid"
+ },
+ "57547": {
+  "img": "57547",
+  "colour": "BROWN",
+  "pattern": "Solid"
+ },
+ "57549": {
+  "img": "57549",
+  "colour": "GREEN",
+  "pattern": "Solid"
+ },
+ "57550": {
+  "img": "57550",
+  "colour": "BEIGE",
+  "pattern": "Stripe"
+ },
+ "57551": {
+  "img": "57551",
+  "colour": "GRAY",
+  "pattern": "Stripe"
+ },
+ "57552": {
+  "img": "57552",
+  "colour": "BEIGE",
+  "pattern": "Textured"
+ },
+ "57553": {
+  "img": "57553",
+  "colour": "BROWN",
+  "pattern": "Textured"
+ },
+ "57554": {
+  "img": "57554",
+  "colour": "BLUE",
+  "pattern": "Textured"
+ },
+ "57555": {
+  "img": "57555",
+  "colour": "NAVY",
+  "pattern": "Textured"
+ },
+ "57566": {
+  "img": "27068",
+  "colour": "WHITE",
+  "pattern": "Solid"
+ },
+ "57567": {
+  "img": "27069",
+  "colour": "BEIGE",
+  "pattern": "Solid"
+ },
+ "57568": {
+  "img": "27070",
+  "colour": "BEIGE",
+  "pattern": "Solid"
+ },
+ "57569": {
+  "img": "27071",
+  "colour": "GREEN",
+  "pattern": "Solid"
+ },
+ "57570": {
+  "img": "27072",
+  "colour": "BLUE",
+  "pattern": "Solid"
+ },
+ "57571": {
+  "img": "27073",
+  "colour": "NAVY",
+  "pattern": "Solid"
+ }
+}
