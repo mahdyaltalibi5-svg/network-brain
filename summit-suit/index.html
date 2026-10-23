@@ -659,7 +659,7 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 <main id="main">
 <section id="film" aria-label="The anatomy of a bespoke suit">
   <canvas id="seq" role="img" aria-label="A bespoke charcoal three-piece suit assembling piece by piece: shirt, tie, waistcoat, then jacket"></canvas>
-  <noscript><img src="frames/f_216.webp" width="2200" height="1244" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
+  <noscript><img src="frames/f_198.webp" width="2200" height="1244" alt="Charcoal three-piece bespoke suit with white shirt, black tie and pocket square by Summit Customs" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></noscript>
   <div class="vignette"></div>
 
   <div class="hero" id="top">
@@ -950,9 +950,10 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 (() => {
-// The first 9s (217 frames at 24fps) of the 4K Kling clip; the last second is the suit standing still.
-// Portrait screens only ever show the middle of the frame, so they get a centre-cropped, lighter set.
-const COUNT = 217;
+// 199 frames at 24fps cut from the 4K Kling clip: the clip's first 9s, minus the moment where the
+// sleeves wrap on before the jacket body (it read as the jacket going on twice), bridged by a short
+// dissolve from shirt-and-tie into the waistcoat. Portrait screens get a centre-cropped, lighter set.
+const COUNT = 199;
 const PORTRAIT = innerWidth < innerHeight;
 const DIR = PORTRAIT ? 'frames-m' : 'frames';
 const src = i => `${DIR}/f_${String(i).padStart(3, '0')}.webp`;
@@ -1034,27 +1035,28 @@ resize(); addEventListener('resize', resize);
 gsap.registerPlugin(ScrollTrigger);
 gsap.to('.progress i', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
 
-// Timeline units: the clip plays from 0.8 to 9.8 (one unit per second of footage).
+// Timeline units: the film plays from 0.8 to 9.05 (one unit per second of footage).
 const V0 = .8, at = sec => V0 + sec;
 const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: draw,
-  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=480%', scrub: .6, pin: true, anticipatePin: 1 } });
+  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=440%', scrub: .6, pin: true, anticipatePin: 1 } });
 const panel = (k, start, hold) => {
   const el = `[data-p="${k}"]`;
   tl.fromTo(el, { opacity: 0, y: 30, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5 }, start);
   if (hold) tl.to(el, { opacity: 0, y: -30, filter: 'blur(8px)', duration: .4, ease: 'power2.in' }, start + hold);
 };
-tl.to(state, { frame: COUNT - 1, duration: 9, ease: 'none' }, V0)
+tl.to(state, { frame: COUNT - 1, duration: (COUNT - 1) / 24, ease: 'none' }, V0)
   .to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
   .to('.scroll-cue', { opacity: 0, duration: .3 }, 0);
 const drift = (to, t) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, t);
-// Captions follow the clip: shirt and tie form ~2.5-3.5s, waistcoat ~5s, jacket ~5.5-7s, suit settles ~7.5s.
-drift(1, at(2.1)); drift(-1, at(4.2)); drift(1, at(5.4)); drift(-1, at(7.0));
-panel('shirt', at(2.6), 1.2);
-panel('vest', at(4.6), 1.0);
-panel('jacket', at(5.9), 1.2);
+// Captions follow the film: shirt and tie ~2.5-3.5s, waistcoat dissolves in ~5.1-5.6s, jacket wraps on
+// ~5.7-6.6s, suit settles ~6.8s.
+drift(1, at(2.1)); drift(-1, at(4.2)); drift(1, at(5.2)); drift(-1, at(6.5));
+panel('shirt', at(2.6), 1.4);
+panel('vest', at(4.6), .9);
+panel('jacket', at(5.6), 1.0);
 // The film ends on the finished suit; a short hold, then the pin releases and the site follows.
-panel('complete', at(7.5));
-tl.to({}, { duration: .2 }, at(8.8));
+panel('complete', at(7.0));
+tl.to({}, { duration: .2 }, at(8.0));
 
 // Nav turns solid once past the film
 // (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
