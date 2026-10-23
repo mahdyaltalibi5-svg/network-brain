@@ -1035,33 +1035,30 @@ resize(); addEventListener('resize', resize);
 gsap.registerPlugin(ScrollTrigger);
 gsap.to('.progress i', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
 
-// The film plays in segments with holds, so each caption stays up while its garment is finished
-// and still: shirt and tie, waistcoat, jacket, then the complete suit.
+// Timeline units: the film plays from 0.8 to 9.05 (one unit per second of footage).
+const V0 = .8, at = sec => V0 + sec;
 const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: draw,
-  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=560%', scrub: .6, pin: true, anticipatePin: 1 } });
-let at = .8;
-const play = (to, dur) => { tl.to(state, { frame: to, duration: dur, ease: 'none' }, at); at += dur; };
-const hold = dur => { at += dur; };
-const showCap = (k, when) => tl.fromTo(`[data-p="${k}"]`, { opacity: 0, y: 30, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5 }, when);
-const hideCap = (k, when) => tl.to(`[data-p="${k}"]`, { opacity: 0, y: -30, filter: 'blur(8px)', duration: .4, ease: 'power2.in' }, when);
-const drift = (to, when) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, when);
-
-tl.to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
+  scrollTrigger: { trigger: '#film', start: 'top top', end: '+=440%', scrub: .6, pin: true, anticipatePin: 1 } });
+const panel = (k, start, hold) => {
+  const el = `[data-p="${k}"]`;
+  tl.fromTo(el, { opacity: 0, y: 30, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5 }, start);
+  if (hold) tl.to(el, { opacity: 0, y: -30, filter: 'blur(8px)', duration: .4, ease: 'power2.in' }, start + hold);
+};
+tl.to(state, { frame: COUNT - 1, duration: (COUNT - 1) / 24, ease: 'none' }, V0)
+  .to('.hero .inner', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 }, .3)
   .to('.scroll-cue', { opacity: 0, duration: .3 }, 0);
-// Particles become the shirt and tie (frames 0-86)
-drift(1, 3.0); play(86, 3.4); showCap('shirt', at - .8);
-hold(1.6); hideCap('shirt', at);
-// Waistcoat dissolves in (frames 86-134)
-drift(-1, at); play(122, .6); play(134, 1.0); showCap('vest', at - .5);
-hold(1.4); hideCap('vest', at);
-// Jacket wraps on (frames 134-162)
-drift(1, at - .2); play(162, 1.4); showCap('jacket', at - 1.0);
-hold(1.3); hideCap('jacket', at);
-// Suit settles; the film ends on it and the pin releases
-drift(-1, at - .1); play(COUNT - 1, 1.4); showCap('complete', at - 1.0);
-hold(1.0); tl.to({}, { duration: .01 }, at);
+const drift = (to, t) => tl.to(state, { shift: to, duration: .9, ease: 'power2.inOut' }, t);
+// Captions follow the film: shirt and tie ~2.5-3.5s, waistcoat dissolves in ~5.1-5.6s, jacket wraps on
+// ~5.7-6.6s, suit settles ~6.8s.
+drift(1, at(2.1)); drift(-1, at(4.2)); drift(1, at(5.2)); drift(-1, at(6.5));
+panel('shirt', at(2.6), 1.4);
+panel('vest', at(4.6), .9);
+panel('jacket', at(5.6), 1.0);
+// The film ends on the finished suit; a short hold, then the pin releases and the site follows.
+panel('complete', at(7.0));
+tl.to({}, { duration: .2 }, at(8.0));
 
-// Nav turns solid once the film releases
+// Nav turns solid once past the film
 // (onEnter/onLeaveBack rather than onToggle, which also switches off at the very bottom of the page)
 const past = on => { document.getElementById('nav').classList.toggle('solid', on); document.body.classList.toggle('past', on); };
 ScrollTrigger.create({ start: () => tl.scrollTrigger.end + 1, onEnter: () => past(true), onLeaveBack: () => past(false) });
