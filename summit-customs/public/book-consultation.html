@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a Consultation · Summit Customs</title>
+<meta name="description" content="Request a free 30-minute consultation with Summit Customs in Salt Lake City, in person or by video. Mon–Sat, 10am–6pm Mountain Time.">
+<meta name="robots" content="noindex">
+<style>
+  :root { --void:#07080A; --ivory:#F2EDE4; --gold:#C9A45C; --charcoal:#2A2B2E; --stone:#A39E92; --line:rgba(201,164,92,.35); }
+  * { box-sizing:border-box; }
+  html { background:var(--void); }
+  body { margin:0; background:var(--void); color:var(--ivory); font:16px/1.6 "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color:var(--gold); }
+  .wrap { max-width:760px; margin:0 auto; padding:40px 16px 80px; }
+  header { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--line); padding-bottom:20px; }
+  .brand { color:var(--ivory); text-decoration:none; font:600 13px/1 system-ui, sans-serif; letter-spacing:.28em; text-transform:uppercase; }
+  .brand b { color:var(--gold); font-weight:600; }
+  header a.tel { font-size:14px; text-decoration:none; }
+  .eyebrow { margin:48px 0 8px; color:var(--gold); font-size:12px; letter-spacing:.24em; text-transform:uppercase; }
+  h1 { margin:0 0 16px; font:400 clamp(38px,7vw,60px)/1.05 "Cormorant Garamond", Georgia, "Times New Roman", serif; }
+  h1 em { color:var(--gold); }
+  .lede { margin:0 0 36px; color:var(--stone); max-width:60ch; }
+  fieldset { border:0; border-top:1px solid var(--line); margin:0; padding:28px 0 8px; }
+  legend { padding:0; font:400 26px/1.2 "Cormorant Garamond", Georgia, serif; }
+  legend span { color:var(--gold); font:500 12px/1 system-ui, sans-serif; letter-spacing:.2em; margin-right:12px; vertical-align:middle; }
+  .hint { color:var(--stone); font-size:14px; margin:6px 0 16px; }
+  .chips { display:grid; gap:8px; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); }
+  .chips.times { grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); }
+  .chip { appearance:none; border:1px solid #3c3d41; background:var(--charcoal); color:var(--ivory); padding:10px 8px; font:inherit; font-size:14px; cursor:pointer; text-align:center; line-height:1.3; }
+  .chip small { display:block; color:var(--stone); font-size:12px; }
+  .chip:hover { border-color:var(--gold); }
+  .chip[aria-pressed="true"] { background:var(--gold); border-color:var(--gold); color:var(--void); }
+  .chip[aria-pressed="true"] small { color:var(--void); }
+  .chip:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .row { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+  @media (max-width:560px) { .row { grid-template-columns:1fr; } }
+  label { display:block; font-size:14px; margin-bottom:16px; }
+  input, select, textarea { display:block; width:100%; margin-top:6px; background:var(--charcoal); color:var(--ivory); border:1px solid #3c3d41; padding:12px; font:inherit; border-radius:0; }
+  textarea { min-height:110px; resize:vertical; }
+  .btn { display:inline-block; margin-top:12px; background:var(--gold); color:var(--void); border:0; padding:16px 28px; font:600 13px/1 system-ui, sans-serif; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; text-decoration:none; }
+  .err { color:#f0a58f; font-size:14px; min-height:1.4em; margin:12px 0 0; }
+  .summary { border:1px solid var(--line); padding:16px; margin:8px 0 0; color:var(--ivory); }
+  .summary:empty { display:none; }
+  .done { display:none; border:1px solid var(--gold); padding:24px; margin-top:28px; }
+  .done.show { display:block; }
+  .done h2 { margin:0 0 8px; font:400 30px/1.2 "Cormorant Garamond", Georgia, serif; }
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--stone); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="/">Summit <b>Customs</b></a>
+    <a class="tel" href="tel:+18018669718">(801) 866-9718</a>
+  </header>
+
+  <main>
+    <p class="eyebrow">Free 30-minute consultation</p>
+    <h1>Book your<br><em>consultation.</em></h1>
+    <p class="lede">Choose a day and time that suits you, in person in Salt Lake City or by video. Your request goes straight to Kobe, who will confirm the time with you personally.</p>
+
+    <form id="book" novalidate>
+      <fieldset>
+        <legend><span>01</span>What is it for?</legend>
+        <label>Occasion
+          <select id="occasion" name="occasion">
+            <option value="">Choose one</option>
+            <option>Bespoke Suit</option>
+            <option>Bespoke Sport Coat</option>
+            <option>Bespoke Tuxedo</option>
+            <option>Wedding</option>
+            <option>Shirts</option>
+            <option>Shoes</option>
+            <option>Wardrobe Capsule</option>
+            <option>Image Consulting</option>
+            <option>Something else</option>
+          </select>
+        </label>
+        <div role="radiogroup" aria-label="Meeting type" class="chips" id="mode" style="grid-template-columns:repeat(2,minmax(0,1fr));max-width:420px">
+          <button type="button" class="chip" aria-pressed="true" data-v="In person (Salt Lake City)">In person<small>Salt Lake City</small></button>
+          <button type="button" class="chip" aria-pressed="false" data-v="Video call">Video call<small>Anywhere</small></button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>02</span>Pick a day</legend>
+        <p class="hint">Monday to Saturday, the next three weeks.</p>
+        <div class="chips" id="days" aria-label="Day"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>03</span>Pick a time</legend>
+        <p class="hint">Mountain Time, 10am to 6pm. Kobe confirms every booking by email or phone.</p>
+        <div class="chips times" id="times" aria-label="Time"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>04</span>Your details</legend>
+        <div class="row">
+          <label>Name<input id="name" name="name" autocomplete="name" required></label>
+          <label>Phone<input id="phone" name="phone" type="tel" autocomplete="tel"></label>
+        </div>
+        <label>Email<input id="email" name="email" type="email" autocomplete="email" required></label>
+        <label>Anything we should know? <span style="color:var(--stone)">(optional)</span>
+          <textarea id="notes" name="notes" placeholder="Event date, the look you have in mind, questions…"></textarea>
+        </label>
+        <p class="summary" id="summary" aria-live="polite"></p>
+        <p class="err" id="err" role="alert"></p>
+        <button class="btn" type="submit">Request this time</button>
+      </fieldset>
+    </form>
+
+    <div class="done" id="done" tabindex="-1">
+      <h2>Almost done: send the email.</h2>
+      <p>Your email app should have opened with your request to <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a>. Press send and Kobe will confirm your time.</p>
+      <p>Nothing opened? <a id="again" href="#">Try again</a>, email <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a> directly, or call <a href="tel:+18018669718">(801) 866-9718</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    Summit Customs · Salt Lake City, Utah · Mon–Sat, 10am–6pm MST ·
+    <a href="tel:+18018669718">(801) 866-9718</a> ·
+    <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var TO = "kobe@summitcustomsuits.com";
+  var $ = function (id) { return document.getElementById(id); };
+  var params = new URLSearchParams(location.search);
+  var state = { mode: "In person (Salt Lake City)", day: null, time: null };
+
+  // Prefill from ?occasion= and ?notes= (the site's Book buttons pass these)
+  var occ = params.get("occasion");
+  if (occ) {
+    var sel = $("occasion"), found = false;
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].text.toLowerCase() === occ.toLowerCase()) { sel.selectedIndex = i; found = true; }
+    if (!found) { var o = new Option(occ, occ, true, true); sel.add(o, 1); }
+  }
+  if (params.get("notes")) $("notes").value = params.get("notes");
+
+  function pick(group, btn) {
+    group.querySelectorAll(".chip").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+  }
+
+  $("mode").addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    pick(this, b); state.mode = b.dataset.v; render();
+  });
+
+  // Today's date in Mountain Time, so the day list matches the studio's calendar
+  function mtToday() {
+    var p = new Intl.DateTimeFormat("en-US", { timeZone: "America/Denver", year: "numeric", month: "numeric", day: "numeric" }).formatToParts(new Date());
+    var g = function (t) { return +p.find(function (x) { return x.type === t; }).value; };
+    return new Date(Date.UTC(g("year"), g("month") - 1, g("day"), 12));
+  }
+  var fmt = function (d, o) { return d.toLocaleDateString("en-US", Object.assign({ timeZone: "UTC" }, o)); };
+
+  var days = $("days"), start = mtToday();
+  for (var n = 1; n <= 21; n++) {
+    var d = new Date(start.getTime() + n * 864e5);
+    if (d.getUTCDay() === 0) continue; // closed Sundays
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.setAttribute("aria-pressed", "false");
+    b.dataset.v = fmt(d, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    b.innerHTML = fmt(d, { weekday: "short" }) + "<small>" + fmt(d, { month: "short", day: "numeric" }) + "</small>";
+    days.appendChild(b);
+  }
+  days.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    pick(this, b); state.day = b.dataset.v; render();
+  });
+
+  var times = $("times");
+  for (var m = 10 * 60; m < 18 * 60; m += 30) {
+    var h = Math.floor(m / 60), mm = m % 60;
+    var label = ((h + 11) % 12 + 1) + ":" + (mm ? "30" : "00") + (h < 12 ? " am" : " pm");
+    var t = document.createElement("button");
+    t.type = "button"; t.className = "chip"; t.setAttribute("aria-pressed", "false");
+    t.dataset.v = label; t.textContent = label;
+    times.appendChild(t);
+  }
+  times.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    pick(this, b); state.time = b.dataset.v; render();
+  });
+
+  function render() {
+    $("summary").textContent = state.day && state.time ? "Requesting: " + state.day + " at " + state.time + " MT · " + state.mode : "";
+  }
+
+  var lastHref = "";
+  $("book").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("name").value.trim(), email = $("email").value.trim();
+    var missing = [];
+    if (!state.day) missing.push("a day");
+    if (!state.time) missing.push("a time");
+    if (!name) missing.push("your name");
+    if (!/^\S+@\S+\.\S+$/.test(email)) missing.push("a valid email");
+    if (missing.length) { $("err").textContent = "Please choose " + missing.join(", ") + "."; return; }
+    $("err").textContent = "";
+    var occasion = $("occasion").value || "Consultation";
+    var subject = "Consultation request: " + occasion + " on " + state.day + " at " + state.time + " MT";
+    var body = [
+      "Hi Kobe,", "",
+      "I'd like to book a consultation.", "",
+      "Occasion: " + occasion,
+      "Preferred time: " + state.day + " at " + state.time + " (Mountain Time)",
+      "Meeting: " + state.mode, "",
+      "Name: " + name,
+      "Email: " + email,
+      "Phone: " + ($("phone").value.trim() || "-"), "",
+      "Notes: " + ($("notes").value.trim() || "-"),
+    ].join("\n");
+    lastHref = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    location.href = lastHref;
+    $("done").classList.add("show");
+    $("done").focus();
+  });
+  $("again").addEventListener("click", function (e) { e.preventDefault(); if (lastHref) location.href = lastHref; });
+})();
+</script>
+</body>
+</html>
