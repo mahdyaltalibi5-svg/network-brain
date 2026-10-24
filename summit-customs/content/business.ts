@@ -13,7 +13,7 @@ export const business = {
   shortDescription:
     "Summit Customs is a Salt Lake City bespoke suit and image consulting studio for high-achieving professionals, grooms and executives across the Wasatch Front.",
   url: SITE_URL,
-  email: ph("studio email address"),
+  email: "Kobe@summitcustomsuits.com",
   phone: ph("studio phone number"),
   phoneHref: ph("phone in E.164 format, e.g. +18015550000"),
   address: {
@@ -44,7 +44,13 @@ export const business = {
     ph("Google Business Profile URL"),
     ph("LinkedIn page URL"),
   ],
-  bookingUrl: ph("online booking link (Calendly / Acuity / Square)"),
+  /**
+   * Google Calendar appointment-schedule booking page. Paste the FULL link from Google Calendar →
+   * appointment schedule → Share → "Website embed" (calendar.google.com/calendar/appointments/schedules/…)
+   * to show the calendar inline on /book. A short calendar.app.google link also works, as a button
+   * (Google blocks short links from being embedded). See lib/booking.ts.
+   */
+  bookingUrl: ph("Google Calendar appointment schedule link (Share → Website embed URL)"),
   logo: `${SITE_URL}/logo.svg`,
 } as const;
 

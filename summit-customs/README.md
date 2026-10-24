@@ -47,6 +47,16 @@ Inline markup in copy strings: `[link text](/path)`, `**bold**`.
 
 If you add copy with new special characters (é, ñ…), run `npm run fonts`. The self-hosted fonts are subset to the characters the site uses, and this also regenerates the layout-shift-free fallback metrics.
 
+## Online booking (Google Calendar)
+
+`/book` shows the studio's Google Calendar booking page inline. Until it's set up, it shows a pre-filled email request to the studio address.
+
+1. In Google Calendar (signed in as the studio account), choose **Create → Appointment schedule**. Set the 60–90 min consultation, your hours, buffers, booking window and the questions to ask (name, phone, what it's for). Turn on email confirmations and reminders.
+2. Open the schedule → **Share** → **Website embed** → **Inline schedule**, and copy the `src` URL from the code (`https://calendar.google.com/calendar/appointments/schedules/…`).
+3. Paste it as `bookingUrl` in `content/business.ts`, then commit and push.
+
+The full URL embeds the calendar on the page. A short `calendar.app.google/…` link also works, but only as a "See available times" button, because Google blocks short links from being embedded. Bookings land in Google Calendar with an invite to the client. The site stores nothing.
+
 ## Swap the logo
 
 1. `components/ui/Logo.tsx` contains the header/footer wordmark and mark (inline SVG). Replace `LogoMark` and the wordmark with the client's SVG.

@@ -2,6 +2,7 @@ import { business, founder, SITE_URL } from "@/content/business";
 import type { Faq } from "@/content/faq";
 import type { Service } from "@/content/services";
 import { ratingSource, reviews } from "@/content/reviews";
+import { booking } from "@/lib/booking";
 import { isPh, real } from "@/lib/ph";
 
 /**
@@ -114,6 +115,10 @@ export function localBusiness(): Json {
       "Image consulting",
       "Executive wardrobe planning",
     ],
+    potentialAction:
+      booking.kind === "none"
+        ? undefined
+        : { "@type": "ReserveAction", name: "Book a private fitting", target: { "@type": "EntryPoint", urlTemplate: booking.href } },
     ...rating,
   });
 }
