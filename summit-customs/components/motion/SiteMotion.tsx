@@ -132,7 +132,7 @@ export function SiteMotion() {
       const a = e.target instanceof Element ? e.target.closest("a") : null;
       if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
       const url = new URL(a.href, location.href);
-      if (url.origin !== location.origin || (url.pathname === location.pathname && url.hash)) return;
+      if (url.origin !== location.origin || url.pathname.endsWith(".html") || (url.pathname === location.pathname && url.hash)) return;
       if (url.pathname === location.pathname && url.search === location.search) return;
       e.preventDefault();
       const el = wipe.current;

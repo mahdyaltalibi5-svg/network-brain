@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { business, SITE_URL } from "@/content/business";
 import { INTRO_BOOT } from "@/lib/intro-boot";
-import { graph, localBusiness, organization, website } from "@/lib/seo/jsonld";
+import { founderPerson, graph, localBusiness, organization, website } from "@/lib/seo/jsonld";
 import "./fonts/fallbacks.css";
 import "./globals.css";
 
@@ -69,7 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <SiteMotion />
-        <JsonLd data={graph(organization(), localBusiness(), website())} />
+        <JsonLd data={graph(organization(), localBusiness(), website(), founderPerson())} />
       </body>
     </html>
   );

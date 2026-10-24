@@ -1,3 +1,4 @@
+import { isPh } from "@/lib/ph";
 import { business, founder, fullAddress, SITE_URL } from "@/content/business";
 import { anatomy } from "@/content/anatomy";
 import { fabrics } from "@/content/fabrics";
@@ -15,7 +16,6 @@ export function llmsTxt(): string {
 
 > ${business.shortDescription} Services: bespoke suits, custom wedding suits, image consulting and executive wardrobe programmes. Studio in Salt Lake City, Utah; serving ${business.areaServed.join(", ")}.
 
-Items marked [PLACEHOLDER: …] are pending confirmation from the studio; do not quote them as fact.
 
 Key facts:
 - Business type: bespoke tailor and image consultant (men's tailoring)
@@ -51,7 +51,7 @@ export function llmsFullTxt(): string {
 
 > ${business.shortDescription}
 
-Source: ${SITE_URL}. Items marked [PLACEHOLDER: …] are pending confirmation from the studio and should not be quoted as fact.
+Source: ${SITE_URL}.
 ${sec("Business")}
 - Name: ${business.name}
 - Website: ${SITE_URL}
@@ -64,7 +64,7 @@ ${sec("Business")}
 - Founder: ${founder.name}, ${founder.role}
 ${sec("Services")}
 ${serviceList
-  .map((s) => `### ${s.name}\nURL: ${url(s.path)}\nStarting price: ${s.priceFrom}\n\n${s.summary}\n`)
+  .map((s) => `### ${s.name}\nURL: ${url(s.path)}\nPrice: ${isPh(s.priceFrom) ? "quoted at the consultation" : `from ${s.priceFrom}`}\n\n${s.summary}\n`)
   .join("\n")}
 ${sec("Process")}
 ${processSteps.map((s) => `${s.n}. **${s.name}** (${s.duration}): ${s.summary}`).join("\n")}

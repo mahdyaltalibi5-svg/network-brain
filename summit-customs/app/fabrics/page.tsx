@@ -47,9 +47,6 @@ export default function FabricsPage() {
               <p className="mt-4 text-ivory-dim">
                 <span className="text-ivory">Best for:</span> {f.bestFor}
               </p>
-              <p className="mt-6 border-t border-line-soft pt-4 text-sm text-ivory-dim">
-                <span className="text-ivory">Mills:</span> {rich(f.mills)}
-              </p>
             </li>
           ))}
         </ul>

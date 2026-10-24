@@ -30,10 +30,23 @@ test("/book offers a working way to book today", async ({ page }) => {
     await expect(iframe).toHaveAttribute("src", /calendar\.google\.com\/calendar\/appointments\/schedules\/.+gv=true/);
     await expect(iframe).toHaveAttribute("title", /booking calendar/i);
   } else {
-    // not configured yet: a pre-filled email request to the studio
-    const mail = page.getByRole("link", { name: "Request a fitting by email" });
+    // not configured yet: the day/time request form, plus a pre-filled email
+    const mail = page.getByRole("link", { name: /^Or email / });
     const href = await mail.getAttribute("href");
     expect(href).toMatch(/^mailto:Kobe@summitcustomsuits\.com\?subject=Private%20fitting%20request&body=/);
     expect(decodeURIComponent(href!.split("body=")[1])).toContain("Dates and times that suit me:");
+
+    await page.getByRole("link", { name: "Pick a day and time" }).click();
+    await expect(page).toHaveURL(/\/book-consultation\.html$/);
+    await expect(page.locator("#days .chip")).not.toHaveCount(0);
+    await page.locator("#days .chip").first().click();
+    await page.locator("#times .chip").first().click();
+    await page.fill("#name", "Test Client");
+    await page.fill("#email", "test@example.com");
+    const request = page.waitForRequest((r) => r.url().startsWith("mailto:"));
+    await page.getByRole("button", { name: "Request this time" }).click();
+    const mailto = decodeURIComponent((await request).url());
+    expect(mailto).toMatch(/^mailto:kobe@summitcustomsuits\.com\?subject=Consultation request: /);
+    expect(mailto).toContain("Name: Test Client");
   }
 });

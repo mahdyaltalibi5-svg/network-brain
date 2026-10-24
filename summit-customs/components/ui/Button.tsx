@@ -18,7 +18,7 @@ const variants = {
 };
 
 export function LinkButton({ href, children, variant = "solid", className = "" }: Props) {
-  const external = /^(https?:|mailto:|tel:)/.test(href);
+  const external = /^(https?:|mailto:|tel:)/.test(href) || href.endsWith(".html");
   const cls = `${base} ${variants[variant]} ${className}`;
   const arrow = (
     <span aria-hidden="true" className="transition-transform duration-500 ease-expo group-hover:translate-x-1">

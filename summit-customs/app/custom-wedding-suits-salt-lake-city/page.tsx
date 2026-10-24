@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { studio } from "@/content/business";
 import Link from "next/link";
 import { Block, ServicePage } from "@/components/layout/ServicePage";
-import { Ph, rich } from "@/components/ui/Rich";
 import { faqsByTag } from "@/content/faq";
 import { services } from "@/content/services";
 import { pageMeta } from "@/lib/seo/metadata";
@@ -67,7 +66,7 @@ export default function WeddingSuitsPage() {
           ))}
         </ol>
         <p>
-          Short on time? {rich(studio.rush)}. Read the full{" "}
+          Short on time? {studio.rush}. Read the full{" "}
           <Link href="/journal/custom-wedding-suit-timeline">custom wedding suit timeline</Link>.
         </p>
       </Block>
@@ -103,9 +102,8 @@ export default function WeddingSuitsPage() {
         <p>
           We coordinate cloth, cut and accessories across the whole party so it looks considered, not
           uniform. The groom is set apart by a distinct cloth, a waistcoat or a different lapel.
-          Groomsmen&rsquo;s options: <Ph>confirm whether groomsmen are offered bespoke, made-to-measure, or both</Ph>.
-          Out-of-town party members: {rich(studio.remoteMeasuring)}. Group pricing:{" "}
-          {rich(studio.weddingPartyPricing)}.
+          We dress grooms, groomsmen, fathers and family. Have everyone measured at least three months
+          before the date so all the pieces are made together. Group pricing is quoted at your consultation.
         </p>
       </Block>
     </ServicePage>

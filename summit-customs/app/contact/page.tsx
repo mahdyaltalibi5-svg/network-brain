@@ -3,8 +3,8 @@ import { Block } from "@/components/layout/ServicePage";
 import { LinkButton } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { PageHero } from "@/components/ui/PageHero";
-import { Ph, rich } from "@/components/ui/Rich";
-import { business, studio } from "@/content/business";
+import { rich } from "@/components/ui/Rich";
+import { business } from "@/content/business";
 import { isPh } from "@/lib/ph";
 import { breadcrumbs, graph, webPage } from "@/lib/seo/jsonld";
 import { pageMeta } from "@/lib/seo/metadata";
@@ -71,14 +71,16 @@ export default function ContactPage() {
 
       <Block id="directions" eyebrow="Getting here" title="Directions & parking">
         <p>
-          <Ph>directions, parking and building access notes (e.g. nearest TRAX stop, validated parking)</Ph>
+          The studio is at {business.address.street}, in downtown Salt Lake City.{" "}
+          <a className="text-gold-bright" href={business.mapUrl}>Get directions in Google Maps</a>. Visits are by
+          appointment, so we&rsquo;ll share arrival details when we confirm your time.
         </p>
       </Block>
 
       <Block id="area" eyebrow="Service area" title="Clients across the Wasatch Front">
         <p>
           The studio is in Salt Lake City. We welcome clients from {business.areaServed.slice(1, -1).join(", ")} and{" "}
-          {business.areaServed.at(-1)}. Travel fittings: {rich(studio.travelFittings)}.
+          {business.areaServed.at(-1)}. Can&rsquo;t make it in? Consultations are also available by video.
         </p>
       </Block>
       <JsonLd data={graph(webPage(path, title, description), breadcrumbs(trail))} />

@@ -53,11 +53,14 @@ export function BookingCalendar() {
       {booking.kind === "none" && emailReady && (
         <div className="border border-line-soft p-8">
           <p className="max-w-xl text-ivory-dim">
-            Tell us a few times that suit you and we&rsquo;ll reply to confirm your private fitting. Your email
-            app opens with the details to fill in.
+            Pick a day and a time that suit you, in person or by video. Your request goes straight to Kobe, who
+            confirms your private fitting personally.
           </p>
-          <div className="mt-6">
-            <LinkButton href={bookingMailto()}>Request a fitting by email</LinkButton>
+          <div className="mt-6 flex flex-wrap items-center gap-6">
+            <LinkButton href="/book-consultation.html">Pick a day and time</LinkButton>
+            <a className="text-sm text-gold-bright underline underline-offset-4" href={bookingMailto()}>
+              Or email {business.email}
+            </a>
           </div>
         </div>
       )}

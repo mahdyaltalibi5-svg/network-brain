@@ -1,5 +1,3 @@
-import { ph } from "@/lib/ph";
-
 export type Fabric = {
   slug: string;
   name: string;
@@ -7,7 +5,6 @@ export type Fabric = {
   season: string;
   character: string;
   bestFor: string;
-  mills: string;
 };
 
 export const fabrics: Fabric[] = [
@@ -18,7 +15,6 @@ export const fabrics: Fabric[] = [
     season: "Year-round",
     character: "Smooth, tightly spun yarn with a clean drape that keeps a crease and resists shine.",
     bestFor: "Daily office suits, travel and the first suit in any wardrobe.",
-    mills: ph("mills / cloth books carried for year-round worsted"),
   },
   {
     slug: "high-twist",
@@ -27,7 +23,6 @@ export const fabrics: Fabric[] = [
     season: "May–September",
     character: "An open weave of tightly twisted yarns. It breathes, springs back from creasing and handles a dry Salt Lake summer.",
     bestFor: "Summer weddings, travel suits and warm offices.",
-    mills: ph("mills carried for high-twist / fresco"),
   },
   {
     slug: "flannel",
@@ -36,7 +31,6 @@ export const fabrics: Fabric[] = [
     season: "October–April",
     character: "A brushed, softly napped wool that holds warmth and reads quietly expensive in grey and charcoal.",
     bestFor: "Winter suits, Park City evenings and odd trousers.",
-    mills: ph("mills carried for flannel"),
   },
   {
     slug: "wool-linen",
@@ -45,7 +39,6 @@ export const fabrics: Fabric[] = [
     season: "Late spring–summer",
     character: "Wool's structure with linen's texture and silk's subtle sheen. It creases less than pure linen.",
     bestFor: "Outdoor ceremonies, garden receptions and summer jackets.",
-    mills: ph("mills carried for blends"),
   },
   {
     slug: "super-fine",
@@ -54,7 +47,6 @@ export const fabrics: Fabric[] = [
     season: "Occasion",
     character: "Extremely fine fibre with a soft hand and lustre. Beautiful, but more delicate, and best rotated rather than worn daily.",
     bestFor: "Wedding suits, evening wear and statement pieces.",
-    mills: ph("mills carried for Super 150s+"),
   },
   {
     slug: "eveningwear",
@@ -63,6 +55,5 @@ export const fabrics: Fabric[] = [
     season: "Black tie",
     character: "Pebble-weave barathea or a wool–mohair blend with a crisp sheen under evening light.",
     bestFor: "Dinner suits, black-tie weddings and galas.",
-    mills: ph("mills carried for evening cloths"),
   },
 ];

@@ -8,7 +8,7 @@ import { reviews } from "@/content/reviews";
 import { LinkButton } from "@/components/ui/Button";
 import { FaqList } from "@/components/ui/FaqList";
 import { JacketArt } from "@/components/ui/JacketArt";
-import { Ph, rich } from "@/components/ui/Rich";
+import { rich } from "@/components/ui/Rich";
 import { Section } from "@/components/ui/Section";
 import { ExplodedJacketArt, ProcessTrailArt, WovenSwatchArt } from "./scene-art";
 
@@ -173,7 +173,7 @@ export function FabricSection() {
               <p className="mt-1 text-sm text-stone">{f.weight}</p>
               <p className="mt-4 flex-1 text-[0.95rem] text-ivory-dim">{f.character}</p>
               <p className="mt-5 border-t border-line-soft pt-3 text-sm text-ivory-dim">
-                <span className="text-ivory">Mills:</span> {rich(f.mills)}
+                <span className="text-ivory">Best for:</span> {f.bestFor}
               </p>
             </li>
           ))}
@@ -254,6 +254,8 @@ export function OccasionsSection() {
 }
 
 export function TestimonialsSection() {
+  // Hidden until content/reviews.ts holds real, permitted client reviews.
+  if (reviews.length === 0) return null;
   return (
     <Section
       id="testimonials"
@@ -264,8 +266,7 @@ export function TestimonialsSection() {
         </>
       }
     >
-      {reviews.length > 0 ? (
-        <ul className="grid gap-10 md:grid-cols-3">
+      <ul className="grid gap-10 md:grid-cols-3">
           {reviews.map((r) => (
             <li key={r.author}>
               <figure>
@@ -278,22 +279,6 @@ export function TestimonialsSection() {
             </li>
           ))}
         </ul>
-      ) : (
-        <ul className="grid gap-10 md:grid-cols-3">
-          {[1, 2, 3].map((n) => (
-            <li key={n} className="border-t border-line pt-8">
-              <figure>
-                <blockquote className="font-display text-2xl leading-snug text-ivory">
-                  <Ph>verified client testimonial {n} (with permission)</Ph>
-                </blockquote>
-                <figcaption className="mt-6 text-sm text-ivory-dim">
-                  <Ph>client name or initials, role</Ph>
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
-      )}
     </Section>
   );
 }

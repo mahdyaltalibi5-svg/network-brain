@@ -15,7 +15,7 @@ export const faqs: Faq[] = [
   {
     id: "cost",
     q: "How much does a custom suit cost in Salt Lake City?",
-    a: `At Summit Customs, bespoke two-piece suits start at ${studio.bespokeFrom} and three-piece suits at ${studio.threePieceFrom}. Across most US cities, made-to-measure suits generally fall around $800–$2,500 and fully bespoke suits around $3,000–$8,000 or more. The price is driven by three things: the cloth (mill, weight and fibre), the construction (fused, half canvas or full canvas) and the hours of hand work. Your quote is fixed at the fabric consultation, before anything is cut. See [Bespoke Suits](/bespoke-suits) for what is included.`,
+    a: `At Summit Customs, every suit is quoted individually at your consultation. Across most US cities, made-to-measure suits generally fall around $800–$2,500 and fully bespoke suits around $3,000–$8,000 or more. The price is driven by three things: the cloth (mill, weight and fibre), the construction (fused, half canvas or full canvas) and the hours of hand work. Your quote is fixed at the fabric consultation, before anything is cut. See [Bespoke Suits](/bespoke-suits) for what is included.`,
     tags: ["cost", "bespoke"],
     home: true,
   },
@@ -36,7 +36,7 @@ export const faqs: Faq[] = [
   {
     id: "fittings",
     q: "How many fittings does a custom suit need?",
-    a: `A bespoke suit at Summit Customs includes ${studio.fittings} fittings. The trade standard is a **baste fitting** (the jacket loosely tacked together so the shape can be changed), a **forward fitting** (sleeves and collar set, balance confirmed) and a **final fitting**. Each appointment takes about 30–45 minutes.`,
+    a: `Fittings at Summit Customs refine the balance and details before delivery. The trade standard is a **baste fitting** (the jacket loosely tacked together so the shape can be changed), a **forward fitting** (sleeves and collar set, balance confirmed) and a **final fitting**. Each appointment takes about 30–45 minutes.`,
     tags: ["bespoke", "process"],
   },
   {
@@ -68,7 +68,7 @@ export const faqs: Faq[] = [
   {
     id: "wedding-party",
     q: "Can you dress an entire wedding party?",
-    a: `Yes. We coordinate cloth, cut and accessories across the groom, groomsmen and fathers, so the party looks considered without looking uniform. Out-of-town groomsmen: ${studio.remoteMeasuring}. Group pricing: ${studio.weddingPartyPricing}.`,
+    a: `Yes. We coordinate cloth, cut and accessories across the groom, groomsmen and fathers, so the party looks considered without looking uniform. We dress grooms, groomsmen, fathers and family; have everyone measured at least three months before the date so all the pieces are made together. Group pricing is quoted at your consultation.`,
     tags: ["wedding"],
   },
   {
@@ -105,7 +105,7 @@ export const faqs: Faq[] = [
   {
     id: "service-area",
     q: "Do you serve Park City, Provo, Ogden, Sandy and Draper?",
-    a: `Yes. Our studio is in Salt Lake City, and we work with clients across the Wasatch Front and Back, including Park City, Provo, Ogden, Sandy and Draper. Off-site fittings: ${studio.travelFittings}`,
+    a: `Yes. Our studio is in Salt Lake City, and we work with clients across the Wasatch Front and Back, including Park City, Provo, Ogden, Sandy and Draper. Consultations are also available by video.`,
     tags: ["studio"],
   },
   {
@@ -117,7 +117,7 @@ export const faqs: Faq[] = [
   {
     id: "weight-change",
     q: "What if my body changes after my suit is made?",
-    a: `Bespoke suits are built with generous inlays (extra cloth in the seams) so they can be let out or taken in later. Your pattern is kept on file, so future commissions start from a proven fit. Aftercare and alteration policy: ${studio.aftercare}.`,
+    a: `Bespoke suits are built with generous inlays (extra cloth in the seams) so they can be let out or taken in later. Your pattern is kept on file, so future commissions start from a proven fit. If anything needs adjusting after delivery, we handle it.`,
     tags: ["bespoke", "process"],
   },
   {

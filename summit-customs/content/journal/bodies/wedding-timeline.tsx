@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { services } from "@/content/services";
 import { studio } from "@/content/business";
-import { rich } from "@/components/ui/Rich";
 
 export default function WeddingTimeline() {
   return (
@@ -60,8 +58,8 @@ export default function WeddingTimeline() {
       <p>
         A coordinated party looks considered, not uniform. Common approaches are the same cloth with the
         groom in a waistcoat or a different lapel, or a shared colour family across different cloths. Out-of-town
-        groomsmen need to be measured early, because their fittings are hardest to schedule. Summit Customs
-        process for remote party members: {rich(studio.remoteMeasuring)}.
+        groomsmen need to be measured early, because their fittings are hardest to schedule. We recommend
+        having everyone measured at least three months before the date.
       </p>
 
       <h2 id="utah">Utah venues and seasons</h2>
@@ -114,9 +112,8 @@ export default function WeddingTimeline() {
       <p>
         Plan your budget around three variables: the cloth, the construction and the number of garments.
         A waistcoat or a second pair of trousers adds to the commission but extends the suit&rsquo;s life
-        after the wedding. At Summit Customs, the groom&rsquo;s custom suit starts at{" "}
-        {rich(services.wedding.priceFrom)}, and the quote is confirmed in writing before
-        cutting. Leave room for accessories: shoes, shirt, tie or bow tie, cufflinks and a pocket square.
+        after the wedding. At Summit Customs, the groom&rsquo;s suit is quoted at your consultation, and
+        the quote is confirmed in writing before cutting. Leave room for accessories: shoes, shirt, tie or bow tie, cufflinks and a pocket square.
       </p>
 
       <h2 id="checklist">Accessories checklist</h2>
@@ -156,10 +153,15 @@ export default function WeddingTimeline() {
 
       <h2 id="rush">If you&rsquo;re short on time</h2>
       <p>
-        If your date is under three months away, talk to us anyway. Rush options and minimum lead time:{" "}
-        {rich(studio.rush)}. Start with{" "}
+        If your date is under three months away, talk to us anyway. {studio.rush}. Start with{" "}
         <Link href="/custom-wedding-suits-salt-lake-city">custom wedding suits</Link>, or{" "}
         <Link href="/book">book a wedding consultation</Link>.
+      </p>
+      <p>
+        The first consultation is free and takes about 30 minutes, in person at the studio in Salt Lake City
+        or by video. It costs nothing to find out what is still possible for your date, and you leave with a
+        clear plan either way: which pieces to prioritise, which cloths can be ready in time, and when each
+        member of the party needs to be measured.
       </p>
     </>
   );

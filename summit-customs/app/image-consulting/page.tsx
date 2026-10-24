@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Block, ServicePage } from "@/components/layout/ServicePage";
-import { Ph } from "@/components/ui/Rich";
 import { faqsByTag } from "@/content/faq";
 import { services } from "@/content/services";
 import { pageMeta } from "@/lib/seo/metadata";
@@ -82,7 +81,9 @@ export default function ImageConsultingPage() {
 
       <Block id="packages" eyebrow="Packages" title="Ways to work together">
         <p>
-          Package structure and pricing: <Ph>image consulting packages, e.g. single colour session / full programme / ongoing retainer, with prices and session lengths</Ph>.
+          Every engagement starts with a complimentary 30-minute consultation, in person in Salt Lake City or
+          by video. From there, Kobe recommends the sessions you actually need and confirms the price before
+          anything begins.
         </p>
       </Block>
     </ServicePage>

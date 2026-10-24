@@ -143,6 +143,8 @@ export function founderPerson(): Json | null {
     jobTitle: founder.role,
     worksFor: { "@id": ids.org },
     url: abs("/about"),
+    image: abs(founder.photo),
+    sameAs: real(business.sameAs),
   };
 }
 

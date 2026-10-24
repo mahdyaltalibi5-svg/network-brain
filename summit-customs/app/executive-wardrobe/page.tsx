@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Block, ServicePage } from "@/components/layout/ServicePage";
-import { Ph } from "@/components/ui/Rich";
 import { faqsByTag } from "@/content/faq";
 import { services } from "@/content/services";
 import { pageMeta } from "@/lib/seo/metadata";
@@ -83,7 +82,7 @@ export default function ExecutiveWardrobePage() {
           <li><strong>Maintain:</strong> seasonal reviews, repairs and replacements before anything looks tired.</li>
         </ol>
         <p>
-          Programme format and retainer: <Ph>executive programme structure, e.g. annual retainer, number of seasonal reviews, in-office visits</Ph>.
+          The programme format and fees are set around your calendar and agreed at your first consultation.
         </p>
       </Block>
     </ServicePage>

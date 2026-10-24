@@ -61,7 +61,7 @@ export default function BookPage() {
         <ol>
           <li><strong>Conversation:</strong> your work, your calendar, and what the suit or wardrobe must do.</li>
           <li><strong>Direction:</strong> silhouette, details and cloth options, with honest guidance on budget.</li>
-          <li><strong>Measurements:</strong> taken if you&rsquo;re ready to proceed. Your pattern is drafted from them.</li>
+          <li><strong>Private measurements:</strong> taken one-on-one, in private, if you&rsquo;re ready to proceed. They stay confidential and your pattern is drafted from them.</li>
           <li><strong>Quote:</strong> confirmed in writing before anything is cut.</li>
         </ol>
         <p>Bring the shoes you plan to wear with the suit, and a shirt you like the fit of.</p>

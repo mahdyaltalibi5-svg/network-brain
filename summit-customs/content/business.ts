@@ -14,33 +14,33 @@ export const business = {
     "Summit Customs is a Salt Lake City bespoke suit and image consulting studio for high-achieving professionals, grooms and executives across the Wasatch Front.",
   url: SITE_URL,
   email: "Kobe@summitcustomsuits.com",
-  phone: ph("studio phone number"),
-  phoneHref: ph("phone in E.164 format, e.g. +18015550000"),
+  phone: "(801) 866-9718",
+  phoneHref: "+18018669718",
   address: {
-    street: ph("street address and suite"),
+    street: "215 S State St, Suite 575",
     locality: "Salt Lake City",
     region: "UT",
-    postalCode: ph("ZIP code"),
+    postalCode: "84111",
     country: "US",
   },
   geo: {
-    latitude: ph("studio latitude"),
-    longitude: ph("studio longitude"),
+    latitude: "40.7645",
+    longitude: "-111.8879",
   },
-  mapUrl: ph("Google Maps link to the studio"),
-  hoursText: ph("opening hours, e.g. Tue–Sat 10am–6pm, by appointment"),
+  mapUrl: "https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE",
+  hoursText: "Mon–Sat, 10am–6pm MT, by appointment",
   /** schema.org openingHoursSpecification rows; leave empty until confirmed. */
-  openingHours: [] as {
+  openingHours: [{ days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "10:00", closes: "18:00" }] as {
     days: string[];
     opens: string;
     closes: string;
   }[],
-  appointmentOnly: ph("confirm: are fittings by appointment only?"),
-  priceRange: ph("price range, e.g. $$$ or $1,800–$6,000"),
+  appointmentOnly: "By appointment, Monday to Saturday, 10am to 6pm Mountain Time, in person or by video.",
+  priceRange: "$$$",
   foundingYear: ph("year founded"),
   areaServed: ["Salt Lake City", "Park City", "Provo", "Ogden", "Sandy", "Draper"],
   sameAs: [
-    ph("Instagram profile URL"),
+    "https://www.instagram.com/summitcustomsuits/",
     ph("Google Business Profile URL"),
     ph("LinkedIn page URL"),
   ],
@@ -58,13 +58,13 @@ export const business = {
 export const studio = {
   bespokeFrom: ph("bespoke two-piece starting price"),
   threePieceFrom: ph("bespoke three-piece starting price"),
-  bespokeWeeks: ph("standard bespoke timeline in weeks, e.g. 8–10"),
+  bespokeWeeks: "5 to 8",
   fittings: ph("number of fittings included in a bespoke suit, e.g. three"),
-  canvas: ph("canvas construction offered: full canvas standard? half canvas available?"),
+  canvas: "canvassed construction, with a full floating canvas on our top tier",
   handFinishing: ph("hand finishing offered, e.g. hand-padded lapels, working sleeve buttonholes, pick-stitched edges, hand-set collar"),
-  mills: ph("fabric mills / merchants carried, e.g. Holland & Sherry, Loro Piana, Vitale Barberis Canonico, Dormeuil"),
+  mills: "Dormeuil, Scabal, Vitale Barberis Canonico, Holland & Sherry, Marlane, Marzotto and Fratelli Tallia di Delfino",
   aftercare: ph("aftercare / alteration policy and any complimentary adjustment window"),
-  rush: ph("rush policy and minimum lead time (including weddings)"),
+  rush: "Rush orders are available in select circumstances; ask when you book",
   remoteMeasuring: ph("remote measuring process for out-of-town clients and groomsmen"),
   travelFittings: ph("off-site fittings outside Salt Lake City: offered? where? travel fee?"),
   weddingPartyPricing: ph("wedding party pricing or minimum"),
@@ -72,18 +72,18 @@ export const studio = {
 } as const;
 
 export const founder = {
-  name: ph("founder full name"),
-  role: "Founder & Head Clothier",
-  photo: ph("founder portrait, 4:5, min 1200px tall"),
+  name: "Kobe Apponsah",
+  role: "Founder & Master Clothier",
+  photo: "/img/kobe-portrait-1100.webp",
   credentials: [
-    ph("tailoring training / apprenticeship, e.g. where and with whom"),
-    ph("years of experience fitting and cutting suits"),
-    ph("image consulting certification, e.g. AICI or equivalent"),
-    ph("notable clients, press or industry recognition"),
+    "A background in high-level sales, where presence decides the room",
+    "Works one-on-one with every client, from the first conversation to the final fitting",
+    "Custom suiting, wardrobe refinement and image consulting under one roof",
+    "Cloth from Dormeuil, Scabal, Vitale Barberis Canonico, Holland & Sherry and more",
   ],
   bio: [
-    ph("2–3 sentences on the founder's background and how they came to bespoke tailoring"),
-    ph("1–2 sentences on their philosophy of fit and dress for Utah professionals"),
+    "My background in high-level sales taught me one thing quickly: the men who win the room don't just speak well; they look like they belong there before they say a word. That's where I come in.",
+    "From custom suiting to wardrobe refinement, every detail is intentional. The fit. The fabric. The silhouette. Nothing is accidental. I don't believe in trends. I believe in standards.",
   ],
 } as const;
 

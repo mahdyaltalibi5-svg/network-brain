@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import { Block } from "@/components/layout/ServicePage";
 import { CtaBand } from "@/components/ui/CtaBand";
-import { PhotoSlot } from "@/components/ui/Figure";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { PageHero } from "@/components/ui/PageHero";
 import { Related } from "@/components/ui/Related";
 import { rich } from "@/components/ui/Rich";
 import { business, founder } from "@/content/business";
-import { breadcrumbs, founderPerson, graph, webPage } from "@/lib/seo/jsonld";
+import { breadcrumbs, graph, webPage } from "@/lib/seo/jsonld";
 import { pageMeta } from "@/lib/seo/metadata";
 
 const path = "/about";
 const title = "About Summit Customs | Bespoke Tailor & Image Consultant, Salt Lake City";
 const description =
-  "Meet the founder of Summit Customs, a Salt Lake City bespoke suit and image consulting studio. Our training, our standards and why we cut every pattern by hand.";
+  "Meet Kobe Apponsah, founder of Summit Customs, a Salt Lake City custom suit and image consulting studio. Our standards and how we work.";
 
 export const metadata: Metadata = pageMeta({ title, description, path });
 
@@ -29,13 +28,24 @@ export default function AboutPage() {
             Savile Row precision, <em className="text-gold">Wasatch scale</em>.
           </>
         }
-        summary={`${business.shortDescription} The studio was founded in ${business.foundingYear} by ${founder.name}, and pairs traditional bespoke tailoring with image consulting under one roof.`}
+        summary={`${business.shortDescription} The studio was founded by ${founder.name}, and pairs custom tailoring with image consulting under one roof.`}
       />
 
       <section id="founder" aria-labelledby="founder-title" className="py-20 md:py-28">
         <div className="container-site grid gap-14 md:grid-cols-12">
           <div className="md:col-span-4">
-            <PhotoSlot label={founder.photo.slice(14, -1)} />
+            {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-sized webp */}
+            <img
+              src={founder.photo}
+              srcSet={`/img/kobe-portrait-640.webp 640w, ${founder.photo} 1100w`}
+              sizes="(min-width: 768px) 33vw, 100vw"
+              width={1100}
+              height={578}
+              loading="lazy"
+              decoding="async"
+              alt={`Portrait of ${founder.name}, founder of Summit Customs, in a midnight tuxedo with satin peak lapels`}
+              className="h-auto w-full border border-line-soft"
+            />
           </div>
           <div className="md:col-span-7 md:col-start-6">
             <p className="eyebrow">{founder.role}</p>
@@ -47,7 +57,7 @@ export default function AboutPage() {
                 <p key={p}>{rich(p)}</p>
               ))}
             </div>
-            <h3 className="mt-12 font-display text-3xl text-ivory">Credentials</h3>
+            <h3 className="mt-12 font-display text-3xl text-ivory">How Kobe works</h3>
             <ul className="mt-6 space-y-3 border-t border-line-soft pt-6 text-ivory-dim">
               {founder.credentials.map((c) => (
                 <li key={c} className="flex gap-4">
@@ -86,7 +96,7 @@ export default function AboutPage() {
         ]}
       />
       <CtaBand />
-      <JsonLd data={graph(webPage(path, title, description), breadcrumbs(trail), founderPerson())} />
+      <JsonLd data={graph(webPage(path, title, description), breadcrumbs(trail))} />
     </>
   );
 }

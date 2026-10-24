@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { studio } from "@/content/business";
 import { ComparisonTable } from "@/components/ui/ComparisonTable";
-import { rich } from "@/components/ui/Rich";
 
 export default function BespokeVsMtm() {
   return (
@@ -167,7 +165,7 @@ export default function BespokeVsMtm() {
         </li>
       </ol>
       <p>
-        Summit Customs specialises in bespoke. Starting prices are {rich(studio.bespokeFrom)}.
+        Summit Customs specialises in custom tailoring, and every suit is quoted individually at your consultation.
         See <Link href="/bespoke-suits">what every bespoke commission includes</Link>, or{" "}
         <Link href="/book">book a private fitting</Link> to talk it through. There is no obligation to
         commission.

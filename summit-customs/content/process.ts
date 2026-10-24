@@ -1,4 +1,3 @@
-import { ph } from "@/lib/ph";
 import { studio } from "@/content/business";
 
 export type ProcessStep = {
@@ -27,14 +26,14 @@ export const processSteps: ProcessStep[] = [
   {
     n: 2,
     slug: "measurements",
-    name: "Measurements",
-    duration: "Taken at the consultation",
+    name: "Private Measurements",
+    duration: "One-on-one, in private",
     summary:
-      "Twenty-plus measurements, plus posture notes a tape measure can't capture: shoulder slope, stance, seat and the way you carry your arms.",
+      "Measurements are taken one-on-one with Kobe in a private appointment, never on a busy shop floor. Your figures are confidential and kept on file only to cut your garments.",
     detail: [
-      "Body measurements across chest, waist, seat, rise, arm and back.",
-      "Posture analysis: shoulder slope, head and neck carriage, asymmetries.",
-      "Your pattern is drafted from these figures, not adjusted from a stock size.",
+      "A private, one-on-one session: no audience, no salespeople.",
+      "Your measurements are kept confidential and are never shared or published.",
+      "Your pattern is drafted from your own figures and kept on file for future orders.",
     ],
   },
   {
@@ -53,13 +52,12 @@ export const processSteps: ProcessStep[] = [
     n: 4,
     slug: "construction",
     name: "Construction",
-    duration: studio.constructionWeeks,
+    duration: `Within the ${studio.bespokeWeeks} weeks`,
     summary:
       "The pattern is cut and the suit is built in stages, with fittings along the way so the shape is refined on your body rather than on paper.",
     detail: [
       `Construction: ${studio.canvas}.`,
-      `Hand details: ${studio.handFinishing}.`,
-      `Fittings during construction: ${ph("number of fittings before final, e.g. baste + forward")}.`,
+      "Fittings refine the garment's balance and details before delivery.",
     ],
   },
   {
@@ -72,7 +70,7 @@ export const processSteps: ProcessStep[] = [
     detail: [
       "Last adjustments are made and checked before collection.",
       "Your pattern is archived, so the next commission starts from a proven fit.",
-      `Aftercare: ${studio.aftercare}.`,
+      "If anything needs adjusting after delivery, we handle it.",
     ],
   },
 ];

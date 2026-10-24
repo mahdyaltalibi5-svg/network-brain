@@ -29,8 +29,8 @@ export default function BespokeSuitsPage() {
       }
       facts={[
         ["Starting price", s.priceFrom],
-        ["Typical timeline", "6–12 weeks"],
-        ["Fittings", studio.fittings],
+        ["Typical timeline", `${studio.bespokeWeeks} weeks`],
+        ["First consultation", "Free, 30 minutes"],
         ["Your pattern", "Drafted for you, kept on file"],
       ]}
       faqs={faqsByTag("bespoke")}
@@ -76,9 +76,9 @@ export default function BespokeSuitsPage() {
             Utah&rsquo;s seasons.
           </li>
           <li>Choice of lapel, button stance, pockets, lining, buttons and trouser details.</li>
-          <li>{rich(studio.fittings)} fittings, each about 30–45 minutes.</li>
+          <li>Fittings to refine the balance and details, each about 30–45 minutes.</li>
           <li>Final pressing, and your pattern archived for future commissions.</li>
-          <li>Aftercare: {rich(studio.aftercare)}.</li>
+          <li>Aftercare: if anything needs adjusting after delivery, we handle it.</li>
         </ul>
       </Block>
 
@@ -91,8 +91,7 @@ export default function BespokeSuitsPage() {
           only. A <strong>fused</strong> jacket is glued throughout.
         </p>
         <p>
-          Summit Customs construction: {rich(studio.canvas)}.
-          Hand details: {rich(studio.handFinishing)}.
+          Summit Customs construction: {studio.canvas}.
         </p>
         <h3>Why the shoulder matters most</h3>
         <p>
@@ -113,9 +112,8 @@ export default function BespokeSuitsPage() {
 
       <Block id="pricing" eyebrow="Investment" title="What a bespoke suit costs">
         <p>
-          Bespoke two-piece suits at Summit Customs start at {rich(studio.bespokeFrom)}, and
-          three-piece suits at {rich(studio.threePieceFrom)}. The final figure depends on
-          three things:
+          Every Summit Customs suit is quoted individually at your consultation. The final figure
+          depends on three things:
         </p>
         <ol>
           <li><strong>Cloth:</strong> the mill, the fibre and the weight. A Super 110s worsted and a Super 180s wool–silk differ greatly in cost.</li>

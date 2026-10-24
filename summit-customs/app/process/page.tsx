@@ -32,7 +32,7 @@ export default function ProcessPage() {
             Five steps. <em className="text-gold">No shortcuts.</em>
           </>
         }
-        summary="Every Summit Customs suit follows the same five-step ascent: consultation, measurements, fabric, construction and final fitting. Across the trade, a bespoke suit typically takes 6–12 weeks from first consultation to collection, because it is fitted on your body between stages. Nothing is cut until you have approved the cloth, the design and the price."
+        summary="Every Summit Customs suit follows the same five-step ascent: consultation, private measurements, fabric, construction and final fitting. Across the trade, a bespoke suit typically takes 6–12 weeks from first consultation to collection, because it is fitted on your body between stages. Nothing is cut until you have approved the cloth, the design and the price."
       />
 
       <section aria-label="Process steps" className="container-site pb-24">
