@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://summitcustomsuits.com/sitemap.xml
+Sitemap: https://www.summitcustomsuits.com/sitemap.xml

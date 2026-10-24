@@ -11,9 +11,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 from content import ARTICLES, AREAS, FAQ
 OUT = os.path.join(ROOT, '..', 'summit-suit')
-SITE = 'https://summitcustomsuits.com'
-ASSET_HOST = 'https://summit-customs-suits.vercel.app'  # where og-image etc. live until the domain moves
-BOOK = 'https://summitcustomsuits.com/book'
+SITE = 'https://www.summitcustomsuits.com'  # the apex 308s to www, so www is the canonical host
+ASSET_HOST = SITE
+BOOK = '/book'  # project route rewrites this to the booking form in the summit-customs project
 GMAP = 'https://www.google.com/maps/place/?q=place_id:ChIJ6_VVx3v1UocRr6uhoW6oEFE'
 GREV = 'https://search.google.com/local/writereview?placeid=ChIJ6_VVx3v1UocRr6uhoW6oEFE'
 BIZ = {'@id': SITE + '/#business'}
@@ -498,7 +498,7 @@ CAPSULE_JS = r'''<script>
     const f = $('#bp-for').value, w = $('#bp-when').value;
     if (f) notes.push('Dressing for: ' + f);
     if (w) notes.push('Needed: ' + w);
-    $('#bp-book').href = 'https://summitcustomsuits.com/book?occasion=' + encodeURIComponent('Capsule Wardrobe') + '&notes=' + encodeURIComponent(notes.join('\n'));
+    $('#bp-book').href = '/book?occasion=' + encodeURIComponent('Capsule Wardrobe') + '&notes=' + encodeURIComponent(notes.join('\n'));
     $('#bp-book').classList.toggle('off', total === 0);
   };
   document.querySelectorAll('.stepper').forEach(st => {
@@ -992,6 +992,8 @@ INTERNAL = ['suits', 'sport-coats', 'tuxedos', 'shoes', 'fabrics', 'collection',
 for p in INTERNAL:
     h = h.replace(f'href="https://summitcustomsuits.com/{p}"', f'href="/{p}"')
 h = re.sub(r'href="https://summitcustomsuits.com/shoes/([a-z-]+)"', r'href="/shoes#\1"', h)
+h = h.replace('href="https://summitcustomsuits.com/book', 'href="/book')
+h = h.replace('https://summitcustomsuits.com', SITE).replace('https://summit-customs-suits.vercel.app', SITE)
 # self-hosted fonts, feed link, and an absolute path for the portrait frame preload
 h = re.sub(r'<link rel="preconnect" href="https://fonts.googleapis.com">\s*<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\s*<link href="https://fonts.googleapis.com/css2[^"]*" rel="stylesheet">',
            lambda m: FONTS + '\n<link rel="alternate" type="application/rss+xml" title="Summit Customs Journal" href="/feed.xml">', h)
@@ -1057,7 +1059,7 @@ def title_of(s):
 llms = ['# Summit Customs', '',
         '> Bespoke and made-to-measure suits, sport coats, tuxedos, wedding suits, custom shirts, footwear and image consulting in Salt Lake City, Utah. Founded by Kobe Apponsah.', '',
         '- Address: 215 S State St, Suite 575, Salt Lake City, UT 84111', '- Phone: (801) 866-9718', '- Email: kobe@summitcustomsuits.com',
-        '- Hours: by appointment, Monday to Saturday, 10am to 6pm Mountain Time', f'- Book: {BOOK} (complimentary 30-minute consultation, in person or by video)',
+        '- Hours: by appointment, Monday to Saturday, 10am to 6pm Mountain Time', f'- Book: {SITE}{BOOK} (complimentary 30-minute consultation, in person or by video)',
         '- Typical timeline: 5 to 8 weeks from consultation to final fitting', '- Cloth: 4,000+ cloths including Dormeuil, Scabal, Vitale Barberis Canonico and Holland & Sherry',
         '- Google rating: 5.0', '- Instagram: https://www.instagram.com/summitcustomsuits/', '', '## Pages', '']
 for s in [''] + [x for x in built if not x.startswith('journal/')]:
