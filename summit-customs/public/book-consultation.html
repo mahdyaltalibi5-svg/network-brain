@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Book a Consultation · Summit Customs</title>
-<meta name="description" content="Request a free 30-minute consultation with Summit Customs in Salt Lake City, in person or by video. Mon–Sat, 10am–6pm Mountain Time.">
+<meta name="description" content="Book a free 30-minute consultation with Summit Customs in Salt Lake City, in person or by video. Mon–Sat, 10am–6pm Mountain Time.">
 <meta name="robots" content="noindex">
 <style>
   :root { --void:#07080A; --ivory:#F2EDE4; --gold:#C9A45C; --charcoal:#2A2B2E; --stone:#A39E92; --line:rgba(201,164,92,.35); }
@@ -45,6 +45,12 @@
   .done { display:none; border:1px solid var(--gold); padding:24px; margin-top:28px; }
   .done.show { display:block; }
   .done h2 { margin:0 0 8px; font:400 30px/1.2 "Cormorant Garamond", Georgia, serif; }
+  .cal { background:var(--ivory); border:1px solid var(--line); padding:8px; margin:0 0 12px; }
+  .cal iframe { display:block; width:100%; height:860px; border:0; background:#fff; }
+  @media (min-width:700px) { .cal iframe { height:720px; } }
+  details.alt { margin-top:40px; border-top:1px solid var(--line); }
+  details.alt > summary { cursor:pointer; padding:24px 0; font:400 26px/1.2 "Cormorant Garamond", Georgia, serif; color:var(--ivory); }
+  details.alt > summary::marker { color:var(--gold); }
   footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--stone); font-size:14px; }
 </style>
 </head>
@@ -58,8 +64,15 @@
   <main>
     <p class="eyebrow">Free 30-minute consultation</p>
     <h1>Book your<br><em>consultation.</em></h1>
-    <p class="lede">Choose a day and time that suits you, in person in Salt Lake City or by video. Your request goes straight to Kobe, who will confirm the time with you personally.</p>
+    <p class="lede">Pick an open time in Kobe&rsquo;s calendar below. You&rsquo;ll get a confirmation and a calendar invitation by email straight away.</p>
 
+    <div class="cal">
+      <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3_dYpjU_OMJKUaHlPtNLJCi-orQ5WsYBoFfcr3MQfkFvSJHEFG5zAlG-H4hdi0kYrlYXuAz74k?gv=true" title="Summit Customs booking calendar (Google Calendar)" loading="eager"></iframe>
+    </div>
+    <p class="hint"><a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3_dYpjU_OMJKUaHlPtNLJCi-orQ5WsYBoFfcr3MQfkFvSJHEFG5zAlG-H4hdi0kYrlYXuAz74k" target="_blank" rel="noopener">Open the booking calendar in a new tab</a> &middot; or call <a href="tel:+18018669718">(801) 866-9718</a></p>
+
+    <details class="alt" id="alt">
+      <summary>Prefer to request a time by email?</summary>
     <form id="book" novalidate>
       <fieldset>
         <legend><span>01</span>What is it for?</legend>
@@ -110,6 +123,7 @@
         <button class="btn" type="submit">Request this time</button>
       </fieldset>
     </form>
+    </details>
 
     <div class="done" id="done" tabindex="-1">
       <h2>Almost done: send the email.</h2>
