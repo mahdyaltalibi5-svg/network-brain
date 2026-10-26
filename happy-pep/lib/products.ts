@@ -13,7 +13,7 @@ export type Size = {
   coa?: Coa;
 };
 
-export const CATEGORIES = ["GLP analogs", "Short-chain peptides", "Peptide analogs", "Copper peptides"] as const;
+export const CATEGORIES = ["GLP analogs", "Short-chain peptides", "Peptide analogs", "Copper peptides", "Blends", "Research compounds"] as const;
 
 export type Product = {
   slug: string;
@@ -44,6 +44,7 @@ export const products: Product[] = [
     sizes: [
       { label: "10mg", price: 99, inStock: true, image: "/products/rt-10mg.webp" },
       { label: "20mg", price: 169, inStock: true, image: "/products/rt-20mg.webp" },
+      { label: "50mg", price: 379, inStock: true, image: "/products/rt-50mg.webp" },
     ],
     image: "/products/rt-10mg.webp",
     cap: "#3EF5B9",
@@ -59,14 +60,14 @@ export const products: Product[] = [
     cap: "#0125C4",
   },
   {
-    slug: "glp-1",
-    category: "GLP analogs",
-    name: "GLP-1",
-    kind: "Research peptide",
-    description: desc(),
-    sizes: [{ label: "5mg", price: 59, inStock: true }],
-    image: "/products/glp-1-5mg.webp",
-    cap: "#5B7BFF",
+    slug: "bpc-157",
+    category: "Short-chain peptides",
+    name: "BPC-157",
+    kind: "Pentadecapeptide",
+    description: desc("Synthetic pentadecapeptide"),
+    sizes: [{ label: "10mg", price: 59, inStock: true }],
+    image: "/products/bpc-157-10mg.webp",
+    cap: "#3EF5B9",
   },
   {
     slug: "bc",
@@ -76,7 +77,7 @@ export const products: Product[] = [
     description: desc(),
     sizes: [{ label: "10mg", price: 59, inStock: true }],
     image: "/products/bc-10mg.webp",
-    cap: "#3EF5B9",
+    cap: "#5B7BFF",
   },
   {
     slug: "tesa",
@@ -94,9 +95,29 @@ export const products: Product[] = [
     name: "GHK-Cu",
     kind: "Copper tripeptide",
     description: desc("Copper-complexed tripeptide"),
-    sizes: [{ label: "10mg", price: 39, inStock: true }],
-    image: "/products/ghk-cu-10mg.webp",
+    sizes: [{ label: "100mg", price: 69, inStock: true }],
+    image: "/products/ghk-cu-100mg.webp",
     cap: "#5B7BFF",
+  },
+  {
+    slug: "glow",
+    category: "Blends",
+    name: "Glow",
+    kind: "Research blend",
+    description: desc("Research peptide blend"),
+    sizes: [{ label: "70mg", price: 149, inStock: true }],
+    image: "/products/glow-70mg.webp",
+    cap: "#3EF5B9",
+  },
+  {
+    slug: "nj",
+    category: "Research compounds",
+    name: "NJ",
+    kind: "Research compound",
+    description: desc("Research compound"),
+    sizes: [{ label: "500mg", price: 129, inStock: true }],
+    image: "/products/nj-500mg.webp",
+    cap: "#0125C4",
   },
 ];
 
@@ -129,9 +150,10 @@ export function bestValue(p: Product) {
   return save >= 0.1 ? { label: best.label, save } : null;
 }
 
-// Start on the best-value size when there is one, else the first in stock.
+// Start on the smallest in-stock size so the first price shown is the entry
+// price; the best-value size is still badged for anyone comparing.
 export function defaultSize(p: Product) {
-  return bestValue(p)?.label ?? (p.sizes.find((s) => s.inStock) ?? p.sizes[0]).label;
+  return (p.sizes.find((s) => s.inStock) ?? p.sizes[0]).label;
 }
 
 export const money = (n: number) =>
