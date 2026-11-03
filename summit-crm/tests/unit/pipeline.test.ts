@@ -143,6 +143,10 @@ describe("website intake", () => {
     expect(res.headers.get("access-control-allow-origin")).toBe("https://summitcustomsuits.com");
     const lead = (await getLead((await res.json()).id))!;
     expect(lead).toMatchObject({ source: "website", fullName: "Alex Park", occasion: "Bespoke Suit", stage: "new" });
+    // the Pixel already sent "Lead" from the browser; the CRM doesn't double-count it
+    expect(capiBodies()).toHaveLength(0);
+    await moveLead(lead.id, "booked");
+    expect(capiBodies()).toHaveLength(1);
   });
 
   it("accepts the booking page's multipart form posts (no CORS preflight needed)", async () => {

@@ -53,8 +53,16 @@
   details.alt > summary::marker { color:var(--gold); }
   footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--stone); font-size:14px; }
 </style>
+<!-- Meta Pixel (same dataset as summitcustomsuits.com) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1106836472346765');fbq('track','PageView');
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="tel:"],a[href^="mailto:"]');if(a)fbq('track','Contact',{method:a.protocol==='tel:'?'phone':'email'});},true);
+</script>
+<!-- End Meta Pixel -->
 </head>
 <body>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1106836472346765&amp;ev=PageView&amp;noscript=1"></noscript>
 <div class="wrap">
   <header>
     <a class="brand" href="/">Summit <b>Customs</b></a>
@@ -249,6 +257,7 @@
       "Phone: " + ($("phone").value.trim() || "-"), "",
       "Notes: " + ($("notes").value.trim() || "-"),
     ].join("\n");
+    if (window.fbq) fbq("track", "Lead", { content_name: occasion });
     sendToCrm({
       name: name,
       email: email,

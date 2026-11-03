@@ -133,7 +133,10 @@ export async function upsertLead(input: LeadInput): Promise<{ lead: Lead; create
   const lead = toLead(rows[0]);
   const from = { meta: "Meta Lead Ad", website: "the website", manual: "manual entry" }[lead.source];
   await log(lead.id, "created", `Lead from ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}`);
-  const result = await sendStageEvent(lead, "new");
+  // Website enquiries already fire "Lead" from the Meta Pixel on the booking page; sending it
+  // again from here would count each one twice. Their later stages are still reported.
+  const result: CapiResult =
+    lead.source === "website" ? { sent: false, skipped: "already reported by the website's Meta Pixel" } : await sendStageEvent(lead, "new");
   const note = capiNote(result, stageOf("new").metaEvent);
   await log(lead.id, "capi", note.body, note.data);
   return { lead, created: true };
