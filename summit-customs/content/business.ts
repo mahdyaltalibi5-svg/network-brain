@@ -46,12 +46,12 @@ export const business = {
   ],
   /**
    * Google Calendar appointment-schedule booking page. Paste the FULL link from Google Calendar →
-   * appointment schedule → Share → "Website embed" (calendar.google.com/calendar/appointments/schedules/…)
+   * booking page or appointment schedule → Share (calendar.google.com/calendar/appointments/…)
    * to show the calendar inline on /book. A short calendar.app.google link also works, as a button
    * (Google blocks short links from being embedded). See lib/booking.ts.
    */
   bookingUrl:
-    "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3_dYpjU_OMJKUaHlPtNLJCi-orQ5WsYBoFfcr3MQfkFvSJHEFG5zAlG-H4hdi0kYrlYXuAz74k?gv=true",
+    "https://calendar.google.com/calendar/appointments/AcZssZ15isEZFAMkVuLjXa97Mucf-EGrjNHICzJAEcU=?gv=true",
   logo: `${SITE_URL}/logo.svg`,
 } as const;
 

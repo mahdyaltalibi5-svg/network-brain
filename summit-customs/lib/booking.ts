@@ -2,9 +2,10 @@ import { business } from "@/content/business";
 import { isPh } from "./ph";
 
 /**
- * Booking for /book, from `business.bookingUrl` (a Google Calendar appointment schedule).
+ * Booking for /book, from `business.bookingUrl` (a Google Calendar booking page or appointment schedule).
  *
- * - Full schedule URL (calendar.google.com/calendar/appointments/schedules/…): embedded inline.
+ * - Full Google URL (calendar.google.com/calendar/appointments/…, either a booking page or a
+ *   single schedule under /schedules/): embedded inline.
  *   `gv=true` is Google's embed mode; that page allows framing.
  * - Short share link (calendar.app.google/…): Google sends X-Frame-Options: SAMEORIGIN, so it
  *   can't be framed. It is offered as a button that opens Google's booking page.
@@ -25,7 +26,7 @@ export function parseBooking(raw: string): Booking {
     return { kind: "none" };
   }
   if (url.protocol !== "https:") return { kind: "none" };
-  if (url.hostname === "calendar.google.com" && url.pathname.startsWith("/calendar/appointments/schedules/")) {
+  if (url.hostname === "calendar.google.com" && /^\/calendar\/appointments\/(schedules\/)?[\w=-]+$/.test(url.pathname)) {
     const embed = new URL(url);
     embed.searchParams.set("gv", "true");
     const page = new URL(url);

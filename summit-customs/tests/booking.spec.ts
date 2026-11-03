@@ -10,6 +10,13 @@ test("booking link parser: embeds full Google schedule URLs, links short ones, i
   });
   const noGv = parseBooking("https://calendar.google.com/calendar/appointments/schedules/AcZssZ1abc");
   expect(noGv.kind === "embed" && noGv.embedSrc.endsWith("?gv=true")).toBe(true);
+  // a booking page (several appointment types) embeds the same way
+  const page = parseBooking("https://calendar.google.com/calendar/appointments/AcZssZ15isEZ=");
+  expect(page).toEqual({
+    kind: "embed",
+    embedSrc: "https://calendar.google.com/calendar/appointments/AcZssZ15isEZ=?gv=true",
+    href: "https://calendar.google.com/calendar/appointments/AcZssZ15isEZ=",
+  });
   // short share links refuse framing (X-Frame-Options: SAMEORIGIN), so they become a button
   expect(parseBooking("https://calendar.app.google/XyZ123")).toEqual({ kind: "link", href: "https://calendar.app.google/XyZ123" });
   expect(parseBooking("[PLACEHOLDER: Google Calendar link]").kind).toBe("none");
@@ -27,7 +34,7 @@ test("/book offers a working way to book today", async ({ page }) => {
   const iframe = page.locator("#calendar iframe");
   if (await iframe.count()) {
     // calendar configured: Google's embed loads
-    await expect(iframe).toHaveAttribute("src", /calendar\.google\.com\/calendar\/appointments\/schedules\/.+gv=true/);
+    await expect(iframe).toHaveAttribute("src", /calendar\.google\.com\/calendar\/appointments\/.+gv=true/);
     await expect(iframe).toHaveAttribute("title", /booking calendar/i);
   } else {
     // not configured yet: the day/time request form, plus a pre-filled email
