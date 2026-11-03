@@ -27,6 +27,9 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
             <input id="q" name="q" defaultValue={q} placeholder="Search name, email, phone, campaign" className="field min-w-0 flex-1 sm:!w-72 sm:flex-none" />
             <button className="btn-ghost">Search</button>
           </form>
+          <Link href="/settings#import" className="btn-ghost">
+            Import from Meta
+          </Link>
           <details className="relative">
             <summary className="btn cursor-pointer list-none">+ New lead</summary>
             <form action={createLeadAction} className="card absolute right-0 z-20 mt-2 w-80 space-y-3 p-4 shadow-2xl">

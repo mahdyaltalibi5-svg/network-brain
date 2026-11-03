@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { ImportLeads } from "@/components/ImportLeads";
 import { SyncButton } from "@/components/SyncButton";
 import { config, integrations } from "@/lib/config";
 import { stages } from "@/lib/stages";
@@ -33,6 +34,17 @@ export default async function SettingsPage() {
           </li>
         ))}
       </ul>
+
+      <section aria-labelledby="import-h" className="mt-10" id="import">
+        <h2 id="import-h" className="font-display text-2xl">Import a lead file from Meta</h2>
+        <p className="mt-2 max-w-2xl text-sm text-ivory-dim">
+          Works without any Meta keys. In Ads Manager, click the number under <span className="text-ivory">Results</span> for the campaign → <span className="text-ivory">Download</span>{" "}
+          (or Meta Business Suite → <span className="text-ivory">Leads Center</span> → Export), then upload the file here. Leads already in the CRM are skipped, so re-uploading is safe.
+        </p>
+        <div className="mt-4">
+          <ImportLeads />
+        </div>
+      </section>
 
       <section aria-labelledby="sync-h" className="mt-10">
         <h2 id="sync-h" className="font-display text-2xl">Import leads from Meta</h2>

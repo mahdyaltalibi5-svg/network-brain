@@ -73,3 +73,18 @@ test("ads and settings pages explain what to connect", async ({ page }) => {
   await page.getByRole("link", { name: "Last 7 days" }).click();
   await expect(page).toHaveURL(/range=last_7d/);
 });
+
+test("import the lead file downloaded from Meta", async ({ page }) => {
+  await signIn(page, "/settings");
+  const csv = "id,created_time,campaign_id,campaign_name,full_name,phone_number\n120299988877766,2026-11-02T10:00:00+0000,c:9,Kobe.Ascend - LEADS,Jamie Cole,p:+18015550142\n";
+  const file = { name: "leads.csv", mimeType: "text/csv", buffer: Buffer.from(csv) };
+  await page.getByLabel("Meta lead file").setInputFiles(file);
+  await page.getByRole("button", { name: "Import leads" }).click();
+  await expect(page.getByText("Imported 1 new lead.")).toBeVisible();
+  await page.getByLabel("Meta lead file").setInputFiles(file);
+  await page.getByRole("button", { name: "Import leads" }).click();
+  await expect(page.getByText("Imported 0 new leads; 1 already in the CRM.")).toBeVisible();
+  await page.getByRole("link", { name: "Pipeline" }).click();
+  await page.getByRole("link", { name: "Jamie Cole" }).click();
+  await expect(page.getByText("Kobe.Ascend - LEADS")).toBeVisible();
+});

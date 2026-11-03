@@ -24,7 +24,7 @@ export const config = {
   currency: () => env("CRM_CURRENCY") ?? "USD",
 
   meta: {
-    graphVersion: () => env("META_GRAPH_VERSION") ?? "v25.0",
+    graphVersion: () => env("META_GRAPH_VERSION") ?? "v26.0",
     /** App secret: verifies webhook signatures (X-Hub-Signature-256). */
     appSecret: () => env("META_APP_SECRET"),
     /** Any string you choose; entered again in the app's Webhooks settings. */
