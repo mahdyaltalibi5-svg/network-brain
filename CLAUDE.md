@@ -1,6 +1,6 @@
 # CLAUDE.md — Summit Customs website
 
-The Summit Customs site (summitcustomsuits.com) lives in `summit-customs/`. The root `index.html` is an unrelated "Network Brain" page; don't touch it.
+The Summit Customs site (summitcustomsuits.com) lives in `summit-customs/`. The CRM lives in `summit-crm/` (see "Summit CRM" below). The root `index.html` is an unrelated "Network Brain" page; don't touch it.
 Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 
 ## Stack
@@ -75,3 +75,11 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - `npm test`: Playwright tests · `npm run lhci`: Lighthouse CI
 - `npm run placeholders`: regenerate PLACEHOLDERS.md
 - Chromium: `/opt/pw-browsers` (never run `playwright install`)
+
+## Summit CRM (`summit-crm/`)
+- Separate Next.js 16 app (dynamic, password-protected); the website stays fully static. Deploy as its own Vercel project, Root Directory `summit-crm`.
+- Meta: Lead Ads webhook `app/api/meta/webhook` (X-Hub-Signature-256 verified) + daily sync `app/api/meta/sync`; Conversions API for CRM in `lib/meta/capi.ts` (system_generated, event_source=crm, lead_id sent as a raw JSON number); ad spend in `lib/meta/insights.ts`.
+- Pipeline stages and their Meta event names: `lib/stages.ts`. Don't rename `metaEvent` values once events are flowing.
+- DB: `lib/db.ts` uses Postgres when `DATABASE_URL` is set, otherwise PGlite in `.data/` (tests: in memory). Schema in `lib/schema.ts` is idempotent.
+- All config via env vars (`.env.example`); never commit tokens. Website leads arrive at `app/api/leads` (CORS: `CRM_ALLOWED_ORIGINS`).
+- Checks: `npm run check` in `summit-crm/` (lint, types, vitest, build, Playwright; set `PW_CHROMIUM` to the chromium in /opt/pw-browsers).

@@ -1,0 +1,42 @@
+/** Idempotent schema: safe to run on every cold start. */
+export const schema = [
+  `CREATE TABLE IF NOT EXISTS leads (
+    id            TEXT PRIMARY KEY,
+    source        TEXT NOT NULL CHECK (source IN ('meta', 'website', 'manual')),
+    meta_lead_id  TEXT UNIQUE,
+    full_name     TEXT,
+    email         TEXT,
+    phone         TEXT,
+    occasion      TEXT,
+    notes         TEXT,
+    answers       JSONB NOT NULL DEFAULT '[]'::jsonb,
+    stage         TEXT NOT NULL DEFAULT 'new',
+    value_cents   INTEGER,
+    booked_at     TIMESTAMPTZ,
+    ordered_at    TIMESTAMPTZ,
+    campaign_id   TEXT,
+    campaign_name TEXT,
+    adset_id      TEXT,
+    adset_name    TEXT,
+    ad_id         TEXT,
+    ad_name       TEXT,
+    form_id       TEXT,
+    platform      TEXT,
+    fbc           TEXT,
+    fbp           TEXT,
+    lead_created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS leads_stage_idx ON leads (stage, updated_at DESC)`,
+  `CREATE INDEX IF NOT EXISTS leads_campaign_idx ON leads (campaign_id)`,
+  `CREATE TABLE IF NOT EXISTS activities (
+    id         TEXT PRIMARY KEY,
+    lead_id    TEXT NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+    kind       TEXT NOT NULL,
+    body       TEXT NOT NULL,
+    data       JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS activities_lead_idx ON activities (lead_id, created_at DESC)`,
+];

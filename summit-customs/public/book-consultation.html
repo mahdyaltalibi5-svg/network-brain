@@ -142,6 +142,26 @@
 <script>
 (function () {
   var TO = "kobe@summitcustomsuits.com";
+  // Summit CRM lead intake (summit-crm/app/api/leads). Empty = email only.
+  var CRM_LEADS_URL = "";
+
+  // Meta click ID, so the CRM can tie a booking back to the ad that was clicked.
+  function metaClickId() {
+    var m = document.cookie.match(/(?:^|; )_fbc=([^;]+)/);
+    if (m) return decodeURIComponent(m[1]);
+    var id = new URLSearchParams(location.search).get("fbclid");
+    return id ? "fb.1." + Date.now() + "." + id : "";
+  }
+  function sendToCrm(fields) {
+    if (!CRM_LEADS_URL || !window.fetch) return;
+    var fd = new FormData();
+    Object.keys(fields).forEach(function (k) { if (fields[k]) fd.append(k, fields[k]); });
+    var fbp = document.cookie.match(/(?:^|; )_fbp=([^;]+)/);
+    fd.append("fbc", metaClickId());
+    if (fbp) fd.append("fbp", decodeURIComponent(fbp[1]));
+    // multipart form data needs no CORS preflight; keepalive survives the mailto navigation
+    fetch(CRM_LEADS_URL, { method: "POST", body: fd, keepalive: true, mode: "cors" }).catch(function () {});
+  }
   var $ = function (id) { return document.getElementById(id); };
   var params = new URLSearchParams(location.search);
   var state = { mode: "In person (Salt Lake City)", day: null, time: null };
@@ -229,6 +249,13 @@
       "Phone: " + ($("phone").value.trim() || "-"), "",
       "Notes: " + ($("notes").value.trim() || "-"),
     ].join("\n");
+    sendToCrm({
+      name: name,
+      email: email,
+      phone: $("phone").value.trim(),
+      occasion: occasion,
+      notes: "Requested " + state.day + " at " + state.time + " MT (" + state.mode + ")" + ($("notes").value.trim() ? "\n\n" + $("notes").value.trim() : ""),
+    });
     lastHref = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     location.href = lastHref;
     $("done").classList.add("show");

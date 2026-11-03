@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/* Summit Customs brand tokens (same palette as the website), tuned for a working tool. */
+:root {
+  --void: #07080a;
+  --ivory: #f2ede4;
+  --ivory-dim: #c9c3b8;
+  --gold: #c9a45c;
+  --gold-bright: #e2c27f;
+  --charcoal: #2a2b2e;
+  --stone: #a39e92; /* AA on --void and --surface */
+  --surface: #111215;
+  --surface-2: #17181c;
+  --line: rgb(201 164 92 / 0.3);
+  --line-soft: rgb(242 237 228 / 0.1);
+  --ok: #8fc79a;
+  --warn: #e7b36a;
+  --bad: #f0a58f;
+}
+
+@theme inline {
+  --color-void: var(--void);
+  --color-ivory: var(--ivory);
+  --color-ivory-dim: var(--ivory-dim);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-charcoal: var(--charcoal);
+  --color-stone: var(--stone);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html {
+  background: var(--void);
+  color: var(--ivory);
+  color-scheme: dark;
+}
+body {
+  background: var(--void);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+::selection {
+  background: var(--gold);
+  color: var(--void);
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-[0.7rem] font-semibold tracking-[0.2em] text-gold uppercase;
+  }
+  .field {
+    @apply block w-full border border-line-soft bg-surface-2 px-3 py-2 text-ivory placeholder:text-stone focus:border-gold focus:outline-none;
+  }
+  .label {
+    @apply mb-1 block text-xs font-medium text-ivory-dim;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 bg-gold px-4 py-2 text-xs font-semibold tracking-[0.14em] text-void uppercase transition-colors hover:bg-ivory disabled:opacity-60;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 border border-line px-4 py-2 text-xs font-semibold tracking-[0.14em] text-ivory uppercase transition-colors hover:border-ivory;
+  }
+  .card {
+    @apply border border-line-soft bg-surface;
+  }
+}
