@@ -1,6 +1,16 @@
 // Shared behaviour for every Summit Customs page. Needs gsap + ScrollTrigger loaded first.
 (() => {
 gsap.registerPlugin(ScrollTrigger);
+
+// Smooth scrolling (Lenis) for mouse wheels and trackpads; touch keeps native momentum scrolling.
+// It drives ScrollTrigger from GSAP's ticker so the film and every scrubbed animation share one clock.
+if (window.Lenis && matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const lenis = new Lenis({ lerp: .09, anchors: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis;
+}
 const nav = document.getElementById('nav');
 const past = on => { nav.classList.toggle('solid', on); document.body.classList.toggle('past', on); };
 window.summitPast = past;
@@ -31,6 +41,7 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
 const menuBtn = document.querySelector('.menu-btn'), menu = document.getElementById('menu');
 const setMenu = open => {
   document.body.classList.toggle('menu-open', open);
+  if (open) window.__lenis?.stop(); else window.__lenis?.start();
   menuBtn.setAttribute('aria-expanded', open); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   menu.setAttribute('aria-hidden', !open);
 };
@@ -50,8 +61,8 @@ if (lb) {
     lbCap.textContent = cap(items[cur]);
     lb.classList.toggle('single', items.length < 2);
   };
-  const open = (group, i) => { items = group; lastFocus = document.activeElement; showAt(i); lb.hidden = false; document.body.style.overflow = 'hidden'; lb.querySelector('.lb-x').focus(); };
-  const close = () => { lb.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); };
+  const open = (group, i) => { items = group; lastFocus = document.activeElement; showAt(i); lb.hidden = false; document.body.style.overflow = 'hidden'; window.__lenis?.stop(); lb.querySelector('.lb-x').focus(); };
+  const close = () => { lb.hidden = true; document.body.style.overflow = ''; window.__lenis?.start(); if (lastFocus) lastFocus.focus(); };
   const bind = (group) => group.forEach((el, i) => {
     if (el.tagName !== 'BUTTON') { el.tabIndex = 0; el.setAttribute('role', 'button'); }
     el.addEventListener('click', () => open(group, i));

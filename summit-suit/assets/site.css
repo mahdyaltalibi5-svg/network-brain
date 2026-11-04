@@ -501,3 +501,6 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 .area h2{font-family:var(--serif);font-weight:300;font-size:clamp(30px,2.8vw,40px);line-height:1.05;margin-bottom:14px}
 .area p{font-size:17px;line-height:1.7;color:var(--mute);max-width:52ch}
 @media (max-width:900px){.areas{grid-template-columns:1fr}}
+
+/* Lenis smooth scrolling */
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}.lenis.lenis-stopped{overflow:hidden}

@@ -1,0 +1,71 @@
+/* The Anatomy of a Suit: home page film (assets/film.js). Loaded after site.css, so these win. */
+
+/* Film grain: one static noise tile at low opacity (no blend mode: that would re-blend the whole
+   screen every time the canvas changes). Gives footage and close-up the same filmic surface. */
+#film::before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:.045;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* Hero title: lines rise out of hairline masks on load, then leave on scroll (transform/opacity only). */
+.hero .inner{display:flex;flex-direction:column;align-items:center;will-change:transform,opacity}
+.hero h1.eyebrow{order:3;margin:22px 0 0;opacity:0;text-shadow:0 0 18px #000,0 0 6px #000;animation:film-fade 1.2s .9s cubic-bezier(.16,1,.3,1) forwards}
+.hero .display span{overflow:hidden;padding:0 .06em .04em}
+.hero .display span>i{display:block;font-style:inherit;transform:translateY(105%);animation:film-rise 1.4s cubic-bezier(.16,1,.3,1) forwards}
+.hero .display span:nth-child(2)>i{animation-delay:.12s}
+.hero .display span:nth-child(3)>i{animation-delay:.24s}
+.hero .rule{display:block;width:72px;height:1px;margin:30px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);animation:film-draw 1.4s .7s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes film-rise{to{transform:none}}
+@keyframes film-fade{to{opacity:1}}
+@keyframes film-draw{to{transform:none}}
+
+/* Captions: no blur filters (they forced a full repaint every frame). Lines slide out of masks. */
+.panel{will-change:opacity,transform}
+.panel h2 .ln{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
+.js #film .panel h2 .ln>span{display:block;transform:translateY(105%);transition:none;will-change:transform}
+.panel .eyebrow{display:flex;align-items:center;gap:14px}
+.panel.r .eyebrow{justify-content:flex-end}
+.panel .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);transform-origin:left;transform:scaleX(var(--rule,1))}
+.panel.r .eyebrow::before{order:2;transform-origin:right}
+
+/* Chapter rail: where you are in the film. */
+.chapters{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:7;display:flex;gap:26px;list-style:none;margin:0;padding:0;opacity:0;pointer-events:none}
+.chapters li{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);transition:color .5s}
+.chapters li b{font-weight:400;order:3;max-width:0;overflow:hidden;white-space:nowrap;opacity:0;transition:max-width .6s cubic-bezier(.16,1,.3,1),opacity .5s}
+.chapters li i{order:2;width:14px;height:1px;background:currentColor;transition:width .5s cubic-bezier(.16,1,.3,1),background .5s}
+.chapters li.on{color:var(--gold-2)}
+.chapters li.on b{opacity:1;max-width:9em}
+.chapters li.on i{width:34px;background:var(--gold)}
+.film-bar{position:absolute;left:0;right:0;bottom:0;height:1px;z-index:7;background:var(--gold);transform-origin:left;transform:scaleX(0);opacity:.7}
+
+/* Loader: a hairline that fills as frames arrive. */
+.loader{font-size:0;width:120px;height:1px;background:rgba(255,255,255,.12);overflow:hidden;z-index:7}
+.loader i{display:block;height:100%;background:var(--gold);transform-origin:left;transform:scaleX(0);transition:transform .3s}
+
+/* V: the cuff close-up and its monogram. */
+#cuff{position:absolute;inset:0;z-index:3;visibility:hidden;opacity:0;transform-origin:50% 64%;will-change:opacity,transform;background:#050505}
+#cuff svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.panel .mono-ui{margin-top:6px;display:flex;flex-direction:column;gap:14px;align-items:inherit}
+.panel.r .mono-ui{align-items:flex-end}
+.mono-ui label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.mono-ui .row{display:flex;gap:10px;align-items:center}
+.mono-ui input{width:6.2em;background:transparent;border:0;border-bottom:1px solid var(--gold-soft);color:var(--bone);font-family:var(--serif);font-style:italic;font-size:30px;letter-spacing:.18em;text-align:center;text-transform:uppercase;padding:2px 0 4px;outline:none;transition:border-color .3s}
+.mono-ui input:focus{border-color:var(--gold)}
+.mono-ui .threads{display:flex;gap:8px}
+.mono-ui .threads button{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:var(--c);cursor:pointer;padding:0;transition:transform .3s,box-shadow .3s}
+.mono-ui .threads button[aria-pressed="true"]{box-shadow:0 0 0 2px #000,0 0 0 3px var(--gold);transform:scale(1.08)}
+.mono-ui .note{font-size:12px;color:var(--dim);letter-spacing:.04em}
+.panel[data-p="sign"]{pointer-events:auto}
+
+@media (max-width:900px){
+  .chapters{display:none}
+  .mono-ui input{font-size:26px}
+  .panel.r .eyebrow{justify-content:flex-start}
+  .panel.r .eyebrow::before{order:0;transform-origin:left}
+  .panel .mono-ui,.panel.r .mono-ui{flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 20px}
+  .mono-ui label{width:100%}
+  .mono-ui .note{display:none}
+  .mono-ui .btn{width:100%;text-align:center}
+  .panel[data-p="sign"] p{margin-bottom:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero h1.eyebrow,.hero .display span>i,.hero .rule{animation:none;opacity:1;transform:none}
+}
