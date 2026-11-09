@@ -61,8 +61,8 @@
 .loader i{display:block;height:100%;background:var(--gold);transform-origin:left;transform:scaleX(0);transition:transform .3s}
 
 /* V: the cuff close-up and its monogram. */
-#cuff{position:absolute;inset:0;z-index:3;visibility:hidden;opacity:0;transform-origin:50% 64%;will-change:opacity,transform;background:#050505}
-#cuff svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#cuff{position:absolute;inset:0;z-index:3;visibility:hidden;opacity:0;transform-origin:30% 64%;will-change:opacity,transform;background:#050505}
+#cuff canvas,#cuff svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .panel .mono-ui{margin-top:6px;display:flex;flex-direction:column;gap:14px;align-items:inherit}
 .panel.r .mono-ui{align-items:flex-end}
 .mono-ui label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}

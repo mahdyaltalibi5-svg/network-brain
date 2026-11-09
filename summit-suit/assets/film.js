@@ -19,8 +19,8 @@ const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // On landscape screens the close-up sits left of centre (the cuff ends ~34% across), so caption V
 // has the right third to itself. The push-in steers the cuff to the same spot.
 const WIDE = innerWidth / innerHeight >= 1.15;
-const CUFF_TARGET = WIDE ? .345 : .5;
-const CUFF_TARGET_Y = WIDE ? .62 : .25;
+const CUFF_TARGET = WIDE ? .3 : .5;
+const CUFF_TARGET_Y = WIDE ? .64 : .275;
 
 const film = document.getElementById('film');
 const canvas = document.getElementById('seq'), ctx = canvas.getContext('2d', { alpha: false });
@@ -142,112 +142,165 @@ function render() {
 resize(); addEventListener('resize', resize);
 
 /* ── V: the cuff close-up ─────────────────────────────────────────────────────────────────────── */
-// Drawn in SVG to match the last frame's lighting: charcoal sleeve above, white poplin cuff below,
-// smoke behind. Gradients and patterns only (no filters on large shapes), so it composites cheaply.
+// A fabric macro painted once to a canvas (never per frame): the white poplin cuff as a lit
+// cylinder under the charcoal sleeve, with weave, grain and soft shadow, tilted a few degrees like
+// a photograph. The monogram is a small SVG layered on top, so stitching only repaints the letters.
 const NS = 'http://www.w3.org/2000/svg';
 const cuff = document.getElementById('cuff');
-cuff.innerHTML = `
-<svg viewBox="250 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
- <defs>
-  <radialGradient id="cf-bg" cx="50%" cy="22%" r="85%"><stop offset="0" stop-color="#2b2b2c"/><stop offset=".55" stop-color="#0e0e0f"/><stop offset="1" stop-color="#030303"/></radialGradient>
-  <radialGradient id="cf-fog" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-  <linearGradient id="cf-sleeve" x1="0" x2="1"><stop offset="0" stop-color="#0b0b0b"/><stop offset=".18" stop-color="#232323"/><stop offset=".4" stop-color="#363636"/><stop offset=".62" stop-color="#282828"/><stop offset=".86" stop-color="#161616"/><stop offset="1" stop-color="#080808"/></linearGradient>
-  <linearGradient id="cf-sleeve-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset=".93" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
-  <pattern id="cf-twill" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-38) scale(.7)"><rect width="7" height="7" fill="none"/><path d="M0 1.5H7" stroke="#fff" stroke-opacity=".022" stroke-width="1.4"/><path d="M0 5H7" stroke="#000" stroke-opacity=".1" stroke-width="1"/></pattern>
-  <linearGradient id="cf-cuff" x1="0" x2="1"><stop offset="0" stop-color="#8f8b84"/><stop offset=".12" stop-color="#cbc7bf"/><stop offset=".34" stop-color="#f3f0ea"/><stop offset=".52" stop-color="#ebe7e0"/><stop offset=".78" stop-color="#cfcac2"/><stop offset=".94" stop-color="#99958d"/><stop offset="1" stop-color="#6f6b65"/></linearGradient>
-  <linearGradient id="cf-cuff-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".62"/><stop offset=".16" stop-color="#000" stop-opacity=".08"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".86" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
-  <pattern id="cf-poplin" width="4" height="3" patternUnits="userSpaceOnUse"><path d="M0 .5H4" stroke="#000" stroke-opacity=".045" stroke-width="1"/><path d="M1 0V3" stroke="#fff" stroke-opacity=".05" stroke-width=".8"/></pattern>
-  <radialGradient id="cf-mop" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#ebe8e2"/><stop offset=".75" stop-color="#d6d9dc"/><stop offset="1" stop-color="#b9b3ab"/></radialGradient>
-  <radialGradient id="cf-horn" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#5a4d44"/><stop offset=".5" stop-color="#2a221e"/><stop offset="1" stop-color="#0f0c0b"/></radialGradient>
-  <filter id="cf-soft" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".55"/></filter>
-  <clipPath id="cf-cuff-clip"><path d="${CUFF_PATH()}"/></clipPath>
-  <pattern id="cf-satin" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(62)"><rect width="3.2" height="3.2" style="fill:var(--thread)"/><path d="M0 .7H3.2" stroke="#fff" stroke-opacity=".26" stroke-width=".7"/><path d="M0 2.3H3.2" stroke="#000" stroke-opacity=".28" stroke-width=".6"/></pattern>
-  <linearGradient id="cf-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".22"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
- </defs>
- <rect x="-800" y="-1600" width="3200" height="3600" fill="#030303"/>
- <rect width="1600" height="900" fill="url(#cf-bg)"/>
- <ellipse cx="800" cy="880" rx="980" ry="190" fill="url(#cf-fog)"/>
- <ellipse cx="260" cy="760" rx="520" ry="120" fill="url(#cf-fog)" opacity=".7"/>
- <g filter="url(#cf-soft)">
-  <path d="${CUFF_PATH()}" fill="url(#cf-cuff)"/>
- </g>
- <g clip-path="url(#cf-cuff-clip)">
-  <rect x="200" y="380" width="1200" height="340" fill="url(#cf-poplin)"/>
-  <rect x="200" y="380" width="1200" height="340" fill="url(#cf-cuff-v)"/>
-  <path d="M276 448V636Q276 664 304 666Q800 688 1296 666Q1324 664 1324 636V448" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-dasharray="8 6" transform="translate(0 1.2)"/>
-  <path d="M276 448V636Q276 664 304 666Q800 688 1296 666Q1324 664 1324 636V448" fill="none" stroke="#9c968c" stroke-width="2" stroke-dasharray="8 6"/>
-  <g id="cf-mono"></g>
- </g>
- <g transform="translate(1238 566)">
-  <ellipse cx="2" cy="8" rx="30" ry="26" fill="#000" opacity=".28"/>
-  <circle r="29" fill="url(#cf-mop)" stroke="#a7a198" stroke-width="1.2"/>
-  <circle r="21" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>
-  <g fill="#8e877d"><circle cx="-7" cy="-7" r="3.4"/><circle cx="7" cy="-7" r="3.4"/><circle cx="-7" cy="7" r="3.4"/><circle cx="7" cy="7" r="3.4"/></g>
-  <path d="M-7-7 7 7M7-7-7 7" stroke="#e9e5de" stroke-width="2.6" stroke-linecap="round"/>
- </g>
- <g filter="url(#cf-soft)">
-  <path d="M120-1600H1480V398Q800 452 120 398Z" fill="url(#cf-sleeve)"/>
- </g>
- <path d="M120-1600H1480V398Q800 452 120 398Z" fill="url(#cf-twill)"/>
- <path d="M120-1600H1480V398Q800 452 120 398Z" fill="url(#cf-sleeve-v)"/>
- <path d="M120 396Q800 450 1480 396" fill="none" stroke="#fff" stroke-opacity=".1" stroke-width="2"/>
- <path d="M120 372Q800 426 1480 372" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="1.6" stroke-dasharray="3 5"/>
- <g>${[0, 1, 2, 3].map(n => {
-   const x = 1060 + n * 46, y = 330 + n * 1.5;
-   return `<g transform="translate(${x} ${y})"><ellipse cx="2" cy="5" rx="23" ry="21" fill="#000" opacity=".5"/><circle r="22" fill="url(#cf-horn)" stroke="#000" stroke-opacity=".6"/><circle r="15.5" fill="none" stroke="#fff" stroke-opacity=".08"/><g fill="#050404"><circle cx="-5" cy="-5" r="2.6"/><circle cx="5" cy="-5" r="2.6"/><circle cx="-5" cy="5" r="2.6"/><circle cx="5" cy="5" r="2.6"/></g><path d="M-5-5 5 5M5-5-5 5" stroke="#3a3a3a" stroke-width="1.8" stroke-linecap="round"/></g>`;
- }).join('')}</g>
-</svg>`;
-function frameCuff() {
-  const s = cuff.querySelector('svg');
-  if (WIDE) { s.setAttribute('viewBox', '250 0 1600 900'); return; }
-  const vw = 1180, vh = vw * innerHeight / innerWidth;
-  s.setAttribute('viewBox', `210 ${(552 - CUFF_TARGET_Y * vh).toFixed(0)} ${vw} ${vh.toFixed(0)}`);
+const ROT = -4 * Math.PI / 180;
+cuff.innerHTML = `<canvas></canvas><svg aria-hidden="true" focusable="false"><defs></defs><g id="cf-mono"></g></svg>`;
+const cuffCv = cuff.querySelector('canvas');
+const svg = cuff.querySelector('svg');
+const mono = cuff.querySelector('#cf-mono');
+let L = null; // layout in CSS px, shared by the painting and the monogram
+function layoutCuff(w, h) {
+  return WIDE
+    ? { w, h, x0: -.06 * w, x1: .635 * w, hemY: .33 * h, botY: .93 * h, sag: .05 * h, mx: CUFF_TARGET * w, my: CUFF_TARGET_Y * h, cap: Math.min(.1 * h, .075 * w) }
+    : { w, h, x0: -.12 * w, x1: 1.12 * w, hemY: .13 * h, botY: .4 * h, sag: .022 * h, mx: .5 * w, my: CUFF_TARGET_Y * h, cap: .058 * h };
 }
-frameCuff(); addEventListener('resize', frameCuff);
-function CUFF_PATH() { return 'M240 392H1360V640Q1360 690 1310 692Q800 714 290 692Q240 690 240 640Z'; }
+function tile(size, paint) {
+  const t = document.createElement('canvas'); t.width = t.height = size;
+  paint(t.getContext('2d'), size);
+  return t;
+}
+function paintCuff() {
+  const w = film.clientWidth, h = film.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  L = layoutCuff(w, h);
+  cuffCv.width = Math.round(w * dpr); cuffCv.height = Math.round(h * dpr);
+  const c = cuffCv.getContext('2d', { alpha: false });
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = '#030303'; c.fillRect(0, 0, w, h);
+  const noise = c.createPattern(tile(160, (t, n) => {
+    const d = t.createImageData(n, n);
+    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() < .5 ? 0 : 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = Math.random() * 22; }
+    t.putImageData(d, 0, 0);
+  }), 'repeat');
+  const weave = c.createPattern(tile(4, t => {
+    t.fillStyle = 'rgba(255,255,255,.06)'; t.fillRect(0, 0, 4, 1);
+    t.fillStyle = 'rgba(0,0,0,.05)'; t.fillRect(0, 2, 4, 1); t.fillRect(1, 0, 1, 4);
+  }), 'repeat');
+  const twill = c.createPattern(tile(6, t => {
+    t.strokeStyle = 'rgba(255,255,255,.035)'; t.lineWidth = 1.2;
+    t.beginPath(); t.moveTo(-1, 7); t.lineTo(7, -1); t.moveTo(-4, 4); t.lineTo(4, -4); t.moveTo(2, 10); t.lineTo(10, 2); t.stroke();
+  }), 'repeat');
+  const { x0, x1, hemY, botY, sag } = L, cw = x1 - x0, xm = (x0 + x1) / 2;
+  const arc = (p, y, dx = 0) => { p.moveTo(x0 - dx, y); p.quadraticCurveTo(xm, y + sag * 2, x1 + dx, y); };
+
+  c.save();
+  c.translate(L.mx, L.my); c.rotate(ROT); c.translate(-L.mx, -L.my);
+
+  // Cuff: a cylinder lit from the upper left.
+  const cuffShape = new Path2D();
+  cuffShape.moveTo(x0, hemY - h * .2); cuffShape.lineTo(x1, hemY - h * .2); cuffShape.lineTo(x1, botY);
+  cuffShape.quadraticCurveTo(xm, botY + sag * 2, x0, botY); cuffShape.closePath();
+  c.save(); c.clip(cuffShape);
+  let g = c.createLinearGradient(x0, 0, x1, 0);
+  [[0, '#2f2d2a'], [.07, '#7d7a74'], [.22, '#cfccc5'], [.4, '#efece6'], [.52, '#e6e3dc'], [.72, '#aeaaa3'], [.9, '#5d5a55'], [1, '#262422']].forEach(([s, col]) => g.addColorStop(s, col));
+  c.fillStyle = g; c.fillRect(x0, hemY - h * .2, cw, botY - hemY + h * .4);
+  c.fillStyle = weave; c.fillRect(x0, 0, cw, h * 1.2);
+  c.fillStyle = noise; c.fillRect(x0, 0, cw, h * 1.2);
+  // the cloth rolls under at the bottom edge
+  g = c.createLinearGradient(0, botY - (botY - hemY) * .22, 0, botY + sag);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.38)');
+  c.fillStyle = g; c.fillRect(x0, hemY, cw, botY - hemY + sag * 2);
+  // soft shadow cast by the sleeve hem, following its curve
+  {
+    const p = new Path2D(); arc(p, hemY - h * .03);
+    c.save(); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = h * .075 * dpr; c.shadowOffsetY = h * .05 * dpr;
+    c.strokeStyle = '#000'; c.lineWidth = h * .05; c.stroke(p); c.stroke(p); c.restore();
+  }
+  // topstitching along the cuff edge: each stitch catches the light and casts a hair of shadow
+  const inset = (botY - hemY) * .085, stitchRow = new Path2D(); arc(stitchRow, botY - inset);
+  c.setLineDash([7, 4.5]); c.lineCap = 'round';
+  c.translate(0, 1.2); c.strokeStyle = 'rgba(0,0,0,.22)'; c.lineWidth = 1.7; c.stroke(stitchRow);
+  c.translate(0, -1.2); c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 1.5; c.stroke(stitchRow);
+  c.setLineDash([]);
+  c.restore();
+
+  // Sleeve: charcoal wool, same light.
+  const sleeve = new Path2D();
+  const sx = cw * .025;
+  sleeve.moveTo(x0 - sx, -h); sleeve.lineTo(x0 - sx, hemY); sleeve.quadraticCurveTo(xm, hemY + sag * 2, x1 + sx, hemY); sleeve.lineTo(x1 + sx, -h); sleeve.closePath();
+  c.save(); c.clip(sleeve);
+  g = c.createLinearGradient(x0 - sx, 0, x1 + sx, 0);
+  [[0, '#040404'], [.08, '#151516'], [.26, '#2b2b2d'], [.4, '#38383a'], [.56, '#2a2a2c'], [.8, '#141415'], [1, '#040404']].forEach(([s, col]) => g.addColorStop(s, col));
+  c.fillStyle = g; c.fillRect(x0 - sx, -h, cw + sx * 2, h * 2.2);
+  c.fillStyle = twill; c.fillRect(x0 - sx, -h, cw + sx * 2, h * 2.2);
+  c.fillStyle = noise; c.fillRect(x0 - sx, -h, cw + sx * 2, h * 2.2);
+  g = c.createLinearGradient(0, -h * .1, 0, hemY + sag);
+  g.addColorStop(0, 'rgba(0,0,0,.85)'); g.addColorStop(.55, 'rgba(0,0,0,.25)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.fillStyle = g; c.fillRect(x0 - sx, -h, cw + sx * 2, h * 2.2);
+  const hemRow = new Path2D(); arc(hemRow, hemY - (botY - hemY) * .09, sx);
+  c.setLineDash([5, 4]); c.strokeStyle = 'rgba(0,0,0,.5)'; c.lineWidth = 1.4; c.stroke(hemRow); c.setLineDash([]);
+  const hemEdge = new Path2D(); arc(hemEdge, hemY - 1.5, sx);
+  c.strokeStyle = 'rgba(255,255,255,.09)'; c.lineWidth = 2; c.stroke(hemEdge);
+  c.restore();
+  c.restore();
+
+  // Lens falloff: the eye goes to the monogram, the edges go to black like the rest of the film.
+  const r = Math.hypot(w, h);
+  g = c.createRadialGradient(L.mx, L.my, r * .14, L.mx, L.my, r * .62);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.82)');
+  c.fillStyle = g; c.fillRect(0, 0, w, h);
+
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  mono.setAttribute('transform', `rotate(-4 ${L.mx.toFixed(1)} ${L.my.toFixed(1)})`);
+}
+paintCuff();
+let cuffTimer = 0;
+addEventListener('resize', () => { clearTimeout(cuffTimer); cuffTimer = setTimeout(() => { paintCuff(); build(input?.value); }, 150); });
 
 /* Monogram: Cormorant Garamond Italic capitals (assets/monogram.json), stitched in two passes like
    a real embroidery head: a running-stitch outline, then satin fill sweeping across each letter. */
-const THREADS = { navy: '#1f2b4a', burgundy: '#5b1a24', charcoal: '#2a2b2e', gold: '#a8823c' };
-const mono = cuff.querySelector('#cf-mono');
-const svg = cuff.querySelector('svg');
-let glyphData = null, parts = [], replay = null;
-const CAP = 118, CX = 800, BASE = 618;
+const THREADS = { navy: '#1c2747', burgundy: '#5a1823', charcoal: '#27282b', gold: '#a07a34' };
+let glyphData = null, parts = [], replay = null, thread = THREADS.navy;
 
 function setThread(name) {
-  svg.style.setProperty('--thread', THREADS[name] || THREADS.navy);
-  mono.querySelectorAll('.o').forEach(p => p.setAttribute('stroke', THREADS[name] || THREADS.navy));
+  thread = THREADS[name] || THREADS.navy;
+  mono.querySelectorAll('[data-t]').forEach(p => p.setAttribute(p.dataset.t, thread));
 }
 function build(initials) {
-  if (!glyphData) return;
+  if (!glyphData || !L) return;
   const letters = (initials || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3).split('');
   if (!letters.length) letters.push('S', 'C');
-  const k = CAP / glyphData.capH, gap = 52;
+  const k = L.cap / glyphData.capH, gap = L.cap * .44, capU = glyphData.capH;
   const ws = letters.map(ch => (glyphData.glyphs[ch].x2 - glyphData.glyphs[ch].x1) * k);
   const total = ws.reduce((a, b) => a + b, 0) + gap * (letters.length - 1);
-  let x = CX - total / 2;
+  const base = L.my + L.cap / 2;
+  let x = L.mx - total / 2;
+  // Satin stitch: fine diagonal threads, about 2px apart on screen whatever the letter size.
+  const pitch = 2.1 / k;
+  svg.querySelector('defs').innerHTML = `
+    <pattern id="cf-satin" width="${pitch}" height="${pitch}" patternUnits="userSpaceOnUse" patternTransform="rotate(58)">
+      <path d="M0 ${pitch * .25}H${pitch}" stroke="#fff" stroke-opacity=".3" stroke-width="${pitch * .3}"/>
+      <path d="M0 ${pitch * .78}H${pitch}" stroke="#000" stroke-opacity=".34" stroke-width="${pitch * .3}"/>
+    </pattern>
+    <linearGradient id="cf-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>`;
   mono.textContent = '';
   parts = [];
-  const thread = getComputedStyle(svg).getPropertyValue('--thread').trim() || THREADS.navy;
   letters.forEach((ch, i) => {
     const g = glyphData.glyphs[ch];
     const id = `cf-clip-${i}`;
     const grp = document.createElementNS(NS, 'g');
-    grp.setAttribute('transform', `translate(${(x - g.x1 * k).toFixed(1)} ${BASE}) scale(${k.toFixed(4)})`);
-    grp.innerHTML = `<clipPath id="${id}"><rect class="r" x="${g.x1 - 2}" y="${-CAP}" height="${CAP * 1.6}" width="0"/></clipPath>
-      <path d="${g.d}" fill="#000" fill-opacity=".28" transform="translate(.4 .9)" clip-path="url(#${id})"/>
-      <path class="f" d="${g.d}" fill="url(#cf-satin)" clip-path="url(#${id})"/>
-      <path class="f2" d="${g.d}" fill="url(#cf-sheen)" clip-path="url(#${id})"/>
-      <path class="o" d="${g.d}" fill="none" stroke="${thread}" stroke-width="${(1.5 / k).toFixed(3)}" stroke-linejoin="round"/>`;
+    grp.setAttribute('transform', `translate(${(x - g.x1 * k).toFixed(1)} ${base.toFixed(1)}) scale(${k.toFixed(4)})`);
+    grp.innerHTML = `<clipPath id="${id}"><rect class="r" x="${g.x1 - 3}" y="${-capU * 1.2}" height="${capU * 1.7}" width="0"/></clipPath>
+      <g clip-path="url(#${id})">
+        <path d="${g.d}" fill="#000" fill-opacity=".3" transform="translate(${.8 / k} ${1.8 / k})"/>
+        <path d="${g.d}" fill="#000" fill-opacity=".22" transform="translate(${.3 / k} ${.8 / k})"/>
+        <path d="${g.d}" fill="${thread}" data-t="fill"/>
+        <path d="${g.d}" fill="url(#cf-satin)"/>
+        <path d="${g.d}" fill="url(#cf-sheen)"/>
+      </g>
+      <path class="o" d="${g.d}" fill="none" stroke="${thread}" data-t="stroke" stroke-width="${(1.1 / k).toFixed(3)}" stroke-linejoin="round"/>`;
     mono.appendChild(grp);
     const o = grp.querySelector('.o'), len = o.getTotalLength();
     o.style.strokeDasharray = `${len} ${len}`;
-    parts.push({ o, len, r: grp.querySelector('.r'), w: g.x2 - g.x1 + 4 });
+    parts.push({ o, len, r: grp.querySelector('.r'), w: g.x2 - g.x1 + 6 });
     x += ws[i];
     if (i < letters.length - 1) {
       const dot = document.createElementNS(NS, 'circle');
-      dot.setAttribute('cx', (x + gap / 2).toFixed(1)); dot.setAttribute('cy', BASE - CAP * .32); dot.setAttribute('r', 5.5);
-      dot.setAttribute('fill', 'url(#cf-satin)');
+      dot.setAttribute('cx', (x + gap / 2).toFixed(1)); dot.setAttribute('cy', (base - L.cap * .3).toFixed(1)); dot.setAttribute('r', (L.cap * .04).toFixed(1));
+      dot.setAttribute('fill', thread); dot.dataset.t = 'fill';
       mono.appendChild(dot);
       parts.push({ dot });
       x += gap;
@@ -329,7 +382,7 @@ const tl = gsap.timeline({
     if (c !== activeCh) { activeCh = c; rail.forEach((li, i) => li.classList.toggle('on', i === c)); }
     if (bar) bar.style.transform = `scaleX(${tl.progress().toFixed(4)})`;
   },
-  scrollTrigger: { trigger: '#film', start: 'top top', end: () => `+=${Math.round(innerHeight * (PORTRAIT ? 6.2 : 6.6))}`,
+  scrollTrigger: { trigger: '#film', start: 'top top', end: () => `+=${Math.round(innerHeight * (PORTRAIT ? 5.2 : 5.4))}`,
     scrub: window.__lenis ? .35 : .7, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
 });
 const panel = (k, start, hold) => {
@@ -362,7 +415,7 @@ tl.to(state, { shift: 0, duration: .7, ease: 'sine.inOut' }, 9.0)
   .fromTo('#cuff', { autoAlpha: 0, scale: .86 }, { autoAlpha: 1, scale: 1, duration: .8, ease: 'power2.out' }, 10.2)
   .to(state, { stitch: 1, duration: 2.1, ease: 'none' }, 10.75);
 panel('sign', CH[4][1]);
-tl.to({}, { duration: .9 }, 12.9);
+tl.to({}, { duration: .7 }, 12.9);
 
 // At rest the figure breathes: the first frames ping-pong slowly until the visitor scrolls.
 if (!REDUCED) {
