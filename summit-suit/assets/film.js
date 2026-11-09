@@ -25,7 +25,8 @@ const CUFF_TARGET_Y = WIDE ? .62 : .25;
 const film = document.getElementById('film');
 const canvas = document.getElementById('seq'), ctx = canvas.getContext('2d', { alpha: false });
 const loaderBar = document.querySelector('.loader i');
-const state = { frame: 0, shift: 0, zoom: 0, stitch: 0 };
+const state = { frame: 0, shift: 0, zoom: 0, stitch: 0, idle: 0 };
+let idleWeight = 1; // 1 at the top of the page, 0 once the film is being scrubbed
 const frames = new Array(COUNT);
 
 /* ── Frames: first frame, then coarse-to-fine so the whole film scrubs almost at once ─────────── */
@@ -85,7 +86,7 @@ function draw(f) {
 }
 function render() {
   queued = false;
-  const f = Math.max(0, Math.min(COUNT - 1, state.frame));
+  const f = Math.max(0, Math.min(COUNT - 1, state.frame + state.idle * idleWeight));
   const i0 = Math.floor(f), a = f - i0;
   const key = `${f.toFixed(3)}|${state.shift.toFixed(3)}|${state.zoom.toFixed(4)}|${W}x${H}`;
   if (key === lastKey && !force) return;
@@ -323,6 +324,7 @@ const tl = gsap.timeline({
     draw();
     if (replay) { /* typing replay owns the monogram */ } else stitch(state.stitch);
     const t = tl.time();
+    idleWeight = Math.max(0, 1 - t / V0);
     let c = -1; CH.forEach(([, s], i) => { if (t >= s - .15) c = i; });
     if (c !== activeCh) { activeCh = c; rail.forEach((li, i) => li.classList.toggle('on', i === c)); }
     if (bar) bar.style.transform = `scaleX(${tl.progress().toFixed(4)})`;
@@ -338,13 +340,18 @@ const panel = (k, start, hold) => {
   if (hold) tl.to(el, { autoAlpha: 0, y: -22, duration: .4, ease: 'power2.in' }, start + hold);
 };
 tl.to(state, { frame: COUNT - 1, duration: (COUNT - 1) / 24, ease: 'none' }, V0)
-  .to('.hero .inner', { autoAlpha: 0, y: -60, scale: .97, duration: 1 }, .25)
-  .to('.scroll-cue', { autoAlpha: 0, duration: .3 }, 0)
+  // The title parts like a curtain as the film begins.
+  .to('.hero .display .a', { autoAlpha: 0, xPercent: -26, duration: .9, ease: 'power2.in' }, .1)
+  .to('.hero .display .b', { autoAlpha: 0, xPercent: 26, duration: .9, ease: 'power2.in' }, .1)
+  .to('.hero .foot', { autoAlpha: 0, duration: .5 }, .1)
+  .to('.scroll-cue', { autoAlpha: 0, duration: .3, overwrite: true }, 0)
   .to('.chapters', { autoAlpha: 1, duration: .5 }, at(2.1));
 const drift = (to, t) => tl.to(state, { shift: to, duration: 1.1, ease: 'sine.inOut' }, t);
 // Captions follow the film: shirt and tie ~2.5-3.5s, waistcoat dissolves in ~5.1-5.6s, jacket wraps on
 // ~5.7-6.6s, suit settles ~6.8s.
-drift(1, at(2.0)); drift(-1, at(4.1)); drift(1, at(5.1)); drift(-1, at(6.4));
+drift(1, .95); drift(-1, at(4.1)); drift(1, at(5.1)); drift(-1, at(6.4));
+// Prologue fills the stretch where the figure gathers light, before the first garment.
+panel('pro', 1.25, 1.2);
 panel('shirt', CH[0][1], 1.5);
 panel('vest', CH[1][1], 1.0);
 panel('jacket', CH[2][1], 1.1);
@@ -356,6 +363,15 @@ tl.to(state, { shift: 0, duration: .7, ease: 'sine.inOut' }, 9.0)
   .to(state, { stitch: 1, duration: 2.1, ease: 'none' }, 10.75);
 panel('sign', CH[4][1]);
 tl.to({}, { duration: .9 }, 12.9);
+
+// At rest the figure breathes: the first frames ping-pong slowly until the visitor scrolls.
+if (!REDUCED) {
+  const b = { v: 0 };
+  gsap.to(b, { v: 9, duration: 3.8, ease: 'sine.inOut', yoyo: true, repeat: -1, onUpdate() {
+    const q = Math.round(b.v * 12) / 12;
+    if (q !== state.idle) { state.idle = q; if (idleWeight > 0 && scrollY < innerHeight) draw(); }
+  } });
+}
 
 // Nav turns solid once past the film
 ScrollTrigger.create({ start: () => tl.scrollTrigger.end + 1, onEnter: () => window.summitPast(true), onLeaveBack: () => window.summitPast(false) });

@@ -6,13 +6,33 @@
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* Hero title: lines rise out of hairline masks on load, then leave on scroll (transform/opacity only). */
-.hero .inner{display:flex;flex-direction:column;align-items:center;will-change:transform,opacity}
-.hero h1.eyebrow{order:3;margin:22px 0 0;opacity:0;text-shadow:0 0 18px #000,0 0 6px #000;animation:film-fade 1.2s .9s cubic-bezier(.16,1,.3,1) forwards}
-.hero .display span{overflow:hidden;padding:0 .06em .04em}
-.hero .display span>i{display:block;font-style:inherit;transform:translateY(105%);animation:film-rise 1.4s cubic-bezier(.16,1,.3,1) forwards}
-.hero .display span:nth-child(2)>i{animation-delay:.12s}
-.hero .display span:nth-child(3)>i{animation-delay:.24s}
-.hero .rule{display:block;width:72px;height:1px;margin:30px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);animation:film-draw 1.4s .7s cubic-bezier(.16,1,.3,1) forwards}
+/* The title flanks the figure (landscape) or sits beneath it (portrait), never on top of it. */
+#seq{animation:film-in 2.6s cubic-bezier(.16,1,.3,1) both}
+@keyframes film-in{from{opacity:0;transform:scale(1.08)}}
+.hero{display:block}
+.hero .inner{position:absolute;inset:0;transform:none}
+.hero .display{position:absolute;inset:0;font-size:clamp(44px,6.9vw,150px);line-height:.9}
+.hero .display .a,.hero .display .b{position:absolute;top:50%;margin-top:-1.05em;display:block;will-change:transform,opacity}
+.hero .display .a{right:69.5%;text-align:right}
+.hero .display .b{left:69.5%;text-align:left}
+.hero .display .w{display:block;overflow:hidden;padding:0 .08em .12em;margin-bottom:-.12em}
+.hero .display .w>i{display:block;font-style:inherit;transform:translateY(110%);animation:film-rise 1.5s .5s cubic-bezier(.16,1,.3,1) forwards}
+.hero .display .w:nth-child(2)>i{animation-delay:.62s}
+.hero .display .b .w>i{animation-delay:.74s}
+.hero .display .b .w:nth-child(2)>i{animation-delay:.86s}
+.hero .foot{position:absolute;left:0;right:0;bottom:118px;text-align:center;will-change:opacity}
+.hero h1.eyebrow{margin:18px 0 0;opacity:0;text-shadow:0 0 18px #000,0 0 6px #000;animation:film-fade 1.4s 1.5s cubic-bezier(.16,1,.3,1) forwards}
+.hero .rule{display:block;width:72px;height:1px;margin:0 auto;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);animation:film-draw 1.6s 1.2s cubic-bezier(.16,1,.3,1) forwards}
+.scroll-cue{opacity:0;animation:film-fade 1.2s 2.1s forwards}
+@media (orientation:portrait){
+  .hero .display{font-size:clamp(40px,12.4vw,96px);inset:auto 0 150px;text-align:center;line-height:.94}
+  .hero .display .a,.hero .display .b{position:static;margin:0;text-align:center}
+  .hero .display .w{display:inline-block;vertical-align:top}
+  .hero .foot{bottom:92px}
+  .hero h1.eyebrow{font-size:clamp(8.5px,2.5vw,12px);letter-spacing:.16em;margin-top:12px;white-space:nowrap}
+  .scroll-cue{bottom:20px;font-size:0;gap:0}
+  .scroll-cue i{height:34px}
+}
 @keyframes film-rise{to{transform:none}}
 @keyframes film-fade{to{opacity:1}}
 @keyframes film-draw{to{transform:none}}
@@ -67,5 +87,5 @@
   .panel[data-p="sign"] p{margin-bottom:10px}
 }
 @media (prefers-reduced-motion:reduce){
-  .hero h1.eyebrow,.hero .display span>i,.hero .rule{animation:none;opacity:1;transform:none}
+  #seq,.hero h1.eyebrow,.hero .display .w>i,.hero .rule,.scroll-cue{animation:none;opacity:1;transform:none}
 }
