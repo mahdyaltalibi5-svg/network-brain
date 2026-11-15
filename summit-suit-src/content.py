@@ -118,7 +118,7 @@ ARTICLES = [
 <p>Final adjustments, collection, and a plan for the day: how to hang it, how to travel with it, and what to do if it rains.</p>
 
 <h2>Short on time?</h2>
-<p>Rush orders are available in select circumstances. Call <a href="tel:+18018669718">(801) 866-9718</a> and ask; the sooner you call, the more options there are.</p>
+<p>Rush orders are available in select circumstances. Call <a href="tel:@@PHONE_TEL@@">@@PHONE@@</a> and ask; the sooner you call, the more options there are.</p>
 
 <h2>Suit or tuxedo?</h2>
 <p>For an evening reception with a formal dress code, a tuxedo is correct, and a <a href="/tuxedos">bespoke tuxedo</a> is a garment you own for every black-tie event after the wedding. For daytime, outdoor and mountain weddings, a three-piece suit is a favourite: the waistcoat keeps the look sharp when the jacket comes off for the dancing.</p>
@@ -126,7 +126,7 @@ ARTICLES = [
 ''',
   faqs=[('How far in advance should I order a custom wedding suit?', 'We recommend starting 4 to 6 months before the wedding. The suit itself typically takes 5 to 8 weeks, and the extra time leaves room for decisions, fittings and the unexpected.'),
         ('Can Summit Customs dress the groomsmen too?', 'Yes. Book a consultation for the wedding party and have everyone measured at least three months before the date so the pieces are made together.'),
-        ('Do you offer rush wedding suits?', 'Rush orders are available in select circumstances. Call (801) 866-9718 as early as possible.')],
+        ('Do you offer rush wedding suits?', 'Rush orders are available in select circumstances. Call @@PHONE@@ as early as possible.')],
   related=['black-tie-guide', 'suit-fabrics-for-utah', 'what-to-expect-at-your-first-fitting'],
  ),
  dict(
@@ -210,7 +210,7 @@ ARTICLES = [
   kw='custom suit consultation, suit fitting Salt Lake City, what to bring to a suit fitting',
   body='''
 <h2>Before you arrive</h2>
-<p>Book online or call <a href="tel:+18018669718">(801) 866-9718</a>. The first consultation is complimentary, takes about 30 minutes, and can be in person at 215 S State St, Suite 575, in downtown Salt Lake City, or by video. If you like, <a href="/capsule-wardrobe">build a capsule blueprint</a> first so you arrive with a starting point.</p>
+<p>Book online or call <a href="tel:@@PHONE_TEL@@">@@PHONE@@</a>. The first consultation is complimentary, takes about 30 minutes, and can be in person at 215 S State St, Suite 575, in downtown Salt Lake City, or by video. If you like, <a href="/capsule-wardrobe">build a capsule blueprint</a> first so you arrive with a starting point.</p>
 
 <h2>What to bring</h2>
 <ul>
@@ -313,7 +313,7 @@ ARTICLES = [
 
 # Service areas: slug-ish id, place name, drive note, copy
 AREAS = [
- ('salt-lake-city', 'Salt Lake City', 'Downtown, our home', 'Our atelier is at 215 S State St, Suite 575, in the heart of downtown, a short walk from the City Creek, Main Street and the law and finance offices along State Street. Consultations are by appointment, Monday to Saturday.'),
+ ('salt-lake-city', 'Salt Lake City', 'Downtown, our home', 'Our atelier is at 215 S State St, Suite 575, in the heart of downtown, a short walk from the City Creek, Main Street and the law and finance offices along State Street. Consultations are by appointment, @@DAYS@@.'),
  ('park-city', 'Park City', 'About 35 minutes via I-80', 'Park City clients come to us for mountain weddings, winter events and tailoring that works between the slopes and the boardroom. Ask about lighter cloths for summer ceremonies and textured winter jackets.'),
  ('lehi', 'Lehi &amp; Silicon Slopes', 'About 30 minutes via I-15', 'For founders and executives along Silicon Slopes, we build suits and sport coats for investor meetings, conferences and the dinners that follow. Video consultations make the first step easy around a busy schedule.'),
  ('provo', 'Provo &amp; Orem', 'About 45 minutes via I-15', 'From graduation and first-job suits to wedding parties, Utah County clients make the drive for a first consultation, and use video for follow-up conversations.'),
@@ -327,7 +327,7 @@ AREAS = [
 FAQ = [
  ('Getting started', [
   ('Is the first consultation free?', 'Yes. Your first step is a complimentary 30-minute private consultation, in person in Salt Lake City or by video. The conversation is about your goals, your lifestyle and the impression you want to leave. There is no obligation.'),
-  ('How do I book?', 'Book online at summitcustomsuits.com/book or call (801) 866-9718. Consultations are by appointment, Monday to Saturday, 10am to 6pm Mountain Time.'),
+  ('How do I book?', 'Book online at summitcustomsuits.com/book or call @@PHONE@@. Consultations are by appointment, @@DAYS@@, @@OPEN@@ to @@CLOSE@@ Mountain Time.'),
   ('Who will I work with?', 'You work directly with founder Kobe Apponsah from the first conversation through the final fitting. You are never handed off to a salesperson.'),
   ('Can I do the consultation by video?', 'Yes. The first consultation can be in person at our downtown Salt Lake City atelier or by video.'),
   ('What should I bring?', 'The shoes you plan to wear with the suit, a shirt that fits you well, photos of looks you like, and the dates you are dressing for.'),
@@ -351,7 +351,7 @@ FAQ = [
  ]),
  ('Visiting', [
   ('Where is Summit Customs?', '215 S State St, Suite 575, Salt Lake City, UT 84111, in downtown Salt Lake City.'),
-  ('What are your hours?', 'By appointment, Monday to Saturday, 10am to 6pm Mountain Time.'),
+  ('What are your hours?', 'By appointment, @@DAYS@@, @@OPEN@@ to @@CLOSE@@ Mountain Time.'),
   ('Do you serve clients outside Salt Lake City?', 'Yes. Clients come from Park City, Lehi, Provo, Sandy, Ogden and beyond, and consultations can also be held by video.'),
  ]),
 ]

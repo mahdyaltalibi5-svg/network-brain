@@ -11,6 +11,16 @@ if (window.Lenis && matchMedia('(pointer: fine)').matches && !matchMedia('(prefe
   gsap.ticker.lagSmoothing(0);
   window.__lenis = lenis;
 }
+// Announcement bar: dismissed per message (a new message shows again).
+const ann = document.querySelector('.announce');
+if (ann) {
+  const key = 'ann:' + ann.textContent.trim().slice(0, 80);
+  let gone = false; try { gone = localStorage.getItem(key) === '1'; } catch {}
+  if (gone) ann.remove(); else {
+    document.body.classList.add('has-announce');
+    ann.querySelector('button').addEventListener('click', () => { ann.remove(); document.body.classList.remove('has-announce'); try { localStorage.setItem(key, '1'); } catch {} });
+  }
+}
 const nav = document.getElementById('nav');
 const past = on => { nav.classList.toggle('solid', on); document.body.classList.toggle('past', on); };
 window.summitPast = past;

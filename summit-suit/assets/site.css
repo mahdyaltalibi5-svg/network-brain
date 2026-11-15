@@ -504,3 +504,13 @@ footer .mega{grid-column:1/-1;font-family:var(--serif);font-weight:300;font-size
 
 /* Lenis smooth scrolling */
 html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}.lenis.lenis-stopped{overflow:hidden}
+
+/* Announcement bar (set from the Summit CRM: Website → Announcement) */
+.announce{position:fixed;inset:0 0 auto 0;z-index:51;height:38px;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 44px;background:#0b0b0c;border-bottom:1px solid var(--gold-soft);font-size:12.5px;letter-spacing:.06em;color:var(--bone)}
+.announce p{margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.announce a{color:var(--gold-2);margin-left:8px;border-bottom:1px solid var(--gold-soft)}
+.announce button{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--dim);font-size:20px;line-height:1;padding:6px 8px;cursor:pointer}
+.announce button:hover{color:var(--bone)}
+body.has-announce .nav{top:38px}
+body.has-announce .announce~.nav,body.has-announce #menu{margin-top:0}
+@media (max-width:640px){.announce{font-size:11.5px;letter-spacing:.03em;padding:0 38px 0 14px;justify-content:flex-start}}

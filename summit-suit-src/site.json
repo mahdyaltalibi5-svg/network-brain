@@ -1,0 +1,16 @@
+{
+  "announcement": {
+    "enabled": false,
+    "text": "",
+    "link": "",
+    "linkText": ""
+  },
+  "phone": "(801) 866-9718",
+  "email": "kobe@summitcustomsuits.com",
+  "hours": {
+    "days": "Monday to Saturday",
+    "daysShort": "Mon–Sat",
+    "open": "10am",
+    "close": "6pm"
+  }
+}

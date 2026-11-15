@@ -11,6 +11,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 from content import ARTICLES, AREAS, FAQ
 OUT = os.path.join(ROOT, '..', 'summit-suit')
+# Editable business details (phone, email, hours, announcement bar). Written by the Summit CRM's
+# Website page; sources use @@TOKENS@@ that apply_site() fills in after every page is built.
+SITE_SETTINGS = json.load(open(os.path.join(ROOT, 'site.json')))
 SITE = 'https://summitcustomsuits.com'
 ASSET_HOST = 'https://summit-customs-suits.vercel.app'  # where og-image etc. live until the domain moves
 BOOK = 'https://summitcustomsuits.com/book'
@@ -45,7 +48,7 @@ def header(active):
         else:
             items.append(f'<a class="lnk" href="{href}"{cur}>{label}</a>')
     menu = '\n    '.join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for l, h in MENU)
-    return f'''<header class="nav" id="nav">
+    return f'''@@ANNOUNCE@@<header class="nav" id="nav">
   <a class="logo" href="/" aria-label="Summit Customs home"><img src="/img/mark.png" width="260" height="116" alt="Summit Customs mountain logo"><span>SUMMIT<span class="long"> CUSTOMS</span></span></a>
   <nav class="nav-r" aria-label="Main">
     {"".join(items)}
@@ -59,7 +62,7 @@ def header(active):
   </nav>
   <div class="menu-foot">
     <a class="btn fill" href="{BOOK}">Book a Free Consultation</a>
-    <a class="btn" href="tel:+18018669718">Call (801) 866-9718</a>
+    <a class="btn" href="tel:@@PHONE_TEL@@">Call @@PHONE@@</a>
   </div>
 </div>
 <div class="progress" aria-hidden="true"><i></i></div>'''
@@ -100,9 +103,9 @@ FOOTER = f'''<footer>
     <address>
       Summit Customs<br>
       <a href="{GMAP}" target="_blank" rel="noopener">215 S State St, Suite 575<br>Salt Lake City, UT 84111</a><br>
-      <a href="tel:+18018669718">(801) 866-9718</a><br>
-      <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a><br>
-      Mon&ndash;Sat &middot; 10am&ndash;6pm MST<br>
+      <a href="tel:@@PHONE_TEL@@">@@PHONE@@</a><br>
+      <a href="mailto:@@EMAIL@@">@@EMAIL@@</a><br>
+      @@DAYS_SHORT@@ &middot; @@OPEN@@&ndash;@@CLOSE@@ MST<br>
       <a href="https://www.instagram.com/summitcustomsuits/" rel="noopener" target="_blank">@summitcustomsuits</a><br>
       <a href="{GREV}" rel="noopener" target="_blank">&#9733; Review us on Google</a>
     </address>
@@ -113,7 +116,7 @@ FOOTER = f'''<footer>
 
 <div class="mbar">
   <a href="{BOOK}">Book a Consultation</a>
-  <a href="tel:+18018669718">Call</a>
+  <a href="tel:@@PHONE_TEL@@">Call</a>
 </div>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo" hidden>
@@ -214,7 +217,7 @@ def img(name, alt, w=640, h=960, sizes='(max-width:900px) 100vw, 50vw', eager=Fa
             f'width="{w}" height="{h}" {load} decoding="async" alt="{alt}">')
 
 def hero(crumbs, eyebrow, h1, lede, media=None, ctas=None, cls=''):
-    ctas = ctas if ctas is not None else [('Book a Free Consultation', BOOK, 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]
+    ctas = ctas if ctas is not None else [('Book a Free Consultation', BOOK, 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]
     btns = ''.join(f'<a class="btn {c}" href="{h}">{l}</a>' for l, h, c in ctas)
     m = f'<div class="phero-media">{media}</div>' if media else ''
     return f'''<section class="phero{' text' if not media else ''} {cls}">
@@ -236,7 +239,7 @@ def cta(title_html, text, occasion=None, label='Book a Private Consultation'):
     <p>{text}</p>
     <div class="ctas">
       <a class="btn fill" href="{book(occasion)}">{label}</a>
-      <a class="btn" href="tel:+18018669718">Call (801) 866-9718</a>
+      <a class="btn" href="tel:@@PHONE_TEL@@">Call @@PHONE@@</a>
     </div>
   </div>
 </section>'''
@@ -346,7 +349,7 @@ built.append(page('suits',
   [('Garments', '/services'), ('Suits', '/suits')],
   hero([('Garments', '/services'), ('Suits', '/suits')], 'The Suit', 'The foundation.<br><em>Elevated.</em>',
        'Start with the suit that fits your life. Explore cloth, colour, and styling with Kobe to create a two or three piece suit around your measurements and preferences.',
-       img('suit', 'Kobe Apponsah fitting a client in a navy custom suit jacket', eager=True), [('Book a Suit Consultation', book('Bespoke Suit'), 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+       img('suit', 'Kobe Apponsah fitting a client in a navy custom suit jacket', eager=True), [('Book a Suit Consultation', book('Bespoke Suit'), 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]) +
   f'''
 <section class="sec split" aria-labelledby="su-pattern">
   <figure class="rv">{img('navy-blazer', 'Client in a navy custom jacket and pink shirt adjusting the lining')}</figure>
@@ -373,7 +376,7 @@ built.append(page('sport-coats',
   [('Garments', '/services'), ('Sport Coats', '/sport-coats')],
   hero([('Garments', '/services'), ('Sport Coats', '/sport-coats')], 'The Sport Coat', 'Commanding.<br><em>Versatile.</em>',
        'A jacket built to stand alone, in a different cloth, a different character. The most powerful tool in a working wardrobe, bridging formal structure and personal style.',
-       img('sportcoat', 'Kobe Apponsah in a navy custom sport coat over a grey turtleneck', eager=True), [('Book a Sport Coat Consultation', book('Bespoke Sport Coat'), 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+       img('sportcoat', 'Kobe Apponsah in a navy custom sport coat over a grey turtleneck', eager=True), [('Book a Sport Coat Consultation', book('Bespoke Sport Coat'), 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]) +
   f'''
 <section class="sec split rev" aria-labelledby="sc-not">
   <figure class="rv">{img('plaid-coat', 'Client wearing a green plaid custom sport coat with navy trousers', 640, 1107)}</figure>
@@ -405,7 +408,7 @@ built.append(page('tuxedos',
   hero([('Garments', '/services'), ('Tuxedos', '/tuxedos')], 'Black Tie Done Correctly', 'Own<br><em>the evening.</em>',
        "A garment you own, not rent. Bespoke evening wear tailored to your exact measurements for life's most defining moments.",
        f'<img src="/img/tux-evening-1100.webp" width="1024" height="1024" fetchpriority="high" decoding="async" alt="Gentleman in a bespoke black tuxedo by a tall window">',
-       [('Book a Tuxedo Consultation', book('Bespoke Tuxedo'), 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+       [('Book a Tuxedo Consultation', book('Bespoke Tuxedo'), 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]) +
   f'''
 <section class="sec split" aria-labelledby="tx-arch">
   <figure class="rv">{img('lapel', 'Close-up of a black bespoke tuxedo with silk lapel, pleated shirt and pocket square', 640, 640, big=1024)}</figure>
@@ -539,7 +542,7 @@ built.append(page('capsule-wardrobe',
   hero([('Capsule Wardrobe', '/capsule-wardrobe')], 'The Capsule Wardrobe', 'Every piece should<br><em>earn its place.</em>',
        'Build a considered foundation of bespoke pieces chosen around your work, your occasions, and the way you want to show up.',
        img('shirt-paisley', 'Custom blue floral shirt on a tailor\'s dress form', 640, 853, eager=True),
-       [('Build Your Capsule', '#builder', 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+       [('Build Your Capsule', '#builder', 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]) +
   f'''
 <section class="sec builder" id="builder" aria-labelledby="cb-h">
   {heads('Your Blueprint', 'Shape your<br><em>foundation.</em>', 'Choose a direction and the pieces you want to start with. Your blueprint goes with you into the consultation, where you and Kobe refine the cloths, weights, and details.')}
@@ -625,7 +628,7 @@ built.append(page('shoes',
   hero([('Garments', '/services'), ('Footwear', '/shoes')], 'The Footwear Edit', 'Made-to-order<br><em>bespoke footwear.</em>',
        'Every suit deserves a shoe that was made for it. Each pair is handcrafted to your specifications: last, leather, sole, and finish, arriving as the final note of a complete look.',
        '<img src="/img/shoes/patina-full-brogue-front.webp" width="900" height="900" fetchpriority="high" decoding="async" alt="Patina full brogue Oxford in tobacco, olive and cognac">',
-       [('Browse the Collection', '#catalog', 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')], 'light-media') +
+       [('Browse the Collection', '#catalog', 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')], 'light-media') +
   f'''
 <section class="sec" id="catalog" aria-label="Footwear catalog">
   <div class="filters rv" role="group" aria-label="Filter shoes">
@@ -733,13 +736,13 @@ document.getElementById('cform').addEventListener('submit', e => {
   const f = e.target, v = n => f.elements[n].value.trim();
   const body = [`Name: ${v('name')}`, `Email: ${v('email')}`, v('phone') && `Phone: ${v('phone')}`, `Service of interest: ${v('service')}`, '', v('message')].filter(x => x !== false && x !== '').join('\n');
   if (window.fbq) fbq('track', 'Lead', { content_name: v('service') });
-  location.href = 'mailto:kobe@summitcustomsuits.com?subject=' + encodeURIComponent('Consultation enquiry: ' + v('service')) + '&body=' + encodeURIComponent(body);
+  location.href = 'mailto:@@EMAIL@@?subject=' + encodeURIComponent('Consultation enquiry: ' + v('service')) + '&body=' + encodeURIComponent(body);
   f.querySelector('.sent').hidden = false;
 });
 </script>'''
 built.append(page('contact',
   'Contact Summit Customs | Custom Tailor, 215 S State St, Salt Lake City',
-  'Contact Summit Customs at 215 S State St, Suite 575, Salt Lake City. Call (801) 866-9718 or email to request a private consultation for custom suits and tailoring.',
+  'Contact Summit Customs at 215 S State St, Suite 575, Salt Lake City. Call @@PHONE@@ or email to request a private consultation for custom suits and tailoring.',
   [('Contact', '/contact')],
   hero([('Contact', '/contact')], 'Reach Out', 'Request a private<br><em>consultation.</em>',
        "Whether you have a question, want to learn more about a specific service, or are ready to begin, we'd love to hear from you.", None) +
@@ -747,10 +750,10 @@ built.append(page('contact',
 <section class="sec contact" aria-label="Contact details and form">
   <div class="c-info rv">
     <dl>
-      <div><dt>Email</dt><dd><a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a></dd></div>
-      <div><dt>Phone</dt><dd><a href="tel:+18018669718">(801) 866-9718</a></dd></div>
+      <div><dt>Email</dt><dd><a href="mailto:@@EMAIL@@">@@EMAIL@@</a></dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:@@PHONE_TEL@@">@@PHONE@@</a></dd></div>
       <div><dt>Atelier</dt><dd><a href="{GMAP}" target="_blank" rel="noopener">215 S State St, Suite 575<br>Salt Lake City, UT 84111</a></dd></div>
-      <div><dt>Availability</dt><dd>By appointment only<br>Monday to Saturday, 10am to 6pm MST</dd></div>
+      <div><dt>Availability</dt><dd>By appointment only<br>@@DAYS@@, @@OPEN@@ to @@CLOSE@@ MST</dd></div>
       <div><dt>Response time</dt><dd>Within 24 hours</dd></div>
     </dl>
     <a class="gbadge" href="{GMAP}" target="_blank" rel="noopener"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><b>5.0 on Google</b><span>Read reviews</span></a>
@@ -768,7 +771,7 @@ built.append(page('contact',
       <label>Message<textarea name="message" rows="5" required></textarea></label>
       <button class="btn fill" type="submit">Send Message</button>
       <p class="hint">Opens your email app with your message ready to send to Kobe.</p>
-      <p class="sent" hidden>Your email app should now be open. If it isn't, email <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a> directly.</p>
+      <p class="sent" hidden>Your email app should now be open. If it isn't, email <a href="mailto:@@EMAIL@@">@@EMAIL@@</a> directly.</p>
     </form>
   </div>
 </section>''',
@@ -803,7 +806,7 @@ built.append(page('privacy',
   <p>You have the right to:</p>
   <ul><li>Request access to the personal data we hold about you</li><li>Request correction of any inaccurate information</li><li>Request deletion of your personal data</li><li>Opt out of any future communications at any time</li></ul>
   <h2>Contact us</h2>
-  <p>If you have any questions about this Privacy Policy or how your information is handled, please reach out: <a href="mailto:kobe@summitcustomsuits.com">kobe@summitcustomsuits.com</a> &middot; <a href="tel:+18018669718">(801) 866-9718</a></p>
+  <p>If you have any questions about this Privacy Policy or how your information is handled, please reach out: <a href="mailto:@@EMAIL@@">@@EMAIL@@</a> &middot; <a href="tel:@@PHONE_TEL@@">@@PHONE@@</a></p>
 </section>''',
   [webpage('privacy', 'WebPage', 'Privacy Policy')]))
 
@@ -811,7 +814,7 @@ built.append(page('privacy',
 WED_FAQ = [('How far ahead should I order a custom wedding suit?', 'Start 4 to 6 months before the wedding. The suit typically takes 5 to 8 weeks from consultation to final fitting, and the extra time leaves room for decisions and a final fitting close to the date.'),
            ('Can you dress the groomsmen and family too?', 'Yes. We dress grooms, groomsmen, fathers and family. Have everyone measured at least three months before the date so all the pieces are made together.'),
            ('Should the groom wear a suit or a tuxedo?', 'For a formal evening reception, a tuxedo. For daytime, outdoor and mountain weddings, a three-piece suit is a favourite; the waistcoat keeps the look sharp when the jacket comes off.'),
-           ('Do you offer rush wedding suits?', 'Rush orders are available in select circumstances. Call (801) 866-9718 as early as you can.'),
+           ('Do you offer rush wedding suits?', 'Rush orders are available in select circumstances. Call @@PHONE@@ as early as you can.'),
            ('Can the consultation be done by video?', 'Yes. The first consultation can be in person in Salt Lake City or by video, which helps when the wedding party is spread out.')]
 def faq_block(items, eyebrow='Questions', h2='Before you<br><em>begin.</em>', lede=''):
     return f'''<section class="sec faq" aria-label="Frequently asked questions">
@@ -836,7 +839,7 @@ built.append(page('wedding-suits',
   hero([('Garments', '/services'), ('Wedding Suits', '/wedding-suits')], 'The Wedding', 'The day you<br><em>will see forever.</em>',
        'Every photograph from your wedding will show what you wore. A suit or tuxedo cut for you, in a cloth chosen for the season and the setting, is the one thing you never have to worry about on the day.',
        img('rooftop', 'Wedding party in custom suits in tan, beige and navy check on a rooftop terrace', 640, 853, eager=True),
-       [('Book a Wedding Consultation', book('Wedding Suit'), 'fill'), ('Call (801) 866-9718', 'tel:+18018669718', '')]) +
+       [('Book a Wedding Consultation', book('Wedding Suit'), 'fill'), ('Call @@PHONE@@', 'tel:@@PHONE_TEL@@', '')]) +
   f'''
 <section class="sec">
   {heads('Who We Dress', 'The groom,<br><em>and everyone beside him.</em>')}
@@ -916,7 +919,7 @@ built.append(page('service-areas',
   f'''
 <section class="sec">
   <div class="areas">{''.join(f'<article class="area rv" id="{i}"><span class="eyebrow">{d}</span><h2 class="h3">{n}</h2><p>{t}</p></article>' for i, n, d, t in AREAS)}</div>
-  <p class="note rv">Visit us at <a href="{GMAP}" target="_blank" rel="noopener" style="color:var(--gold-2)">215 S State St, Suite 575, Salt Lake City, UT 84111</a>, by appointment, Monday to Saturday, 10am to 6pm MST. Drive times are approximate. <a href="/contact" style="color:var(--gold-2)">Map and directions</a>.</p>
+  <p class="note rv">Visit us at <a href="{GMAP}" target="_blank" rel="noopener" style="color:var(--gold-2)">215 S State St, Suite 575, Salt Lake City, UT 84111</a>, by appointment, @@DAYS@@, @@OPEN@@ to @@CLOSE@@ MST. Drive times are approximate. <a href="/contact" style="color:var(--gold-2)">Map and directions</a>.</p>
 </section>
 ''' + cta('Wherever you are,<br><em>start here.</em>', 'Book a complimentary consultation in Salt Lake City or by video.'),
   [webpage('service-areas', 'WebPage', 'Areas We Serve'),
@@ -934,7 +937,7 @@ built.append(page('faq',
   'Answers to common questions about custom suits at Summit Customs in Salt Lake City: the free consultation, timelines, fittings, fabrics, pricing and weddings.',
   [('About', '/about'), ('FAQ', '/faq')],
   hero([('About', '/about'), ('FAQ', '/faq')], 'Questions &amp; Answers', 'Everything,<br><em>answered.</em>',
-       'The questions we hear most about custom tailoring at Summit Customs. Anything else, call <a href="tel:+18018669718">(801) 866-9718</a>.', None) +
+       'The questions we hear most about custom tailoring at Summit Customs. Anything else, call <a href="tel:@@PHONE_TEL@@">@@PHONE@@</a>.', None) +
   ''.join(f'''
 <section class="sec faq" aria-labelledby="fq{i}">
   <div class="rv"><div class="eyebrow">{i + 1:02d}</div><h2 class="h2" id="fq{i}">{name}</h2></div>
@@ -946,7 +949,10 @@ built.append(page('faq',
 
 # Journal -------------------------------------------------------------
 PUB = '2026-10-23'
-def words_of(s): return len(re.findall(r"[A-Za-z][\w'’-]*", re.sub(r'<[^>]+>', ' ', html.unescape(s))))
+def words_of(s):
+    s = re.sub(r'@@(PHONE|PHONE_DASH|PHONE_TEL)@@', '(801) 866-9718', s)  # count tokens as the words they become
+    s = re.sub(r'@@DAYS@@', 'Monday to Saturday', s)
+    return len(re.findall(r"[A-Za-z][\w'’-]*", re.sub(r'<[^>]+>', ' ', html.unescape(s))))
 A_BY = {a['slug']: a for a in ARTICLES}
 def art_card(a, i=None):
     return f'''<a class="card art-card rv" href="/journal/{a['slug']}">
@@ -1004,7 +1010,7 @@ open(os.path.join(OUT, '404.html'), 'w').write(doc)
 
 # ------------------------------------------------------------------ home page: shared chrome + internal links
 HOME = os.path.join(OUT, 'index.html')
-h = open(HOME).read()
+h = open(os.path.join(ROOT, 'home.html')).read()
 h = re.sub(r'<header class="nav" id="nav">.*?<div class="progress" aria-hidden="true"><i></i></div>', lambda m: header('/'), h, count=1, flags=re.S)
 h = re.sub(r'<footer>.*?</footer>\s*<div class="mbar">.*?</div>\s*<div class="lb".*?</div>', lambda m: FOOTER, h, count=1, flags=re.S)
 INTERNAL = ['suits', 'sport-coats', 'tuxedos', 'shoes', 'fabrics', 'collection', 'capsule-wardrobe', 'services', 'gallery', 'about', 'contact', 'privacy']
@@ -1078,8 +1084,8 @@ def title_of(s):
     return html.unescape(t)
 llms = ['# Summit Customs', '',
         '> Bespoke and made-to-measure suits, sport coats, tuxedos, wedding suits, custom shirts, footwear and image consulting in Salt Lake City, Utah. Founded by Kobe Apponsah.', '',
-        '- Address: 215 S State St, Suite 575, Salt Lake City, UT 84111', '- Phone: (801) 866-9718', '- Email: kobe@summitcustomsuits.com',
-        '- Hours: by appointment, Monday to Saturday, 10am to 6pm Mountain Time', f'- Book: {BOOK} (complimentary 30-minute consultation, in person or by video)',
+        '- Address: 215 S State St, Suite 575, Salt Lake City, UT 84111', '- Phone: @@PHONE@@', '- Email: @@EMAIL@@',
+        '- Hours: by appointment, @@DAYS@@, @@OPEN@@ to @@CLOSE@@ Mountain Time', f'- Book: {BOOK} (complimentary 30-minute consultation, in person or by video)',
         '- Typical timeline: 5 to 8 weeks from consultation to final fitting', '- Cloth: 4,000+ cloths including Dormeuil, Scabal, Vitale Barberis Canonico and Holland & Sherry',
         '- Google rating: 5.0', '- Instagram: https://www.instagram.com/summitcustomsuits/', '', '## Pages', '']
 for s in [''] + [x for x in built if not x.startswith('journal/')]:
@@ -1088,4 +1094,46 @@ llms += ['', '## Journal', '']
 for a in ARTICLES:
     llms.append(f"- [{html.unescape(a['name'])}]({SITE}/journal/{a['slug']}): {a['desc']}")
 open(os.path.join(OUT, 'llms.txt'), 'w').write('\n'.join(llms) + '\n')
+
+def apply_site():
+    """Fill @@TOKENS@@ in every text output from site.json."""
+    st = SITE_SETTINGS
+    digits = re.sub(r'\D', '', st['phone'])
+    if len(digits) == 10: digits = '1' + digits
+    local = digits[-10:]
+    def to24(t):
+        m = re.match(r'\s*(\d{1,2})(?::(\d{2}))?\s*([ap])m', t.lower())
+        if not m: return t
+        hh = int(m.group(1)) % 12 + (12 if m.group(3) == 'p' else 0)
+        return f'{hh:02d}:{m.group(2) or "00"}'
+    a = st.get('announcement') or {}
+    bar = ''
+    if a.get('enabled') and a.get('text', '').strip():
+        link = f' <a href="{html.escape(a["link"])}">{html.escape(a.get("linkText") or "Learn more")} &rarr;</a>' if a.get('link') else ''
+        bar = f'<div class="announce" role="region" aria-label="Announcement"><p>{html.escape(a["text"])}{link}</p><button type="button" aria-label="Dismiss announcement">&times;</button></div>\n'
+    h = st['hours']
+    tokens = {
+        '@@ANNOUNCE@@': bar,
+        '@@PHONE_DASH@@': f'{digits[:-10] or "1"}-{local[:3]}-{local[3:6]}-{local[6:]}',
+        '@@PHONE_TEL@@': '+' + digits,
+        '@@PHONE@@': html.escape(st['phone']),
+        '@@EMAIL@@': st['email'],
+        '@@DAYS_SHORT@@': html.escape(h['daysShort']).replace('\u2013', '&ndash;').replace('-', '&ndash;'),
+        '@@DAYS@@': html.escape(h['days']),
+        '@@OPEN24@@': to24(h['open']), '@@CLOSE24@@': to24(h['close']),
+        '@@OPEN@@': html.escape(h['open']), '@@CLOSE@@': html.escape(h['close']),
+    }
+    n = 0
+    for dirpath, _, files in os.walk(OUT):
+        for f in files:
+            if not f.endswith(('.html', '.xml', '.txt', '.webmanifest')): continue
+            fp = os.path.join(dirpath, f)
+            s = open(fp, encoding='utf-8').read()
+            if '@@' not in s: continue
+            for k, v in tokens.items(): s = s.replace(k, v)
+            open(fp, 'w', encoding='utf-8').write(s)
+            n += 1
+    return n
+
+print('site settings applied to', apply_site(), 'files')
 print('built', len(built), 'pages:', ', '.join(built), f'+ 404, index chrome, sitemap ({len(urls)} urls, {n_img} images), feed, llms.txt')
