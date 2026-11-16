@@ -79,6 +79,14 @@ test("ads and settings pages explain what to connect", async ({ page }) => {
   await expect(page).toHaveURL(/\/settings$/);
   await expect(page.getByRole("heading", { level: 1, name: "Connections" })).toBeVisible();
   await expect(page.getByText("/api/meta/webhook")).toBeVisible();
+  const meta = page.getByTestId("meta-connect");
+  await expect(meta.getByText("Not connected")).toBeVisible();
+  await expect(meta.getByText("https://www.summitcustomsuits.com/portal/api/meta/callback")).toBeVisible();
+  await expect(meta.getByRole("link", { name: "Connect with Facebook" })).toHaveCount(0); // needs the app first
+  await meta.getByLabel("App ID").fill("123");
+  await meta.getByLabel("App secret").fill("short");
+  await meta.getByRole("button", { name: "Save app" }).click();
+  await expect(meta.getByRole("alert")).toContainText("App ID is a long number");
   await expect(page.locator("li", { hasText: "Conversions API" }).getByText("Not set up")).toBeVisible();
   await page.getByRole("link", { name: "Meta ads" }).click();
   await expect(page.getByText(/Ad spend isn.t connected yet/)).toBeVisible();

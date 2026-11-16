@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
-import { config } from "@/lib/config";
+import { metaCreds } from "@/lib/meta/creds";
 import { money, num } from "@/lib/format";
 import { funnelByCampaign } from "@/lib/leads";
 import { DATE_PRESETS, fetchCampaignSpend, isDatePreset, joinCampaigns, presetRange, type CampaignSpend, type DatePreset } from "@/lib/meta/insights";
@@ -13,7 +13,8 @@ export default async function AdsPage({ searchParams }: { searchParams: Promise<
   const { range } = await searchParams;
   const preset: DatePreset = isDatePreset(range) ? range : "last_30d";
   const { since, until } = presetRange(preset);
-  const connected = !!(config.meta.adAccountId() && config.meta.adsToken());
+  const m = await metaCreds();
+  const connected = !!(m.adAccountId && m.adsToken);
 
   let spend: CampaignSpend[] = [];
   let error: string | null = null;

@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE, safeEqual, verifySession } from "@/lib/auth";
 import { config } from "@/lib/config";
-import { upsertLead } from "@/lib/leads";
-import { fetchRecentLeads, fromMetaLead } from "@/lib/meta/leadgen";
+import { pollLeads } from "@/lib/meta/connect";
 
 /**
  * Pulls every Instant Form lead from the last `days` days (default 3) and imports any the
@@ -18,10 +17,9 @@ export async function GET(request: Request) {
 
   const days = Math.min(90, Math.max(1, Number(new URL(request.url).searchParams.get("days")) || 3));
   try {
-    const leads = await fetchRecentLeads(Math.floor(Date.now() / 1000) - days * 86_400);
-    let created = 0;
-    for (const l of leads) if ((await upsertLead(fromMetaLead(l))).created) created++;
-    return Response.json({ ok: true, days, fetched: leads.length, created });
+    const r = await pollLeads({ days, force: true });
+    if (r.skipped) return Response.json({ ok: false, error: "Meta isn't connected: connect Facebook in Settings" }, { status: 409 });
+    return Response.json({ ok: true, days, fetched: r.fetched, created: r.created });
   } catch (e) {
     return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 502 });
   }

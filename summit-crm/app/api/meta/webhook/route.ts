@@ -1,4 +1,4 @@
-import { config } from "@/lib/config";
+import { metaCreds } from "@/lib/meta/creds";
 import { upsertLead } from "@/lib/leads";
 import { fetchLead, fromMetaLead, leadgenIds, verifySignature } from "@/lib/meta/leadgen";
 
@@ -9,7 +9,7 @@ import { fetchLead, fromMetaLead, leadgenIds, verifySignature } from "@/lib/meta
  */
 export async function GET(request: Request) {
   const p = new URL(request.url).searchParams;
-  const expected = config.meta.verifyToken();
+  const expected = (await metaCreds()).verifyToken;
   if (expected && p.get("hub.mode") === "subscribe" && p.get("hub.verify_token") === expected) {
     return new Response(p.get("hub.challenge") ?? "", { status: 200, headers: { "Content-Type": "text/plain" } });
   }
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const secret = config.meta.appSecret();
+  const secret = (await metaCreds()).appSecret;
   if (!secret) return new Response("Webhook not configured", { status: 503 });
   const raw = await request.text();
   if (!(await verifySignature(raw, request.headers.get("x-hub-signature-256"), secret))) {

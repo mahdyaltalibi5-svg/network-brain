@@ -1,3 +1,4 @@
+import { metaCreds } from "./creds";
 import { config } from "../config";
 import { stage as stageOf, type StageId } from "../stages";
 import { graph } from "./graph";
@@ -79,13 +80,14 @@ export function serializeEvents(events: { user_data: Record<string, unknown> }[]
 export type CapiResult = { sent: boolean; skipped?: string; response?: unknown; error?: string };
 
 export async function sendStageEvent(lead: CapiLead, stageId: StageId, at?: Date): Promise<CapiResult> {
-  const pixel = config.meta.pixelId();
-  const token = config.meta.capiToken();
+  const m = await metaCreds();
+  const pixel = m.pixelId;
+  const token = m.capiToken;
   if (!pixel || !token) return { sent: false, skipped: "Conversions API not configured" };
   const event = await buildStageEvent(lead, stageId, at);
   if (!Object.keys(event.user_data).length) return { sent: false, skipped: "No lead ID, email or phone to match on" };
   try {
-    const body = serializeEvents([event], [lead.metaLeadId], config.meta.testEventCode());
+    const body = serializeEvents([event], [lead.metaLeadId], m.testEventCode);
     const response = await graph(`${pixel}/events`, { token, method: "POST", body });
     return { sent: true, response };
   } catch (e) {

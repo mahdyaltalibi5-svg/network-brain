@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { metaCreds } from "./creds";
 import { graph, graphAll } from "./graph";
 
 /** Fields requested for every Instant Form lead. */
@@ -82,17 +82,16 @@ export function fromMetaLead(lead: MetaLead): LeadInput {
   };
 }
 
-export function fetchLead(leadgenId: string) {
-  const token = config.meta.pageToken();
-  if (!token) throw new Error("META_PAGE_ACCESS_TOKEN is not set");
+export async function fetchLead(leadgenId: string) {
+  const token = (await metaCreds()).pageToken;
+  if (!token) throw new Error("Meta isn't connected (no Page token)");
   return graph<MetaLead>(leadgenId, { token, params: { fields: LEAD_FIELDS } });
 }
 
 /** Every lead form on the Page, then each form's recent leads. Used by the daily sync. */
 export async function fetchRecentLeads(sinceUnix: number): Promise<MetaLead[]> {
-  const token = config.meta.pageToken();
-  const pageId = config.meta.pageId();
-  if (!token || !pageId) throw new Error("META_PAGE_ID and META_PAGE_ACCESS_TOKEN are required for sync");
+  const { pageToken: token, pageId } = await metaCreds();
+  if (!token || !pageId) throw new Error("Meta isn't connected: connect Facebook in Settings");
   const forms = await graphAll<{ id: string }>(`${pageId}/leadgen_forms`, { token, params: { fields: "id", limit: "100" } });
   const filtering = JSON.stringify([{ field: "time_created", operator: "GREATER_THAN", value: sinceUnix }]);
   const leads: MetaLead[] = [];

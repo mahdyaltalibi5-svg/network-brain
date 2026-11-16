@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { metaCreds } from "./creds";
 import { graphAll } from "./graph";
 
 export type CampaignSpend = {
@@ -15,9 +15,8 @@ export const isDatePreset = (v: unknown): v is DatePreset => typeof v === "strin
 
 /** Campaign-level spend from the ad account (Marketing API insights). */
 export async function fetchCampaignSpend(preset: DatePreset): Promise<CampaignSpend[]> {
-  const account = config.meta.adAccountId();
-  const token = config.meta.adsToken();
-  if (!account || !token) throw new Error("META_AD_ACCOUNT_ID and an ads token are required");
+  const { adAccountId: account, adsToken: token } = await metaCreds();
+  if (!account || !token) throw new Error("Meta isn't connected: connect Facebook in Settings");
   const rows = await graphAll<{ campaign_id: string; campaign_name: string; spend?: string; impressions?: string; clicks?: string }>(
     `${account}/insights`,
     { token, params: { level: "campaign", fields: "campaign_id,campaign_name,spend,impressions,clicks", date_preset: preset, limit: "200" } },

@@ -82,6 +82,12 @@ export const schema = [
     label      TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
+  // Small key/value store for settings made in the CRM (the Meta connection). Secrets are encrypted.
+  `CREATE TABLE IF NOT EXISTS app_settings (
+    key        TEXT PRIMARY KEY,
+    value      TEXT NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
   // Website edits published from the CRM.
   `CREATE TABLE IF NOT EXISTS site_changes (
     id            TEXT PRIMARY KEY,

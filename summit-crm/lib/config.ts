@@ -1,3 +1,4 @@
+import type { MetaCreds } from "./meta/creds";
 /**
  * Every setting comes from environment variables (see .env.example). Nothing secret is
  * hard-coded. Each Meta feature switches on by itself once its variables are present.
@@ -8,7 +9,7 @@ export const config = {
   /** Postgres connection string (Neon, Supabase, Vercel Postgres…). Unset: local PGlite in .data/. */
   databaseUrl: () => env("DATABASE_URL"),
   /** Where people reach the CRM: shown in setup steps (webhook, reminders, phone app). */
-  publicUrl: () => (env("CRM_PUBLIC_URL") ?? "https://summitcustomsuits.com/portal").replace(/\/$/, ""),
+  publicUrl: () => (env("CRM_PUBLIC_URL") ?? "https://www.summitcustomsuits.com/portal").replace(/\/$/, ""),
   /** Sign-in password for the CRM. */
   password: () => env("CRM_PASSWORD"),
   /** Secret for signing session cookies (32+ random characters). */
@@ -74,12 +75,11 @@ export const config = {
 export type Integration = { name: string; ready: boolean; missing: string[]; what: string };
 
 /** What is connected, and what each part still needs. Shown on /settings. */
-export function integrations(): Integration[] {
+export function integrations(m: MetaCreds): Integration[] {
   const check = (name: string, what: string, vars: [string, string | undefined][]): Integration => {
     const missing = vars.filter(([, v]) => !v).map(([k]) => k);
     return { name, what, ready: missing.length === 0, missing };
   };
-  const m = config.meta;
   return [
     check("Database", "Stores leads, stages and activity.", [["DATABASE_URL", config.databaseUrl() ?? (process.env.VERCEL ? undefined : "local")]]),
     check("Sign-in", "Password protection for the CRM.", [
@@ -95,21 +95,19 @@ export function integrations(): Integration[] {
       ["VERCEL_TOKEN", config.site.vercelToken()],
     ]),
     check("Lead Ads webhook", "New Instant Form leads arrive in seconds.", [
-      ["META_APP_SECRET", m.appSecret()],
-      ["META_VERIFY_TOKEN", m.verifyToken()],
-      ["META_PAGE_ACCESS_TOKEN", m.pageToken()],
+      ["Meta app", m.appSecret],
+      ["Facebook Page", m.pageToken],
     ]),
-    check("Lead sync", "Daily backfill of every form's leads (catches anything a webhook missed).", [
-      ["META_PAGE_ID", m.pageId()],
-      ["META_PAGE_ACCESS_TOKEN", m.pageToken()],
+    check("Lead sync", "Checks every form for new leads every 5 minutes (catches anything a webhook missed).", [
+      ["Facebook Page", m.pageId && m.pageToken],
     ]),
     check("Conversions API", "Sends each stage change back to Meta so ads optimise for real clients.", [
-      ["META_PIXEL_ID", m.pixelId()],
-      ["META_CAPI_TOKEN", m.capiToken()],
+      ["Pixel", m.pixelId],
+      ["Facebook login", m.capiToken],
     ]),
     check("Ads reporting", "Spend per campaign, cost per lead, cost per booking and return on ad spend.", [
-      ["META_AD_ACCOUNT_ID", m.adAccountId()],
-      ["META_ADS_ACCESS_TOKEN", m.adsToken()],
+      ["Ad account", m.adAccountId],
+      ["Facebook login", m.adsToken],
     ]),
   ];
 }
