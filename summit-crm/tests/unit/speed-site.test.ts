@@ -45,7 +45,7 @@ describe("lead alerts", () => {
     await phone();
     const { lead } = await upsertLead({ source: "website", fullName: "Alex Park", occasion: "Wedding" });
     expect(pushes).toHaveLength(1);
-    expect(pushes[0].body).toMatchObject({ title: "New lead · Wedding", url: `/leads/${lead.id}` });
+    expect(pushes[0].body).toMatchObject({ title: "New lead · Wedding", url: `/portal/leads/${lead.id}` });
     await upsertLead({ source: "meta", metaLeadId: "1203", fullName: "Old Lead", createdAt: minutesAgo(60 * 24 * 3) });
     expect(pushes).toHaveLength(1);
   });
@@ -100,7 +100,7 @@ describe("speed to lead", () => {
     expect(await sendNudges()).toMatchObject({ sent: 0 }); // already reminded at 5 min
     await db.query(`UPDATE leads SET lead_created_at = now() - interval '20 minutes', created_at = now() - interval '20 minutes' WHERE id = $1`, [lead.id]);
     expect(await sendNudges()).toMatchObject({ sent: 1 });
-    expect(pushes[1].body).toMatchObject({ title: expect.stringMatching(/^Still waiting · 20 min$/), url: `/leads/${lead.id}` });
+    expect(pushes[1].body).toMatchObject({ title: expect.stringMatching(/^Still waiting · 20 min$/), url: `/portal/leads/${lead.id}` });
     await touchLead(lead.id, "call");
     await db.query(`UPDATE leads SET lead_created_at = now() - interval '90 minutes', created_at = now() - interval '90 minutes' WHERE id = $1`, [lead.id]);
     expect(await sendNudges()).toMatchObject({ sent: 0 }); // answered: no more reminders

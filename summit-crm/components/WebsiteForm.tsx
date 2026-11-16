@@ -1,5 +1,7 @@
 "use client";
 
+import { withBase } from "@/lib/base";
+
 import { useActionState, useEffect, useState } from "react";
 import { publishAction, type PublishState } from "@/app/(crm)/website/actions";
 import type { SiteChange, SiteSettings } from "@/lib/site";
@@ -9,7 +11,7 @@ function Status({ initial, siteUrl }: { initial: SiteChange; siteUrl: string }) 
   useEffect(() => {
     if (c.status !== "publishing") return;
     const t = setInterval(async () => {
-      const r = await fetch(`/api/site/changes/${c.id}`);
+      const r = await fetch(withBase(`/api/site/changes/${c.id}`));
       if (r.ok) setC(await r.json());
     }, 3000);
     return () => clearInterval(t);

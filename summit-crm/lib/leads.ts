@@ -1,3 +1,4 @@
+import { withBase } from "./base";
 import { getDb } from "./db";
 import type { LeadInput } from "./meta/leadgen";
 import { sendStageEvent, type CapiResult } from "./meta/capi";
@@ -143,7 +144,7 @@ export async function upsertLead(input: LeadInput): Promise<{ lead: Lead; create
     await notifyAll({
       title: `New lead${lead.occasion ? ` · ${lead.occasion}` : ""}`,
       body: `${lead.fullName ?? lead.email ?? lead.phone ?? "Someone"} via ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}. Tap to call.`,
-      url: `/leads/${lead.id}`,
+      url: withBase(`/leads/${lead.id}`),
       tag: `lead-${lead.id}`,
     });
   }

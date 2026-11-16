@@ -9,8 +9,9 @@ import { stages } from "@/lib/stages";
 export const metadata: Metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
-  const h = await headers();
-  const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`;
+  await headers(); // request-time page
+  // The public address (summitcustomsuits.com/portal), whichever host this request came through.
+  const origin = config.publicUrl();
   const list = integrations();
   const syncReady = list.find((i) => i.name === "Lead sync")?.ready;
 

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function signIn(page: Page, next = "/") {
+async function signIn(page: Page, next = "/portal") {
   await page.goto(next);
   await expect(page).toHaveURL(/\/login/);
   await page.getByLabel("Password").fill("e2e-password");
@@ -8,23 +8,23 @@ async function signIn(page: Page, next = "/") {
 }
 
 test("everything is private until you sign in", async ({ page, request }) => {
-  await page.goto("/");
+  await page.goto("/portal");
   await expect(page).toHaveURL(/\/login$/);
-  expect((await request.get("/api/meta/sync")).status()).toBe(401);
+  expect((await request.get("/portal/api/meta/sync")).status()).toBe(401);
   await page.getByLabel("Password").fill("wrong");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.getByText("That password isn't right.")).toBeVisible();
 });
 
 test("website lead → pipeline → booked → ordered, with notes", async ({ page, request }) => {
-  const res = await request.post("/api/leads", {
+  const res = await request.post("/portal/api/leads", {
     data: { name: "Alex Park", email: "alex@example.com", phone: "801-555-0100", occasion: "Wedding", notes: "Wedding June 14" },
     headers: { origin: "https://summitcustomsuits.com" },
   });
   expect(res.status()).toBe(201);
 
   await signIn(page);
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/portal$/);
   const newCol = page.locator('[data-stage="new"]');
   await expect(newCol.getByRole("link", { name: "Alex Park" })).toBeVisible();
 
@@ -63,7 +63,7 @@ test("add a lead by hand, search for it", async ({ page }) => {
 });
 
 test("ads and settings pages explain what to connect", async ({ page }) => {
-  await signIn(page, "/settings");
+  await signIn(page, "/portal/settings");
   await expect(page).toHaveURL(/\/settings$/);
   await expect(page.getByRole("heading", { level: 1, name: "Connections" })).toBeVisible();
   await expect(page.getByText("/api/meta/webhook")).toBeVisible();
@@ -75,7 +75,7 @@ test("ads and settings pages explain what to connect", async ({ page }) => {
 });
 
 test("import the lead file downloaded from Meta", async ({ page }) => {
-  await signIn(page, "/settings");
+  await signIn(page, "/portal/settings");
   const csv = "id,created_time,campaign_id,campaign_name,full_name,phone_number\n120299988877766,2026-11-02T10:00:00+0000,c:9,Kobe.Ascend - LEADS,Jamie Cole,p:+18015550142\n";
   const file = { name: "leads.csv", mimeType: "text/csv", buffer: Buffer.from(csv) };
   await page.getByLabel("Meta lead file").setInputFiles(file);
@@ -90,12 +90,12 @@ test("import the lead file downloaded from Meta", async ({ page }) => {
 });
 
 test("speed to lead: a new lead waits on Respond until it's called", async ({ page, request }) => {
-  const res = await request.post("/api/leads", {
+  const res = await request.post("/portal/api/leads", {
     data: { name: "Riley Fast", phone: "801-555-0199", occasion: "Tuxedo" },
     headers: { origin: "https://summitcustomsuits.com" },
   });
   expect(res.status()).toBe(201);
-  await signIn(page, "/now");
+  await signIn(page, "/portal/now");
   await expect(page).toHaveURL(/\/now$/);
   const card = page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" });
   await expect(card).toBeVisible();
@@ -110,18 +110,18 @@ test("speed to lead: a new lead waits on Respond until it's called", async ({ pa
   await expect.poll(async () => (await page.reload(), await page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" }).count())).toBe(0);
   await expect(page.getByTestId("speed")).toContainText("Leads answered (30 days)");
 
-  await page.goto("/");
+  await page.goto("/portal");
   await page.getByRole("link", { name: "Riley Fast" }).click();
   await expect(page.getByTestId("response")).toHaveText(/First response in/);
   await expect(page.getByText(/Called 801-555-0199 · first response in/)).toBeVisible();
 });
 
 test("website tab explains how to connect, and the app is installable", async ({ page, request }) => {
-  await signIn(page, "/website");
+  await signIn(page, "/portal/website");
   await expect(page.getByRole("heading", { level: 1, name: "summitcustomsuits.com" })).toBeVisible();
   await expect(page.getByText("Connect website editing")).toBeVisible();
-  const m = await (await request.get("/manifest.webmanifest")).json();
-  expect(m).toMatchObject({ name: "Summit CRM", start_url: "/now", display: "standalone" });
-  expect((await request.get("/sw.js")).status()).toBe(200);
-  expect((await request.get("/icons/icon-192.png")).status()).toBe(200);
+  const m = await (await request.get("/portal/manifest.webmanifest")).json();
+  expect(m).toMatchObject({ name: "Summit CRM", start_url: "/portal/now", scope: "/portal/", display: "standalone" });
+  expect((await request.get("/portal/sw.js")).status()).toBe(200);
+  expect((await request.get("/portal/icons/icon-192.png")).status()).toBe(200);
 });

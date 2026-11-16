@@ -14,11 +14,14 @@ export async function proxy(request: NextRequest) {
   const ok = await verifySession(request.cookies.get(SESSION_COOKIE)?.value, process.env.CRM_SESSION_SECRET);
   if (ok) return NextResponse.next();
   if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const login = new URL("/login", request.url);
+  const login = request.nextUrl.clone(); // keeps the /portal base path
+  login.pathname = "/login";
+  login.search = "";
   if (pathname !== "/") login.searchParams.set("next", pathname + search);
   return NextResponse.redirect(login);
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.svg).*)"],
+  // "/" listed on its own: with basePath, the base itself (/portal) isn't matched by the pattern alone.
+  matcher: ["/", "/((?!_next/static|_next/image|favicon.ico|icon.svg).*)"],
 };

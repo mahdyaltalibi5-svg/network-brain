@@ -77,7 +77,7 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Chromium: `/opt/pw-browsers` (never run `playwright install`)
 
 ## Summit CRM (`summit-crm/`)
-- Separate Next.js 16 app (dynamic, password-protected); the website stays fully static. Deploy as its own Vercel project, Root Directory `summit-crm`.
+- Separate Next.js 16 app (dynamic, password-protected); the website stays fully static. Deploy as its own Vercel project, Root Directory `summit-crm`. Served at summitcustomsuits.com/portal: `basePath: "/portal"` (lib/base.ts; use `withBase()` for hand-built URLs) plus a project-level rewrite on `summit-customs-suits`.
 - Meta: Lead Ads webhook `app/api/meta/webhook` (X-Hub-Signature-256 verified) + daily sync `app/api/meta/sync`; Conversions API for CRM in `lib/meta/capi.ts` (system_generated, event_source=crm, lead_id sent as a raw JSON number); ad spend in `lib/meta/insights.ts`.
 - Pipeline stages and their Meta event names: `lib/stages.ts`. Don't rename `metaEvent` values once events are flowing.
 - DB: `lib/db.ts` uses Postgres when `DATABASE_URL` is set, otherwise PGlite in `.data/` (tests: in memory). Schema in `lib/schema.ts` is idempotent.

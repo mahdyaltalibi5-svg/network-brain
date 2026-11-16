@@ -7,6 +7,8 @@ const env = (key: string) => process.env[key]?.trim() || undefined;
 export const config = {
   /** Postgres connection string (Neon, Supabase, Vercel Postgres…). Unset: local PGlite in .data/. */
   databaseUrl: () => env("DATABASE_URL"),
+  /** Where people reach the CRM: shown in setup steps (webhook, reminders, phone app). */
+  publicUrl: () => (env("CRM_PUBLIC_URL") ?? "https://summitcustomsuits.com/portal").replace(/\/$/, ""),
   /** Sign-in password for the CRM. */
   password: () => env("CRM_PASSWORD"),
   /** Secret for signing session cookies (32+ random characters). */

@@ -1,3 +1,4 @@
+import { withBase } from "./base";
 import { config } from "./config";
 import { getDb } from "./db";
 import { getLead, type Lead } from "./leads";
@@ -96,7 +97,7 @@ export async function sendNudges(now = new Date()) {
     await notifyAll({
       title: `Still waiting · ${formatMinutes(Number(r.age))}`,
       body: `${r.full_name ?? "A new lead"}${r.occasion ? ` · ${r.occasion}` : ""} hasn't heard from you yet.`,
-      url: `/leads/${r.id}`,
+      url: withBase(`/leads/${r.id}`),
       tag: `lead-${r.id}`,
     });
     sent++;

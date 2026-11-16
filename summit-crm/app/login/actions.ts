@@ -1,5 +1,7 @@
 "use server";
 
+import { BASE } from "@/lib/base";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SESSION_COOKIE, SESSION_DAYS, createSession, safeEqual } from "@/lib/auth";
@@ -24,13 +26,13 @@ export async function login(_: LoginState, form: FormData): Promise<LoginState> 
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/",
+    path: BASE,
     maxAge: SESSION_DAYS * 86_400,
   });
   redirect(safeNext(form.get("next")));
 }
 
 export async function logout() {
-  (await cookies()).delete(SESSION_COOKIE);
+  (await cookies()).delete({ name: SESSION_COOKIE, path: BASE });
   redirect("/login");
 }

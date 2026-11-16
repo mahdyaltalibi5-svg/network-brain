@@ -1,5 +1,7 @@
 "use client";
 
+import { withBase } from "@/lib/base";
+
 /**
  * One-tap call / text / email. The tap is logged with sendBeacon (it survives the switch to the
  * dialer or Messages), and the first one stops the speed-to-lead clock.
@@ -8,7 +10,8 @@ export function ContactButtons({ id, phone, email, text, size = "md" }: { id: st
   const tel = phone?.replace(/[^\d+]/g, "");
   const log = (channel: "call" | "text" | "email") => {
     const body = JSON.stringify({ channel });
-    if (!navigator.sendBeacon?.(`/api/leads/${id}/touch`, body)) fetch(`/api/leads/${id}/touch`, { method: "POST", body, keepalive: true });
+    const url = withBase(`/api/leads/${id}/touch`);
+    if (!navigator.sendBeacon?.(url, body)) fetch(url, { method: "POST", body, keepalive: true });
   };
   const cls = size === "lg" ? "btn !py-3 flex-1" : "btn flex-1 sm:flex-none";
   const ghost = size === "lg" ? "btn-ghost !py-3 flex-1" : "btn-ghost flex-1 sm:flex-none";

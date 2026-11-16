@@ -1,5 +1,7 @@
 "use client";
 
+import { withBase } from "@/lib/base";
+
 import { useEffect, useState } from "react";
 
 type State = "loading" | "unsupported" | "ios-install" | "blocked" | "off" | "on" | "busy";
@@ -19,7 +21,7 @@ export function AlertsToggle({ publicKey, compact = false }: { publicKey?: strin
       const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
       const standalone = matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone;
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) return setState(ios && !standalone ? "ios-install" : "unsupported");
-      const reg = await navigator.serviceWorker.register("/sw.js");
+      const reg = await navigator.serviceWorker.register(withBase("/sw.js"), { scope: withBase("/") });
       if (Notification.permission === "denied") return setState("blocked");
       setState((await reg.pushManager.getSubscription()) ? "on" : "off");
     })().catch(() => setState("unsupported"));
@@ -33,7 +35,7 @@ export function AlertsToggle({ publicKey, compact = false }: { publicKey?: strin
       if ((await Notification.requestPermission()) !== "granted") return setState("blocked");
       const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(publicKey) });
       const label = /iphone|android|ipad/i.test(navigator.userAgent) ? "Phone" : "Computer";
-      const res = await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ subscription: sub.toJSON(), label }) });
+      const res = await fetch(withBase("/api/push/subscribe"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ subscription: sub.toJSON(), label }) });
       if (!res.ok) throw new Error();
       setState("on");
       setMsg("Alerts are on for this device.");
@@ -47,7 +49,7 @@ export function AlertsToggle({ publicKey, compact = false }: { publicKey?: strin
     setState("busy");
     const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
     if (sub) {
-      await fetch("/api/push/subscribe", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) });
+      await fetch(withBase("/api/push/subscribe"), { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) });
       await sub.unsubscribe();
     }
     setState("off");

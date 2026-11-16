@@ -1,5 +1,7 @@
 "use client";
 
+import { withBase } from "@/lib/base";
+
 import { useState } from "react";
 
 /** Runs the Meta lead sync on demand and reports what it imported. */
@@ -13,7 +15,7 @@ export function SyncButton({ disabled }: { disabled?: boolean }) {
         disabled={disabled || state.busy}
         onClick={async () => {
           setState({ busy: true });
-          const res = await fetch("/api/meta/sync?days=30");
+          const res = await fetch(withBase("/api/meta/sync?days=30"));
           const j = (await res.json().catch(() => ({}))) as { ok?: boolean; fetched?: number; created?: number; error?: string };
           setState({
             busy: false,
