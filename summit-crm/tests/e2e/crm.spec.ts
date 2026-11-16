@@ -114,6 +114,11 @@ test("speed to lead: a new lead waits on Respond until it's called", async ({ pa
   await page.getByRole("link", { name: "Riley Fast" }).click();
   await expect(page.getByTestId("response")).toHaveText(/First response in/);
   await expect(page.getByText(/Called 801-555-0199 · first response in/)).toBeVisible();
+
+  await page.getByText("Delete this lead").click();
+  await page.getByRole("button", { name: "Yes, delete it" }).click();
+  await expect(page).toHaveURL(/\/portal$/);
+  await expect(page.getByRole("link", { name: "Riley Fast" })).toHaveCount(0);
 });
 
 test("website tab explains how to connect, and the app is installable", async ({ page, request }) => {

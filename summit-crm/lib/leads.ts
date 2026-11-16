@@ -264,3 +264,9 @@ export async function stageCounts() {
   const rows = await db.query(`SELECT stage, COUNT(*)::int AS n FROM leads GROUP BY stage`);
   return new Map(rows.map((r) => [r.stage as StageId, Number(r.n)]));
 }
+
+/** Removes a lead and its activity (spam, duplicates, tests). Nothing is sent to Meta. */
+export async function deleteLead(id: string) {
+  const db = await getDb();
+  await db.query(`DELETE FROM leads WHERE id = $1`, [id]);
+}

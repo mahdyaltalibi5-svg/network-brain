@@ -8,7 +8,7 @@ import { money, sourceLabel, when } from "@/lib/format";
 import { activities, getLead } from "@/lib/leads";
 import { formatMinutes, textTemplate } from "@/lib/speed";
 import { stage as stageOf } from "@/lib/stages";
-import { addNoteAction, moveLeadAction, updateContactAction } from "../../actions";
+import { addNoteAction, deleteLeadAction, moveLeadAction, updateContactAction } from "../../actions";
 
 const kindLabel: Record<string, string> = { created: "Created", stage: "Stage", note: "Note", capi: "Meta", value: "Value", call: "Call", text: "Text", email: "Email" };
 
@@ -153,6 +153,15 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
                 ))}
             </dl>
           </section>
+          <details className="text-sm">
+            <summary className="cursor-pointer text-stone hover:text-bad">Delete this lead</summary>
+            <form action={deleteLeadAction} className="mt-3 space-y-2">
+              <input type="hidden" name="id" value={lead.id} />
+              <input type="hidden" name="confirm" value="yes" />
+              <p className="text-ivory-dim">For spam, duplicates and tests. The lead and its history are removed for good.</p>
+              <button className="btn-ghost border-bad/60 text-bad">Yes, delete it</button>
+            </form>
+          </details>
         </aside>
       </div>
     </>
