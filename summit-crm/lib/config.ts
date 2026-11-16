@@ -23,6 +23,26 @@ export const config = {
   crmName: () => env("CRM_NAME") ?? "Summit CRM",
   currency: () => env("CRM_CURRENCY") ?? "USD",
 
+  /** Web Push (lead alerts on phones). Generate once with `npx web-push generate-vapid-keys`. */
+  push: {
+    publicKey: () => env("VAPID_PUBLIC_KEY"),
+    privateKey: () => env("VAPID_PRIVATE_KEY"),
+    subject: () => env("VAPID_SUBJECT") ?? "mailto:kobe@summitcustomsuits.com",
+  },
+  /** Speed to lead: minutes after which a waiting lead gets a reminder alert. */
+  nudgeMinutes: () => (env("CRM_NUDGE_MINUTES") ?? "5,15,60").split(",").map(Number).filter((n) => n > 0),
+  /** Website editing: commit site settings to GitHub, then deploy the site on Vercel. */
+  site: {
+    githubToken: () => env("GITHUB_TOKEN"),
+    repo: () => env("SITE_GITHUB_REPO") ?? "mahdyaltalibi5-svg/network-brain",
+    branch: () => env("SITE_GITHUB_BRANCH") ?? "claude/relaxed-lovelace-jrt1qj",
+    settingsPath: () => env("SITE_SETTINGS_PATH") ?? "summit-suit-src/site.json",
+    vercelToken: () => env("VERCEL_TOKEN"),
+    vercelTeamId: () => env("SITE_VERCEL_TEAM_ID") ?? "team_bsKASb2CekUFHzj7lwoHm0pC",
+    vercelProject: () => env("SITE_VERCEL_PROJECT") ?? "summit-customs-suits",
+    url: () => env("SITE_URL") ?? "https://summitcustomsuits.com",
+  },
+
   meta: {
     graphVersion: () => env("META_GRAPH_VERSION") ?? "v26.0",
     /** App secret: verifies webhook signatures (X-Hub-Signature-256). */
@@ -63,6 +83,14 @@ export function integrations(): Integration[] {
     check("Sign-in", "Password protection for the CRM.", [
       ["CRM_PASSWORD", config.password()],
       ["CRM_SESSION_SECRET", config.sessionSecret()],
+    ]),
+    check("Lead alerts", "Instant phone notifications for new leads, and reminders while they wait.", [
+      ["VAPID_PUBLIC_KEY", config.push.publicKey()],
+      ["VAPID_PRIVATE_KEY", config.push.privateKey()],
+    ]),
+    check("Website editing", "Publish phone, email, hours and announcement changes to summitcustomsuits.com.", [
+      ["GITHUB_TOKEN", config.site.githubToken()],
+      ["VERCEL_TOKEN", config.site.vercelToken()],
     ]),
     check("Lead Ads webhook", "New Instant Form leads arrive in seconds.", [
       ["META_APP_SECRET", m.appSecret()],

@@ -5,6 +5,9 @@ Client pipeline for Summit Customs, plugged into Meta ads:
 - **Meta Lead Ads → CRM.** Instant Form leads arrive by webhook within seconds (`/api/meta/webhook`), with campaign, ad set, ad and every form answer. A daily sync (`/api/meta/sync`, Vercel Cron) backfills anything missed.
 - **CRM → Meta (Conversions API for CRM).** Every stage change is sent back to Meta as a Conversion Leads event (`Lead`, `Contacted`, `Consultation Booked`, `Consultation Held`, `Purchase` with order value, `Delivered`, `Disqualified`), so campaigns can optimise for people who book and buy, not just form fills.
 - **Ads reporting.** Spend per campaign from the ad account, joined with CRM outcomes: cost per lead, cost per booking, cost per order and return on ad spend.
+- **Speed to lead.** The Respond screen lists everyone not yet contacted with a live clock; one tap calls, texts (with a drafted message) or emails, and the first tap stops the clock. Phone alerts arrive the second a lead lands (Web Push, no third-party service), with reminders at 5/15/60 minutes while it waits. Median response time and the share answered inside 5 and 15 minutes are tracked.
+- **Phone app.** Installable to the home screen (manifest + service worker); opens on Respond.
+- **Website editing.** The Website tab edits the live site's phone, email, hours and announcement bar: it commits `summit-suit-src/site.json` to GitHub and deploys that commit on Vercel, where the generator rebuilds every page.
 - **Website leads.** The booking page on summitcustomsuits.com posts to `/api/leads`, so website enquiries land in the same pipeline.
 
 It's a separate app from the website on purpose: the site stays fully static, and the CRM has its own database, sign-in and server endpoints.

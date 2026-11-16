@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { AlertsToggle } from "@/components/AlertsToggle";
 import { ImportLeads } from "@/components/ImportLeads";
 import { SyncButton } from "@/components/SyncButton";
 import { config, integrations } from "@/lib/config";
@@ -34,6 +35,34 @@ export default async function SettingsPage() {
           </li>
         ))}
       </ul>
+
+      <section aria-labelledby="app-h" className="mt-10 max-w-3xl" id="app">
+        <h2 id="app-h" className="font-display text-2xl">Phone app &amp; lead alerts</h2>
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-ivory-dim">
+          <li>On the phone, open <code className="break-all text-gold">{origin}</code> and sign in.</li>
+          <li>
+            iPhone (Safari): Share → <span className="text-ivory">Add to Home Screen</span>. Android (Chrome): menu → <span className="text-ivory">Install app</span>.
+          </li>
+          <li>Open <span className="text-ivory">Summit</span> from the home screen and turn alerts on below. Do the same on the laptop if you want alerts there too.</li>
+        </ol>
+        <div className="mt-4">
+          <AlertsToggle publicKey={config.push.publicKey()} />
+        </div>
+      </section>
+
+      <section aria-labelledby="nudge-h" className="mt-10 max-w-3xl" id="reminders">
+        <h2 id="nudge-h" className="font-display text-2xl">Reminders while a lead waits</h2>
+        <p className="mt-2 text-sm text-ivory-dim">
+          If nobody has called, texted or emailed a new lead, the phone is reminded at {config.nudgeMinutes().join(", ")} minutes. Something has to check every few
+          minutes: create a free job at <span className="text-ivory">cron-job.org</span> that opens this address every 5 minutes.
+        </p>
+        {config.cronSecret() ? (
+          <code className="mt-3 block break-all border border-line-soft bg-surface-2 p-3 text-xs text-gold">{`${origin}/api/speed/nudge?key=${config.cronSecret()}`}</code>
+        ) : (
+          <p className="mt-3 text-sm text-warn">Set CRON_SECRET first.</p>
+        )}
+        <p className="mt-2 text-xs text-stone">Keep this address private: it can only send reminders, but it shouldn&rsquo;t be shared.</p>
+      </section>
 
       <section aria-labelledby="import-h" className="mt-10" id="import">
         <h2 id="import-h" className="font-display text-2xl">Import a lead file from Meta</h2>

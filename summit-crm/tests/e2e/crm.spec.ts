@@ -88,3 +88,40 @@ test("import the lead file downloaded from Meta", async ({ page }) => {
   await page.getByRole("link", { name: "Jamie Cole" }).click();
   await expect(page.getByText("Kobe.Ascend - LEADS")).toBeVisible();
 });
+
+test("speed to lead: a new lead waits on Respond until it's called", async ({ page, request }) => {
+  const res = await request.post("/api/leads", {
+    data: { name: "Riley Fast", phone: "801-555-0199", occasion: "Tuxedo" },
+    headers: { origin: "https://summitcustomsuits.com" },
+  });
+  expect(res.status()).toBe(201);
+  await signIn(page, "/now");
+  await expect(page).toHaveURL(/\/now$/);
+  const card = page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" });
+  await expect(card).toBeVisible();
+  await expect(card.locator(".font-mono")).toHaveText(/^\d+:\d{2}$/); // live clock
+  await expect(page.getByRole("link", { name: /Respond/ }).locator("span")).toHaveText(/\d+/); // badge
+
+  // keep the browser from leaving for the dialer; the click handler still logs the call
+  await page.evaluate(() => document.addEventListener("click", (e) => { if ((e.target as Element).closest('a[href^="tel:"],a[href^="sms:"]')) e.preventDefault(); }, true));
+  const beacon = page.waitForRequest((r) => r.url().includes("/touch") && r.method() === "POST");
+  await card.getByRole("link", { name: "Call" }).click();
+  await beacon;
+  await expect.poll(async () => (await page.reload(), await page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" }).count())).toBe(0);
+  await expect(page.getByTestId("speed")).toContainText("Leads answered (30 days)");
+
+  await page.goto("/");
+  await page.getByRole("link", { name: "Riley Fast" }).click();
+  await expect(page.getByTestId("response")).toHaveText(/First response in/);
+  await expect(page.getByText(/Called 801-555-0199 · first response in/)).toBeVisible();
+});
+
+test("website tab explains how to connect, and the app is installable", async ({ page, request }) => {
+  await signIn(page, "/website");
+  await expect(page.getByRole("heading", { level: 1, name: "summitcustomsuits.com" })).toBeVisible();
+  await expect(page.getByText("Connect website editing")).toBeVisible();
+  const m = await (await request.get("/manifest.webmanifest")).json();
+  expect(m).toMatchObject({ name: "Summit CRM", start_url: "/now", display: "standalone" });
+  expect((await request.get("/sw.js")).status()).toBe(200);
+  expect((await request.get("/icons/icon-192.png")).status()).toBe(200);
+});

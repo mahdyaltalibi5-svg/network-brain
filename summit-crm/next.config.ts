@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // PGlite (the local/dev database) ships WASM and must not be bundled.
-  serverExternalPackages: ["@electric-sql/pglite"],
+  serverExternalPackages: ["@electric-sql/pglite", "web-push"],
   poweredByHeader: false,
   async headers() {
     return [

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { connection } from "next/server";
+import { Since } from "@/components/Since";
 import { StageSelect } from "@/components/StageSelect";
 import { ago, money, sourceLabel } from "@/lib/format";
 import { listLeads } from "@/lib/leads";
@@ -84,6 +85,11 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
                       {sourceLabel[l.source]}
                       {l.campaignName ? ` · ${l.campaignName}` : ""} · {ago(l.leadCreatedAt, now)}
                     </p>
+                    {!l.firstContactAt && l.stage === "new" && (
+                      <p className="mt-1 text-xs text-stone">
+                        Not contacted · <Since iso={l.leadCreatedAt.toISOString()} />
+                      </p>
+                    )}
                     {l.valueCents != null && <p className="mt-1 text-xs text-gold">{money(l.valueCents, { cents: true })}</p>}
                     <div className="mt-3">
                       <StageSelect id={l.id} stage={l.stage} valueCents={l.valueCents} action={moveLeadAction} compact />

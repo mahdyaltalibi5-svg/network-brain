@@ -82,4 +82,6 @@ Plan: `PLAN.md`. Client-supplied facts still missing: `PLACEHOLDERS.md`.
 - Pipeline stages and their Meta event names: `lib/stages.ts`. Don't rename `metaEvent` values once events are flowing.
 - DB: `lib/db.ts` uses Postgres when `DATABASE_URL` is set, otherwise PGlite in `.data/` (tests: in memory). Schema in `lib/schema.ts` is idempotent.
 - All config via env vars (`.env.example`); never commit tokens. Website leads arrive at `app/api/leads` (CORS: `CRM_ALLOWED_ORIGINS`).
+- Speed to lead: `lib/speed.ts` (first_contact_at clock, stats, reminders via `/api/speed/nudge?key=CRON_SECRET` on an external 5-min scheduler), alerts `lib/push.ts` (Web Push, VAPID env), Respond screen `app/(crm)/now`. Installable PWA: `app/manifest.ts`, `public/sw.js`.
+- Website tab: `lib/site.ts` commits `summit-suit-src/site.json` via the GitHub API and deploys it with the Vercel API (GITHUB_TOKEN, VERCEL_TOKEN). The live-site generator fills `@@TOKENS@@` (phone, email, hours, announcement) from that file; Vercel runs `build.py` on every deploy (`summit-suit/vercel.json`).
 - Checks: `npm run check` in `summit-crm/` (lint, types, vitest, build, Playwright; set `PW_CHROMIUM` to the chromium in /opt/pw-browsers).

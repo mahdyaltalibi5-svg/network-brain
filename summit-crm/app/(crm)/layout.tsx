@@ -1,8 +1,20 @@
 import Link from "next/link";
 import { logout } from "../login/actions";
 import { Nav } from "@/components/Nav";
+import { connection } from "next/server";
+import { getDb } from "@/lib/db";
 
-export default function CrmLayout({ children }: { children: React.ReactNode }) {
+async function waitingCount() {
+  await connection();
+  try {
+    const db = await getDb();
+    return Number((await db.query(`SELECT count(*)::int AS n FROM leads WHERE first_contact_at IS NULL AND stage = 'new'`))[0].n);
+  } catch {
+    return 0;
+  }
+}
+
+export default async function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-10 border-b border-line-soft bg-void/95 backdrop-blur">
@@ -15,7 +27,7 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
               Summit <span className="text-gold">CRM</span>
             </span>
           </Link>
-          <Nav />
+          <Nav waiting={await waitingCount()} />
           <form action={logout} className="ml-auto">
             <button type="submit" className="text-xs text-stone hover:text-ivory">
               Sign out

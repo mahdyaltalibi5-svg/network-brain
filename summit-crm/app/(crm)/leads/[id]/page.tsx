@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { ContactButtons } from "@/components/ContactButtons";
+import { Since } from "@/components/Since";
 import { StageSelect } from "@/components/StageSelect";
 import { money, sourceLabel, when } from "@/lib/format";
 import { activities, getLead } from "@/lib/leads";
+import { formatMinutes, textTemplate } from "@/lib/speed";
 import { stage as stageOf } from "@/lib/stages";
 import { addNoteAction, moveLeadAction, updateContactAction } from "../../actions";
 
-const kindLabel: Record<string, string> = { created: "Created", stage: "Stage", note: "Note", capi: "Meta", value: "Value" };
+const kindLabel: Record<string, string> = { created: "Created", stage: "Stage", note: "Note", capi: "Meta", value: "Value", call: "Call", text: "Text", email: "Email" };
 
 export default async function LeadPage({ params }: { params: Promise<{ id: string }> }) {
   await connection();
@@ -39,10 +42,15 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
                 {lead.email}
               </a>
             )}
-            {lead.phone && (
-              <a href={`sms:${tel}`} className="hover:text-gold">
-                Text
-              </a>
+          </p>
+          <div className="mt-4 max-w-md">
+            <ContactButtons id={lead.id} phone={lead.phone} email={lead.email} text={textTemplate(lead)} />
+          </div>
+          <p className="mt-3 text-sm text-stone" data-testid="response">
+            {lead.firstContactAt ? (
+              <>First response in <span className="text-ivory">{formatMinutes(Math.max(0, (lead.firstContactAt.getTime() - lead.leadCreatedAt.getTime()) / 60000))}</span></>
+            ) : (
+              <>Waiting for a reply · <Since iso={lead.leadCreatedAt.toISOString()} /></>
             )}
           </p>
         </div>

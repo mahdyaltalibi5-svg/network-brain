@@ -2,7 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySession } from "@/lib/auth";
 
 /** Everything is private except sign-in and the endpoints Meta, Vercel Cron and the website call. */
-const PUBLIC = [/^\/login$/, /^\/api\/meta\/webhook$/, /^\/api\/meta\/sync$/, /^\/api\/leads$/, /^\/api\/health$/];
+const PUBLIC = [
+  /^\/login$/, /^\/api\/meta\/webhook$/, /^\/api\/meta\/sync$/, /^\/api\/leads$/, /^\/api\/health$/, /^\/api\/speed\/nudge$/,
+  // installable app: the manifest, service worker and icons load without a session
+  /^\/manifest\.webmanifest$/, /^\/sw\.js$/, /^\/icons\//, /^\/apple-icon/,
+];
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;

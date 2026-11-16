@@ -3,6 +3,7 @@ import type { LeadInput } from "./meta/leadgen";
 import { sendStageEvent, type CapiResult } from "./meta/capi";
 import { bookedStages, orderedStages, stage as stageOf, type StageId } from "./stages";
 import type { FunnelCounts } from "./meta/insights";
+import { notifyAll } from "./push";
 
 export type Lead = {
   id: string;
@@ -18,6 +19,7 @@ export type Lead = {
   valueCents: number | null;
   bookedAt: Date | null;
   orderedAt: Date | null;
+  firstContactAt: Date | null;
   campaignId: string | null;
   campaignName: string | null;
   adsetName: string | null;
@@ -52,6 +54,7 @@ function toLead(r: LeadRow): Lead {
     valueCents: r.value_cents == null ? null : Number(r.value_cents),
     bookedAt: date(r.booked_at),
     orderedAt: date(r.ordered_at),
+    firstContactAt: date(r.first_contact_at),
     campaignId: (r.campaign_id as string) ?? null,
     campaignName: (r.campaign_name as string) ?? null,
     adsetName: (r.adset_name as string) ?? null,
@@ -135,6 +138,15 @@ export async function upsertLead(input: LeadInput): Promise<{ lead: Lead; create
   await log(lead.id, "created", `Lead from ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}`);
   // Website enquiries already fire "Lead" from the Meta Pixel on the booking page; sending it
   // again from here would count each one twice. Their later stages are still reported.
+  // Alert the phone right away, unless this is an old lead arriving late (a file import or backfill).
+  if (Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000) {
+    await notifyAll({
+      title: `New lead${lead.occasion ? ` · ${lead.occasion}` : ""}`,
+      body: `${lead.fullName ?? lead.email ?? lead.phone ?? "Someone"} via ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}. Tap to call.`,
+      url: `/leads/${lead.id}`,
+      tag: `lead-${lead.id}`,
+    });
+  }
   const result: CapiResult =
     lead.source === "website" ? { sent: false, skipped: "already reported by the website's Meta Pixel" } : await sendStageEvent(lead, "new");
   const note = capiNote(result, stageOf("new").metaEvent);
@@ -184,7 +196,8 @@ export async function moveLead(id: string, to: StageId, opts: { valueCents?: num
   const rows = await db.query(
     `UPDATE leads SET stage = $2, value_cents = $3, updated_at = now(),
        booked_at = CASE WHEN $4::boolean AND booked_at IS NULL THEN now() ELSE booked_at END,
-       ordered_at = CASE WHEN $5::boolean AND ordered_at IS NULL THEN now() ELSE ordered_at END
+       ordered_at = CASE WHEN $5::boolean AND ordered_at IS NULL THEN now() ELSE ordered_at END,
+       first_contact_at = CASE WHEN $2 <> 'new' THEN COALESCE(first_contact_at, now()) ELSE first_contact_at END
      WHERE id = $1 RETURNING *`,
     [id, to, value, bookedStages.includes(to), orderedStages.includes(to)],
   );
