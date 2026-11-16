@@ -53,7 +53,7 @@ export default async function WebsitePage() {
       {history.length > 0 && (
         <section aria-labelledby="hist-h" className="mt-12 max-w-3xl">
           <h2 id="hist-h" className="font-display text-2xl">Recent changes</h2>
-          <ul className="mt-3 divide-y divide-line-soft border-y border-line-soft text-sm">
+          <ul className="card mt-3 divide-y divide-white/8 px-5 text-sm">
             {history.map((c) => (
               <li key={c.id} className="flex flex-wrap items-baseline justify-between gap-2 py-3">
                 <span>{c.summary}</span>

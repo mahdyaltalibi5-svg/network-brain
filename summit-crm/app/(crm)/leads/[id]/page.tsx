@@ -93,7 +93,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
               <h2 id="answers-h" className="font-display text-2xl">{lead.source === "meta" ? "Form answers" : "Their message"}</h2>
               {lead.notes && <p className="mt-3 whitespace-pre-wrap text-ivory-dim">{lead.notes}</p>}
               {lead.answers.length > 0 && (
-                <dl className="mt-3 divide-y divide-line-soft">
+                <dl className="mt-3 divide-y divide-white/8">
                   {lead.answers.map((a, i) => (
                     <div key={i} className="grid gap-1 py-2 sm:grid-cols-[40%_1fr]">
                       <dt className="text-sm text-stone">{a.question}</dt>

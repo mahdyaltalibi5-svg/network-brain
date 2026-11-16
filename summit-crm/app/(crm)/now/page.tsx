@@ -20,7 +20,7 @@ export default async function NowPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Speed to lead</p>
-          <h1 className="mt-2 font-display text-4xl">{waiting.length ? `${waiting.length} waiting on you` : "Nobody waiting"}</h1>
+          <h1 className="mt-2 font-display text-5xl">{waiting.length ? `${waiting.length} waiting on you` : "Nobody waiting"}</h1>
           <p className="mt-2 text-sm text-ivory-dim">Reply inside 5 minutes and a lead is far more likely to book. The clock starts the moment they submit.</p>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default async function NowPage() {
       ) : (
         <ul className="mt-8 space-y-3" data-testid="waiting">
           {waiting.map((l) => (
-            <li key={l.id} className="card p-4 md:flex md:items-center md:gap-6" data-lead={l.id}>
+            <li key={l.id} className="card lift p-4 md:flex md:items-center md:gap-6 md:p-5" data-lead={l.id}>
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline justify-between gap-4">
                   <Link href={`/leads/${l.id}`} className="truncate text-lg font-medium hover:text-gold">
@@ -58,7 +58,7 @@ export default async function NowPage() {
           ))}
         </ul>
       )}
-      <dl className="mt-10 grid grid-cols-2 gap-px border border-line-soft bg-line-soft md:grid-cols-4" data-testid="speed">
+      <dl className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4" data-testid="speed">
         {(
           [
             ["Median first response", stats.medianMin == null ? "—" : formatMinutes(stats.medianMin)],
@@ -67,7 +67,7 @@ export default async function NowPage() {
             ["Leads answered (30 days)", String(stats.responded)],
           ] as const
         ).map(([k, v]) => (
-          <div key={k} className="bg-void p-4">
+          <div key={k} className="tile">
             <dt className="text-xs text-stone">{k}</dt>
             <dd className="mt-1 font-display text-3xl">{v}</dd>
           </div>

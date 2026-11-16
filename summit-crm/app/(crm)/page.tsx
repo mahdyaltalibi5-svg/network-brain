@@ -18,7 +18,7 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Pipeline</p>
-          <h1 className="mt-2 font-display text-4xl">Clients in motion</h1>
+          <h1 className="mt-2 font-display text-5xl">Clients in motion</h1>
         </div>
         <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
           <form role="search" className="flex w-full gap-2 sm:w-auto">
@@ -33,7 +33,7 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
           </Link>
           <details className="relative">
             <summary className="btn cursor-pointer list-none">+ New lead</summary>
-            <form action={createLeadAction} className="card absolute right-0 z-20 mt-2 w-80 space-y-3 p-4 shadow-2xl">
+            <form action={createLeadAction} className="glass absolute right-0 z-30 mt-2 w-80 space-y-3 p-5">
               <div>
                 <label className="label" htmlFor="nl-name">Name</label>
                 <input id="nl-name" name="fullName" required className="field" />
@@ -66,17 +66,17 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
         {stages.map((s) => {
           const col = leads.filter((l) => l.stage === s.id);
           return (
-            <section key={s.id} aria-labelledby={`col-${s.id}`} className="w-72 shrink-0" data-stage={s.id}>
-              <header className="flex items-baseline justify-between border-b border-line pb-2">
+            <section key={s.id} aria-labelledby={`col-${s.id}`} className="glass w-72 shrink-0 !rounded-[24px] p-3" data-stage={s.id}>
+              <header className="flex items-baseline justify-between px-1.5 pt-1">
                 <h2 id={`col-${s.id}`} className="text-sm font-semibold">
                   {s.label}
                 </h2>
-                <span className="text-xs text-stone">{col.length}</span>
+                <span className="pill">{col.length}</span>
               </header>
-              <p className="mt-2 text-xs text-stone">{s.hint}</p>
+              <p className="mt-1 px-1.5 text-xs text-stone">{s.hint}</p>
               <ul className="mt-3 space-y-2">
                 {col.map((l) => (
-                  <li key={l.id} className="card p-3" data-lead={l.id}>
+                  <li key={l.id} className="tile lift !p-3.5" data-lead={l.id}>
                     <Link href={`/leads/${l.id}`} className="block font-medium hover:text-gold">
                       {l.fullName ?? l.email ?? l.phone ?? "Unnamed lead"}
                     </Link>

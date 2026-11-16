@@ -62,7 +62,7 @@ export default async function AdsPage({ searchParams }: { searchParams: Promise<
         </p>
       )}
 
-      <dl className="mt-8 grid gap-px border border-line-soft bg-line-soft sm:grid-cols-3 lg:grid-cols-6">
+      <dl className="mt-8 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {(
           [
             ["Spend", money(t.spend)],
@@ -73,18 +73,18 @@ export default async function AdsPage({ searchParams }: { searchParams: Promise<
             ["Return on ad spend", t.spend > 0 ? `${(t.revenue / t.spend).toFixed(1)}×` : "—"],
           ] as const
         ).map(([k, v]) => (
-          <div key={k} className="bg-void p-5">
+          <div key={k} className="tile">
             <dt className="text-xs text-stone">{k}</dt>
             <dd className="mt-1 font-display text-3xl">{v}</dd>
           </div>
         ))}
       </dl>
 
-      <div className="mt-8 overflow-x-auto">
+      <div className="card mt-8 overflow-x-auto p-2 md:p-4">
         <table className="w-full min-w-[900px] text-sm">
           <caption className="sr-only">Campaign performance</caption>
           <thead>
-            <tr className="border-b border-line text-left text-xs text-stone">
+            <tr className="border-b border-white/10 text-left text-xs text-stone">
               {["Campaign", "Spend", "Clicks", "Leads", "Cost / lead", "Booked", "Cost / booking", "Orders", "Revenue", "ROAS"].map((h, i) => (
                 <th key={h} scope="col" className={`py-2 font-medium ${i ? "text-right" : ""}`}>
                   {h}
@@ -101,7 +101,7 @@ export default async function AdsPage({ searchParams }: { searchParams: Promise<
               </tr>
             )}
             {rows.map((r) => (
-              <tr key={r.campaignId} className="border-b border-line-soft">
+              <tr key={r.campaignId} className="border-b border-white/5 last:border-0">
                 <th scope="row" className="py-3 text-left font-normal">
                   {r.campaignName}
                 </th>

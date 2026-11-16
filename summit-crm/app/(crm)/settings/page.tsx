@@ -23,9 +23,9 @@ export default async function SettingsPage() {
         Each part switches on when its environment variables are set in the Vercel project (Settings → Environment Variables), then redeploy.
       </p>
 
-      <ul className="mt-8 grid gap-px border border-line-soft bg-line-soft md:grid-cols-2 xl:grid-cols-3">
+      <ul className="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {list.map((i) => (
-          <li key={i.name} className="bg-void p-5">
+          <li key={i.name} className="tile !p-5">
             <p className="flex items-center gap-2 font-medium">
               <span aria-hidden="true" className={`h-2 w-2 rounded-full ${i.ready ? "bg-ok" : "bg-warn"}`} />
               {i.name}
@@ -58,7 +58,7 @@ export default async function SettingsPage() {
           minutes: create a free job at <span className="text-ivory">cron-job.org</span> that opens this address every 5 minutes.
         </p>
         {config.cronSecret() ? (
-          <code className="mt-3 block break-all border border-line-soft bg-surface-2 p-3 text-xs text-gold">{`${origin}/api/speed/nudge?key=${config.cronSecret()}`}</code>
+          <code className="code mt-3">{`${origin}/api/speed/nudge?key=${config.cronSecret()}`}</code>
         ) : (
           <p className="mt-3 text-sm text-warn">Set CRON_SECRET first.</p>
         )}
