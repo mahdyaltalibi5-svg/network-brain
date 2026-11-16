@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const icon = {
+  home: "M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z",
   now: "M13 2 4 14h7l-1 8 9-12h-7l1-8Z",
   pipe: "M4 4h4v16H4zM10 4h4v10h-4zM16 4h4v6h-4z",
   ads: "M4 20V10M10 20V4M16 20v-7M22 20H2",
@@ -11,9 +12,10 @@ const icon = {
   set: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4-3a7.4 7.4 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2-1.2L14.5 3h-4l-.4 2.6a7.6 7.6 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2l.4 2.6h4l.4-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2Z",
 };
 const links = [
-  { href: "/now", label: "Respond", d: icon.now },
-  { href: "/", label: "Pipeline", d: icon.pipe },
-  { href: "/ads", label: "Meta ads", d: icon.ads },
+  { href: "/", label: "Home", d: icon.home },
+  { href: "/now", label: "Today", d: icon.now },
+  { href: "/pipeline", label: "Pipeline", d: icon.pipe },
+  { href: "/ads", label: "Meta ads", d: icon.ads, desktopOnly: true },
   { href: "/website", label: "Website", d: icon.web },
   { href: "/settings", label: "Settings", d: icon.set },
 ];
@@ -29,16 +31,16 @@ function Badge({ n }: { n: number }) {
 /** Top navigation on desktop; a frosted tab bar along the bottom on phones. */
 export function Nav({ waiting = 0, mobile = false }: { waiting?: number; mobile?: boolean }) {
   const path = usePathname();
-  const isActive = (href: string) => (href === "/" ? path === "/" || path.startsWith("/leads") : path.startsWith(href));
+  const isActive = (href: string) => (href === "/" ? path === "/" : href === "/pipeline" ? path.startsWith("/pipeline") || path.startsWith("/leads") : path.startsWith(href));
   if (mobile)
     return (
       <nav aria-label="Main" className="glass grid grid-cols-5 !rounded-[26px] px-1 py-1.5">
-        {links.map((l) => {
+        {links.filter((l) => !l.desktopOnly).map((l) => {
           const on = isActive(l.href);
           return (
             <Link key={l.href} href={l.href} aria-current={on ? "page" : undefined} className={`relative flex flex-col items-center gap-1 rounded-[20px] py-1.5 text-[10px] tracking-wide transition-colors ${on ? "bg-white/10 text-gold-bright" : "text-ivory-dim"}`}>
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round"><path d={l.d} /></svg>
-              {l.label.replace("Meta ads", "Ads")}
+              {l.label}
               {l.href === "/now" && waiting > 0 && <span className="absolute top-0.5 right-[22%]"><Badge n={waiting} /></span>}
             </Link>
           );

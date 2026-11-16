@@ -21,6 +21,12 @@ export type Lead = {
   bookedAt: Date | null;
   orderedAt: Date | null;
   firstContactAt: Date | null;
+  followUpAt: Date | null;
+  followUpNote: string | null;
+  eventDate: string | null; // YYYY-MM-DD
+  eventLabel: string | null;
+  measurements: Record<string, string>;
+  preferences: Record<string, string>;
   campaignId: string | null;
   campaignName: string | null;
   adsetName: string | null;
@@ -56,6 +62,12 @@ function toLead(r: LeadRow): Lead {
     bookedAt: date(r.booked_at),
     orderedAt: date(r.ordered_at),
     firstContactAt: date(r.first_contact_at),
+    followUpAt: date(r.follow_up_at),
+    followUpNote: (r.follow_up_note as string) ?? null,
+    eventDate: r.event_date == null ? null : (r.event_date instanceof Date ? r.event_date.toISOString() : String(r.event_date)).slice(0, 10),
+    eventLabel: (r.event_label as string) ?? null,
+    measurements: json(r.measurements, {}),
+    preferences: json(r.preferences, {}),
     campaignId: (r.campaign_id as string) ?? null,
     campaignName: (r.campaign_name as string) ?? null,
     adsetName: (r.adset_name as string) ?? null,
@@ -161,17 +173,41 @@ export async function getLead(id: string) {
   return rows[0] ? toLead(rows[0]) : null;
 }
 
-export async function listLeads(opts: { q?: string } = {}) {
+export type LeadFilter = { q?: string; source?: string; campaign?: string; range?: string; sort?: string };
+export const SORTS = { activity: "Recently active", new: "Newest first", old: "Oldest first", value: "Highest value", followup: "Next follow-up" } as const;
+
+/** Leads for the pipeline, filtered and sorted. `range` is days back (7/30/90) or empty for all. */
+export async function listLeads(f: LeadFilter = {}) {
   const db = await getDb();
-  const q = opts.q?.trim();
-  const rows = q
-    ? await db.query(
-        `SELECT * FROM leads WHERE full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1 OR campaign_name ILIKE $1
-         ORDER BY updated_at DESC LIMIT 500`,
-        [`%${q}%`],
-      )
-    : await db.query(`SELECT * FROM leads ORDER BY updated_at DESC LIMIT 500`);
+  const where: string[] = [];
+  const params: unknown[] = [];
+  const p = (v: unknown) => {
+    params.push(v);
+    return `$${params.length}`;
+  };
+  const q = f.q?.trim();
+  if (q) {
+    const k = p(`%${q}%`);
+    where.push(`(full_name ILIKE ${k} OR email ILIKE ${k} OR phone ILIKE ${k} OR campaign_name ILIKE ${k} OR occasion ILIKE ${k})`);
+  }
+  if (f.source && ["meta", "website", "manual"].includes(f.source)) where.push(`source = ${p(f.source)}`);
+  if (f.campaign) where.push(`campaign_name = ${p(f.campaign)}`);
+  if (f.range && /^[0-9]+$/.test(f.range)) where.push(`lead_created_at > now() - (${p(f.range)} || ' days')::interval`);
+  const orders: Record<string, string> = {
+    new: "lead_created_at DESC",
+    old: "lead_created_at ASC",
+    value: "value_cents DESC NULLS LAST, lead_created_at DESC",
+    followup: "follow_up_at ASC NULLS LAST, lead_created_at DESC",
+    activity: "updated_at DESC",
+  };
+  const order = orders[f.sort ?? "activity"] ?? orders.activity;
+  const rows = await db.query(`SELECT * FROM leads ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY ${order} LIMIT 1000`, params);
   return rows.map(toLead);
+}
+
+export async function campaignNames() {
+  const db = await getDb();
+  return (await db.query<{ c: string }>(`SELECT DISTINCT campaign_name AS c FROM leads WHERE campaign_name IS NOT NULL ORDER BY 1`)).map((r) => r.c);
 }
 
 export async function activities(leadId: string): Promise<Activity[]> {

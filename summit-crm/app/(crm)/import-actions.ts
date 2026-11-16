@@ -14,7 +14,7 @@ export async function importLeadsAction(_: ImportState, form: FormData): Promise
   if (!leads.length) return { ok: false, message: "No Meta leads found in that file. Is it the lead download from Ads Manager or Leads Center?" };
   let created = 0;
   for (const l of leads) if ((await upsertLead(l)).created) created++;
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   const dupes = leads.length - created;
   return {
     ok: true,

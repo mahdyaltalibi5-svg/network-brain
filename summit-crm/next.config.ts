@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   basePath: "/portal",
   experimental: {
     // Pages arrive via summitcustomsuits.com, so server actions see that origin.
-    serverActions: { allowedOrigins: ["summitcustomsuits.com", "www.summitcustomsuits.com"] },
+    serverActions: { allowedOrigins: ["summitcustomsuits.com", "www.summitcustomsuits.com"], bodySizeLimit: "4.5mb" },
   },
   async redirects() {
     return [{ source: "/", destination: "/portal", basePath: false, permanent: false }];

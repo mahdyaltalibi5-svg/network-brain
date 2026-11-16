@@ -14,7 +14,7 @@ export async function moveLeadAction(form: FormData) {
   if (!id || !isStage(to)) return;
   const valueRaw = text(form, "value");
   await moveLead(id, to, valueRaw ? { valueCents: parseMoney(valueRaw) } : {});
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath(`/leads/${id}`);
 }
 
@@ -33,7 +33,7 @@ export async function updateContactAction(form: FormData) {
     occasion: text(form, "occasion"),
   });
   revalidatePath(`/leads/${id}`);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function createLeadAction(form: FormData) {
@@ -53,7 +53,7 @@ export async function createLeadAction(form: FormData) {
 export async function deleteLeadAction(form: FormData) {
   const id = text(form, "id");
   if (id && form.get("confirm") === "yes") await deleteLead(id);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/now");
-  redirect("/");
+  redirect("/pipeline");
 }
