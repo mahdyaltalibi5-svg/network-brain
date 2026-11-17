@@ -13,8 +13,8 @@ import { notifyAll } from "./push";
 export const SLA = { good: 5, ok: 15 }; // minutes
 const LATE_IMPORT_MIN = 30;
 
-export type Channel = "call" | "text" | "email";
-const verb: Record<Channel, string> = { call: "Called", text: "Texted", email: "Emailed" };
+export type Channel = "call" | "text" | "email" | "message";
+const verb: Record<Channel, string> = { call: "Called", text: "Texted", email: "Emailed", message: "Replied by message" };
 
 const firstName = (l: Pick<Lead, "fullName">) => l.fullName?.trim().split(/\s+/)[0] ?? "";
 
@@ -32,7 +32,7 @@ export async function touchLead(id: string, channel: Channel): Promise<number | 
   const first = !lead.firstContactAt;
   await db.query(`UPDATE leads SET first_contact_at = COALESCE(first_contact_at, now()), updated_at = now() WHERE id = $1`, [id]);
   const mins = first ? Math.max(0, (Date.now() - lead.leadCreatedAt.getTime()) / 60000) : null;
-  const to = channel === "email" ? lead.email : lead.phone;
+  const to = channel === "email" ? lead.email : channel === "message" ? null : lead.phone;
   await db.query(`INSERT INTO activities (id, lead_id, kind, body, data) VALUES ($1, $2, $3, $4, $5)`, [
     crypto.randomUUID(),
     id,

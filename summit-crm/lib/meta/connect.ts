@@ -6,6 +6,7 @@ import { readSettings, writeSettings } from "../vault";
 import { metaCreds, SECRET_KEYS, type ConnectStep } from "./creds";
 import { graph, graphAll } from "./graph";
 import { fetchRecentLeads, fromMetaLead } from "./leadgen";
+import { syncAds } from "./ads-sync";
 
 /**
  * "Connect with Facebook": one Facebook Login gives the CRM everything it needs.
@@ -24,6 +25,9 @@ export const SCOPES = [
   "ads_read",
   "ads_management",
   "business_management",
+  "pages_messaging",
+  "instagram_basic",
+  "instagram_manage_messages",
 ];
 
 export const redirectUri = () => `${config.publicUrl()}/api/meta/callback`;
@@ -125,12 +129,31 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
       await graph(`${m.appId}/subscriptions`, {
         token: app,
         method: "POST",
-        params: { object: "page", callback_url: webhookUrl(), fields: "leadgen", verify_token: m.verifyToken ?? "", include_values: "true" },
+        params: { object: "page", callback_url: webhookUrl(), fields: "leadgen,messages,message_echoes", verify_token: m.verifyToken ?? "", include_values: "true" },
       });
-      await graph(`${page.id}/subscribed_apps`, { token: page.access_token, method: "POST", params: { subscribed_fields: "leadgen" } });
-      log.push({ step: "Instant lead webhook", ok: true, detail: `New ${page.name} form leads arrive in seconds` });
+      await graph(`${page.id}/subscribed_apps`, { token: page.access_token, method: "POST", params: { subscribed_fields: "leadgen,messages,message_echoes" } });
+      log.push({ step: "Instant lead webhook", ok: true, detail: `New ${page.name} form leads and Messenger messages arrive in seconds` });
     } catch (e) {
-      log.push({ step: "Instant lead webhook", ok: false, detail: `${msg(e)}. Leads still arrive every 5 minutes by polling.` });
+      log.push({ step: "Instant lead webhook", ok: false, detail: `${msg(e)}. Form leads still arrive by polling.` });
+    }
+    // Instagram DMs: the Page's linked Instagram account
+    try {
+      const p = await graph<{ instagram_business_account?: { id: string; username?: string } }>(page.id, {
+        token: page.access_token,
+        params: { fields: "instagram_business_account{id,username}" },
+      });
+      const ig = p.instagram_business_account;
+      if (!ig) throw new Error("No Instagram account is linked to this Page (link it in Meta Business Suite → Settings → Instagram)");
+      await graph(`${m.appId}/subscriptions`, {
+        token: app,
+        method: "POST",
+        params: { object: "instagram", callback_url: webhookUrl(), fields: "messages", verify_token: m.verifyToken ?? "", include_values: "true" },
+      });
+      save["meta.ig_id"] = ig.id;
+      save["meta.ig_username"] = ig.username ?? ig.id;
+      log.push({ step: "Instagram messages", ok: true, detail: `DMs to @${ig.username ?? ig.id} become leads` });
+    } catch (e) {
+      log.push({ step: "Instagram messages", ok: false, detail: msg(e) });
     }
   }
 
@@ -161,7 +184,13 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
   save["meta.connected_at"] = new Date().toISOString();
   await writeSettings(save, SECRET_KEYS);
 
-  // 5. backfill
+  // 5. backfill: ad results for 90 days, and form leads for 30
+  try {
+    const r = await syncAds({ force: true, days: 90 });
+    if (!r.skipped) log.push({ step: "Ad results", ok: true, detail: `${r.campaigns} campaigns, ${r.ads} ads, 90 days of results` });
+  } catch (e) {
+    log.push({ step: "Ad results", ok: false, detail: msg(e) });
+  }
   if (page) {
     try {
       const r = await pollLeads({ days: 30, force: true });
@@ -176,7 +205,7 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
 
 /** Removes the tokens (keeps the app ID/secret so reconnecting is one click). */
 export async function disconnect() {
-  const keys = ["page_token", "user_token", "user_token_expires", "user_name", "page_name", "ad_account_name", "connected_at", "connect_log", "last_poll", "expiry_warned"];
+  const keys = ["page_token", "user_token", "user_token_expires", "user_name", "page_name", "ad_account_name", "connected_at", "connect_log", "last_poll", "expiry_warned", "ads_synced_at", "ads_error", "ig_id", "ig_username"];
   await writeSettings(Object.fromEntries(keys.map((k) => [`meta.${k}`, null])));
 }
 

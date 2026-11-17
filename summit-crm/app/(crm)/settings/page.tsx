@@ -54,6 +54,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                 ["Facebook Page", m.pageName ?? m.pageId],
                 ["Ad account", m.adAccountName ?? m.adAccountId],
                 ["Pixel / dataset", m.pixelId],
+                ["Instagram", m.igUsername ? `@${m.igUsername}` : null],
                 ["Signed in as", m.userName],
               ] as const).map(([k, v]) => (
                 <div key={k} className="tile !p-4"><dt className="text-xs text-stone">{k}</dt><dd className="mt-1 break-words">{v ?? "—"}</dd></div>
@@ -89,6 +90,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                   <li>Signed in to Facebook as the account that manages the Summit Page and ad account, open <a className="text-gold underline-offset-2 hover:underline" href="https://developers.facebook.com/apps/creation/" target="_blank" rel="noopener">developers.facebook.com/apps/creation</a>.</li>
                   <li>Name it <span className="text-ivory">Summit CRM</span>. For use case choose <span className="text-ivory">Other</span>, then app type <span className="text-ivory">Business</span>, and pick the Summit business portfolio.</li>
                   <li>On the app dashboard, add <span className="text-ivory">Facebook Login for Business</span> (or Facebook Login) → Settings, and paste this under <span className="text-ivory">Valid OAuth Redirect URIs</span>: <code className="code mt-1 break-all">{redirectUri()}</code></li>
+                  <li>Also add the <span className="text-ivory">Messenger</span> and <span className="text-ivory">Instagram</span> products (Instagram: “API setup with Facebook login”), so Facebook and Instagram DMs come in as leads. On the phone, in Instagram → Settings → Messages and story replies → Message controls, turn on <span className="text-ivory">Allow access to messages</span>.</li>
                   <li>App settings → Basic: set <span className="text-ivory">App domains</span> to <code className="text-ivory">{host}</code>, add a Privacy Policy URL (<code className="break-all text-ivory">https://www.{host}/privacy</code>), and save.</li>
                 </ol>
               </div>

@@ -75,6 +75,16 @@ export default async function LeadPage({ params, searchParams }: { params: Promi
             <StageSelect id={lead.id} stage={lead.stage} valueCents={lead.valueCents} action={moveLeadAction} />
           </div>
         </div>
+        {(lead.platform === "instagram_dm" || lead.platform === "messenger") && (
+          <a
+            href={lead.platform === "instagram_dm" ? "https://www.instagram.com/direct/inbox/" : "https://business.facebook.com/latest/inbox/all"}
+            target="_blank"
+            rel="noopener"
+            className="btn mt-5"
+          >
+            Reply in {lead.platform === "instagram_dm" ? "Instagram" : "Messenger"}
+          </a>
+        )}
         <div className="mt-5 hidden max-w-md md:block">
           <ContactButtons id={lead.id} phone={lead.phone} email={lead.email} text={textTemplate(lead)} />
         </div>
@@ -157,7 +167,7 @@ export default async function LeadPage({ params, searchParams }: { params: Promi
             <section aria-labelledby="attr-h" className="card p-5">
               <h2 id="attr-h" className="font-display text-2xl">Where they came from</h2>
               <dl className="mt-3 space-y-2 text-sm">
-                {([["Source", sourceLabel[lead.source]], ["Campaign", lead.campaignName], ["Ad set", lead.adsetName], ["Ad", lead.adName], ["Platform", lead.platform === "ig" ? "Instagram" : lead.platform === "fb" ? "Facebook" : lead.platform], ["Received", when(lead.leadCreatedAt)]] as const)
+                {([["Source", sourceLabel[lead.source]], ["Campaign", lead.campaignName], ["Ad set", lead.adsetName], ["Ad", lead.adName], ["Platform", ({ ig: "Instagram", fb: "Facebook", instagram_dm: "Instagram message", messenger: "Facebook Messenger" } as Record<string, string>)[lead.platform ?? ""] ?? lead.platform], ["Received", when(lead.leadCreatedAt)]] as const)
                   .filter(([, v]) => v)
                   .map(([k, v]) => <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-2"><dt className="text-stone">{k}</dt><dd className="break-words">{v}</dd></div>)}
               </dl>

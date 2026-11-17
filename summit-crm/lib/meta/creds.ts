@@ -24,6 +24,9 @@ export type MetaCreds = {
   testEventCode?: string;
   connectedAt?: Date;
   lastPollAt?: Date;
+  igUsername?: string;
+  adsSyncedAt?: Date;
+  adsError?: string;
   log: ConnectStep[];
 };
 
@@ -63,6 +66,9 @@ export async function metaCreds(): Promise<MetaCreds> {
     testEventCode: env("META_TEST_EVENT_CODE"),
     connectedAt: date(s["meta.connected_at"]),
     lastPollAt: date(s["meta.last_poll"]),
+    igUsername: s["meta.ig_username"],
+    adsSyncedAt: date(s["meta.ads_synced_at"]),
+    adsError: s["meta.ads_error"],
     log,
   };
 }

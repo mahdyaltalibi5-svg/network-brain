@@ -123,4 +123,34 @@ export const schema = [
   )`,
   `ALTER TABLE site_changes ADD COLUMN IF NOT EXISTS revert_of TEXT`,
   `ALTER TABLE site_changes ADD COLUMN IF NOT EXISTS files JSONB`,
+  // Meta ad account mirror, synced automatically: every campaign, ad set and ad, and each ad's
+  // results per day. The Ads page reads from here (fast, and history survives).
+  `CREATE TABLE IF NOT EXISTS meta_ads (
+    id               TEXT PRIMARY KEY,
+    level            TEXT NOT NULL,
+    name             TEXT NOT NULL,
+    status           TEXT,
+    campaign_id      TEXT,
+    adset_id         TEXT,
+    objective        TEXT,
+    daily_budget     INTEGER,
+    lifetime_budget  INTEGER,
+    thumbnail_url    TEXT,
+    headline         TEXT,
+    body             TEXT,
+    synced_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS meta_daily (
+    day          DATE NOT NULL,
+    ad_id        TEXT NOT NULL,
+    campaign_id  TEXT,
+    adset_id     TEXT,
+    spend_cents  INTEGER NOT NULL DEFAULT 0,
+    impressions  INTEGER NOT NULL DEFAULT 0,
+    reach        INTEGER NOT NULL DEFAULT 0,
+    clicks       INTEGER NOT NULL DEFAULT 0,
+    leads        INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, ad_id)
+  )`,
+  `CREATE INDEX IF NOT EXISTS meta_daily_campaign_idx ON meta_daily (campaign_id, day)`,
 ];

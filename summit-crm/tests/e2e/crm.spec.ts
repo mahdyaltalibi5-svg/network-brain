@@ -89,7 +89,7 @@ test("ads and settings pages explain what to connect", async ({ page }) => {
   await expect(meta.getByRole("alert")).toContainText("App ID is a long number");
   await expect(page.locator("li", { hasText: "Conversions API" }).getByText("Not set up")).toBeVisible();
   await page.getByRole("link", { name: "Meta ads" }).click();
-  await expect(page.getByText(/Ad spend isn.t connected yet/)).toBeVisible();
+  await expect(page.getByText(/Meta isn.t connected yet/)).toBeVisible();
   await page.getByRole("link", { name: "Last 7 days" }).click();
   await expect(page).toHaveURL(/range=last_7d/);
 });

@@ -1,6 +1,7 @@
 import { metaCreds } from "@/lib/meta/creds";
 import { upsertLead } from "@/lib/leads";
 import { fetchLead, fromMetaLead, leadgenIds, verifySignature } from "@/lib/meta/leadgen";
+import { handleMessages, messageEvents } from "@/lib/meta/messages";
 
 /**
  * Meta Lead Ads webhook (Page subscription, field "leadgen").
@@ -42,5 +43,12 @@ export async function POST(request: Request) {
       results.push({ leadgen_id: change.leadgen_id, error: e instanceof Error ? e.message : String(e) });
     }
   }
-  return Response.json({ ok: true, results });
+  // Messenger and Instagram DMs (object "page" / "instagram", field "messages").
+  let messages: unknown[] = [];
+  try {
+    messages = await handleMessages(messageEvents(payload));
+  } catch (e) {
+    console.error("messages webhook: could not import", e);
+  }
+  return Response.json({ ok: true, results, messages });
 }

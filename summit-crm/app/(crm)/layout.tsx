@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { logout } from "../login/actions";
 import { Nav } from "@/components/Nav";
-import { connection } from "next/server";
+import { after, connection } from "next/server";
+import { autoSync } from "@/lib/meta/auto";
 import { getDb } from "@/lib/db";
 
 async function waitingCount() {
@@ -16,6 +17,8 @@ async function waitingCount() {
 
 export default async function CrmLayout({ children }: { children: React.ReactNode }) {
   const waiting = await waitingCount();
+  // Pull new Meta form leads and ad results after the page is sent (throttled; never slows it).
+  after(() => autoSync());
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-20 px-3 pt-3 md:px-6 md:pt-4">
