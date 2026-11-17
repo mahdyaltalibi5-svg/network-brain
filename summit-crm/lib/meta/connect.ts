@@ -130,8 +130,9 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
 
   // 2. the Page and its token (a Page token from a long-lived user token doesn't expire)
   let page: Page | undefined;
+  let pages: Page[] = [];
   try {
-    const pages = await graphAll<Page>("me/accounts", { token: user, params: { fields: "id,name,access_token", limit: "100" } });
+    pages = await graphAll<Page>("me/accounts", { token: user, params: { fields: "id,name,access_token", limit: "100" } });
     page = pages.find((p) => p.id === m.pageId) ?? pages[0];
     if (!page) throw new Error("This Facebook account doesn't manage any Pages. Sign in with the account that runs Summit Custom Suits.");
     save["meta.page_id"] = page.id;
@@ -153,7 +154,17 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
         params: { object: "page", callback_url: webhookUrl(), fields: "leadgen,messages,message_echoes", verify_token: m.verifyToken ?? "", include_values: "true" },
       });
       await graph(`${page.id}/subscribed_apps`, { token: page.access_token, method: "POST", params: { subscribed_fields: "leadgen,messages,message_echoes" } });
-      log.push({ step: "Instant lead webhook", ok: true, detail: `New ${page.name} form leads and Messenger messages arrive in seconds` });
+      // Ads can use lead forms that live on another of Kobe's Pages: subscribe those for leads too.
+      const others: string[] = [];
+      for (const p of pages.filter((x) => x.id !== page!.id)) {
+        try {
+          await graph(`${p.id}/subscribed_apps`, { token: p.access_token, method: "POST", params: { subscribed_fields: "leadgen" } });
+          others.push(p.name);
+        } catch {
+          // not allowed on that Page; polling still covers its forms
+        }
+      }
+      log.push({ step: "Instant lead webhook", ok: true, detail: `New form leads (${[page.name, ...others].join(", ")}) and Messenger messages arrive in seconds` });
     } catch (e) {
       log.push({ step: "Instant lead webhook", ok: false, detail: `${msg(e)}. Form leads still arrive by polling.` });
     }

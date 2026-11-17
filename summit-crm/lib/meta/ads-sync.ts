@@ -1,7 +1,7 @@
 import { getDb } from "../db";
 import { readSettings, writeSettings } from "../vault";
 import { metaCreds } from "./creds";
-import { graphAll } from "./graph";
+import { graph, graphAll } from "./graph";
 
 /**
  * Mirrors the ad account into the CRM: campaigns, ad sets and ads (status, budget, creative)
@@ -73,6 +73,24 @@ export async function syncInsights(account: string, token: string, days: number)
   return rows.length;
 }
 
+/**
+ * Lead forms can live on any of Kobe's Pages (the ads use forms on "Kobeapp"), so every Page he
+ * manages is kept subscribed to leadgen webhooks. Idempotent; runs with the hourly sync.
+ */
+export async function subscribeAllPages(userToken: string, mainPageId?: string) {
+  const pages = await graphAll<{ id: string; access_token: string }>("me/accounts", { token: userToken, params: { fields: "id,access_token", limit: "100" } });
+  let ok = 0;
+  for (const p of pages) {
+    try {
+      await graph(`${p.id}/subscribed_apps`, { token: p.access_token, method: "POST", params: { subscribed_fields: p.id === mainPageId ? "leadgen,messages,message_echoes" : "leadgen" } }); // replaces this app's fields, so keep DMs on the main Page
+      ok++;
+    } catch {
+      // not permitted on this Page; polling still covers its forms
+    }
+  }
+  return ok;
+}
+
 /** Hourly at most unless forced. The first run looks back 90 days; later runs re-pull the last 3 (Meta revises recent days). */
 export async function syncAds({ force = false, days }: { force?: boolean; days?: number } = {}) {
   const m = await metaCreds();
@@ -84,6 +102,7 @@ export async function syncAds({ force = false, days }: { force?: boolean; days?:
   try {
     const structure = await syncAdStructure(m.adAccountId, m.adsToken);
     const rows = await syncInsights(m.adAccountId, m.adsToken, days ?? (last ? 3 : 90));
+    if (m.userToken) await subscribeAllPages(m.userToken, m.pageId).catch(() => 0);
     await writeSettings({ "meta.ads_error": null });
     return { skipped: false as const, ...structure, rows };
   } catch (e) {
