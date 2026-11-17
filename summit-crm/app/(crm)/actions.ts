@@ -46,7 +46,7 @@ export async function createLeadAction(form: FormData) {
     phone: text(form, "phone") || undefined,
     occasion: text(form, "occasion") || undefined,
     notes: text(form, "notes") || undefined,
-  });
+  }, { alert: "never" });
   redirect(`/leads/${lead.id}`);
 }
 

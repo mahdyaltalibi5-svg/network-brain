@@ -90,7 +90,7 @@ export async function handleMessages(events: DmEvent[]) {
       notes: e.text,
       platform: e.platform,
       createdAt: e.at,
-    });
+    }, { alert: "always" });
     if (created) await db.query(`INSERT INTO activities (id, lead_id, kind, body) VALUES ($1, $2, 'message', $3)`, [crypto.randomUUID(), lead.id, e.text]);
     results.push({ key, lead: lead.id, created });
   }

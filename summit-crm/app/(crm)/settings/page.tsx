@@ -9,6 +9,7 @@ import { config, integrations } from "@/lib/config";
 import { redirectUri, webhookUrl } from "@/lib/meta/connect";
 import { metaCreds } from "@/lib/meta/creds";
 import { secretStatus } from "@/lib/secrets";
+import { subscriptionCount } from "@/lib/push";
 import { disconnectAction } from "./actions";
 import { stages } from "@/lib/stages";
 
@@ -25,6 +26,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   // The public address (summitcustomsuits.com/portal), whichever host this request came through.
   const origin = config.publicUrl();
   const list = integrations(m, await secretStatus());
+  const devices = await subscriptionCount();
 
   return (
     <>
@@ -144,6 +146,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         </ol>
         <div className="mt-4">
           <AlertsToggle publicKey={config.push.publicKey()} />
+          <p className="mt-3 text-sm text-ivory-dim" data-testid="alert-devices">
+            {devices ? `Lead alerts are on for ${devices} device${devices === 1 ? "" : "s"}.` : "No device has lead alerts on yet. Turn them on from Kobe’s phone."}{" "}
+            Every new lead from a Facebook or Instagram ad, an Instagram or Facebook message, or the website sends one.
+          </p>
         </div>
       </section>
 

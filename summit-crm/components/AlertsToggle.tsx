@@ -68,7 +68,21 @@ export function AlertsToggle({ publicKey, compact = false }: { publicKey?: strin
       {note[state] ? (
         <p className="text-sm text-warn">{note[state]}</p>
       ) : state === "on" ? (
-        <button type="button" className="btn-ghost" onClick={disable}>Turn alerts off on this device</button>
+        <>
+          <button
+            type="button"
+            className="btn"
+            onClick={async () => {
+              setMsg("Sending…");
+              const r = await fetch(withBase("/api/push/test"), { method: "POST" });
+              const j = (await r.json().catch(() => ({}))) as { sent?: number; error?: string };
+              setMsg(r.ok ? `Test alert sent to ${j.sent} device${j.sent === 1 ? "" : "s"}. It should arrive in a few seconds.` : (j.error ?? "Couldn't send a test alert."));
+            }}
+          >
+            Send a test alert
+          </button>
+          <button type="button" className="btn-ghost" onClick={disable}>Turn alerts off on this device</button>
+        </>
       ) : (
         <button type="button" className="btn" onClick={enable} disabled={state === "busy"}>
           {state === "busy" ? "Turning on…" : "Turn on lead alerts"}

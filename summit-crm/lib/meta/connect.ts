@@ -1,5 +1,5 @@
 import { config } from "../config";
-import { upsertLead } from "../leads";
+import { upsertLead, type AlertMode } from "../leads";
 import { notifyAll } from "../push";
 import { withBase } from "../base";
 import { readSettings, writeSettings } from "../vault";
@@ -193,7 +193,7 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
   }
   if (page) {
     try {
-      const r = await pollLeads({ days: 30, force: true });
+      const r = await pollLeads({ days: 30, force: true, alert: "never" }); // backfill: no 30 alerts at once
       log.push({ step: "Lead import", ok: true, detail: `${r.fetched} leads in the last 30 days, ${r.created} new` });
     } catch (e) {
       log.push({ step: "Lead import", ok: false, detail: msg(e) });
@@ -213,7 +213,7 @@ export async function disconnect() {
  * Pulls recent form leads and imports any the webhook missed. Called every 5 minutes by the
  * reminder scheduler (throttled to every 4 minutes) and by "Sync now".
  */
-export async function pollLeads({ days, force = false }: { days?: number; force?: boolean } = {}) {
+export async function pollLeads({ days, force = false, alert = "always" }: { days?: number; force?: boolean; alert?: AlertMode } = {}) {
   const m = await metaCreds();
   if (!m.pageId || !m.pageToken) return { skipped: true as const, fetched: 0, created: 0 };
   const now = Date.now();
@@ -222,7 +222,7 @@ export async function pollLeads({ days, force = false }: { days?: number; force?
   const since = days ? now - days * 86_400_000 : (m.lastPollAt?.getTime() ?? now - 3 * 86_400_000) - 15 * 60_000;
   const leads = await fetchRecentLeads(Math.floor(since / 1000));
   let created = 0;
-  for (const l of leads) if ((await upsertLead(fromMetaLead(l))).created) created++;
+  for (const l of leads) if ((await upsertLead(fromMetaLead(l), { alert })).created) created++;
   await writeSettings({ "meta.last_poll": new Date(now).toISOString() });
   return { skipped: false as const, fetched: leads.length, created };
 }

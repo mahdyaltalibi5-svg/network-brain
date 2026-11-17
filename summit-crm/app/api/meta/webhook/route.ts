@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   const results = [];
   for (const change of leadgenIds(payload)) {
     try {
-      const { lead, created } = await upsertLead(fromMetaLead(await fetchLead(change.leadgen_id)));
+      const { lead, created } = await upsertLead(fromMetaLead(await fetchLead(change.leadgen_id)), { alert: "always" });
       results.push({ leadgen_id: change.leadgen_id, id: lead.id, created });
     } catch (e) {
       // Still answer 200: Meta retries failed deliveries for hours, and the daily sync

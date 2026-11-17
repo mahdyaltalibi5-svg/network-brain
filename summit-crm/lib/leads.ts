@@ -105,7 +105,31 @@ function capiNote(result: CapiResult, eventName: string) {
  * Creates a lead, or returns the existing one for the same Meta lead ID (webhooks and the
  * daily sync can both deliver the same lead). New leads send the "Lead" event to Meta.
  */
-export async function upsertLead(input: LeadInput): Promise<{ lead: Lead; created: boolean }> {
+/**
+ * When to alert the phone about a new lead. "always": it's new to the CRM right now (webhook, live
+ * sync), however long ago it was submitted. "never": bulk imports and backfills. "auto": only if
+ * it was submitted in the last 30 minutes.
+ */
+export type AlertMode = "auto" | "always" | "never";
+
+/** The phone notification for a new lead: says where it came from, and which ad. */
+export function leadAlert(lead: Lead): { title: string; body: string } {
+  const who = lead.fullName ?? lead.email ?? lead.phone ?? "Someone";
+  if (lead.platform === "instagram_dm" || lead.platform === "messenger") {
+    return { title: `New ${lead.platform === "instagram_dm" ? "Instagram" : "Facebook"} message`, body: `${who}: ${(lead.notes ?? "").slice(0, 140)}` };
+  }
+  if (lead.source === "meta") {
+    const where = lead.platform === "ig" ? "Instagram ad" : lead.platform === "fb" ? "Facebook ad" : "Meta ad";
+    const ad = lead.adName ?? lead.campaignName;
+    return {
+      title: `New lead from your ${where}`,
+      body: [`${who}${lead.occasion ? ` · ${lead.occasion}` : ""}${lead.phone ? ` · ${lead.phone}` : ""}`, ad ? `Ad: ${ad}` : "", "Tap to call now."].filter(Boolean).join("\n"),
+    };
+  }
+  return { title: `New lead${lead.occasion ? ` · ${lead.occasion}` : ""}`, body: `${who} via the website. Tap to call.` };
+}
+
+export async function upsertLead(input: LeadInput, { alert = "auto" }: { alert?: AlertMode } = {}): Promise<{ lead: Lead; created: boolean }> {
   const db = await getDb();
   if (input.metaLeadId) {
     const existing = await db.query(`SELECT * FROM leads WHERE meta_lead_id = $1`, [input.metaLeadId]);
@@ -151,14 +175,9 @@ export async function upsertLead(input: LeadInput): Promise<{ lead: Lead; create
   await log(lead.id, "created", `Lead from ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}`);
   // Website enquiries already fire "Lead" from the Meta Pixel on the booking page; sending it
   // again from here would count each one twice. Their later stages are still reported.
-  // Alert the phone right away, unless this is an old lead arriving late (a file import or backfill).
-  if (Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000) {
-    await notifyAll({
-      title: `New lead${lead.occasion ? ` · ${lead.occasion}` : ""}`,
-      body: `${lead.fullName ?? lead.email ?? lead.phone ?? "Someone"} via ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}. Tap to call.`,
-      url: withBase(`/leads/${lead.id}`),
-      tag: `lead-${lead.id}`,
-    });
+  // Alert the phone right away (see AlertMode).
+  if (alert === "always" || (alert === "auto" && Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000)) {
+    await notifyAll({ ...leadAlert(lead), url: withBase(`/leads/${lead.id}`), tag: `lead-${lead.id}` });
   }
   const result: CapiResult =
     lead.source === "website" ? { sent: false, skipped: "already reported by the website's Meta Pixel" }
