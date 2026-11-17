@@ -7,7 +7,7 @@ export type AppState = { error?: string; ok?: string };
 
 export async function saveAppAction(_prev: AppState, form: FormData): Promise<AppState> {
   try {
-    const app = await saveApp(String(form.get("appId") ?? ""), String(form.get("appSecret") ?? ""));
+    const app = await saveApp(String(form.get("appId") ?? ""), String(form.get("appSecret") ?? ""), String(form.get("configId") ?? ""));
     revalidatePath("/settings");
     return { ok: `Saved ${app.name ?? app.id}.` };
   } catch (e) {

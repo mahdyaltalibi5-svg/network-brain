@@ -37,9 +37,11 @@ const appToken = (id: string, secret: string) => `${id}|${secret}`;
 const msg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /** Saves the Meta app's ID and secret after checking them against the Graph API. */
-export async function saveApp(appId: string, appSecret: string) {
+export async function saveApp(appId: string, appSecret: string, configId = "") {
   appId = appId.trim();
   appSecret = appSecret.trim();
+  configId = configId.trim();
+  if (configId && !/^\d{5,25}$/.test(configId)) throw new Error("The Configuration ID is a long number (Facebook Login for Business → Configurations).");
   if (!/^\d{5,25}$/.test(appId)) throw new Error("The App ID is a long number, shown at the top of the app dashboard.");
   if (!/^[0-9a-f]{32}$/i.test(appSecret)) throw new Error("The App secret is 32 letters and numbers (App settings → Basic → App secret → Show).");
   let app: { id: string; name?: string };
@@ -54,6 +56,7 @@ export async function saveApp(appId: string, appSecret: string) {
       "meta.app_id": app.id,
       "meta.app_secret": appSecret,
       "meta.app_name": app.name ?? null,
+      "meta.config_id": configId || null,
       "meta.verify_token": existing["meta.verify_token"] ?? Buffer.from(crypto.getRandomValues(new Uint8Array(24))).toString("base64url"),
     },
     SECRET_KEYS,
@@ -63,15 +66,21 @@ export async function saveApp(appId: string, appSecret: string) {
 
 /** The Facebook Login address Kobe is sent to. */
 export async function loginUrl(state: string) {
-  const { appId } = await metaCreds();
+  const { appId, configId } = await metaCreds();
   if (!appId) throw new Error("Save the Meta app first");
   const u = new URL(`https://www.facebook.com/${config.meta.graphVersion()}/dialog/oauth`);
   u.searchParams.set("client_id", appId);
   u.searchParams.set("redirect_uri", redirectUri());
   u.searchParams.set("state", state);
   u.searchParams.set("response_type", "code");
-  u.searchParams.set("scope", SCOPES.join(","));
-  u.searchParams.set("auth_type", "rerequest"); // ask again for anything declined last time
+  if (configId) {
+    // Facebook Login for Business (Business-type apps): the configuration lists the permissions.
+    u.searchParams.set("config_id", configId);
+    u.searchParams.set("override_default_response_type", "true");
+  } else {
+    u.searchParams.set("scope", SCOPES.join(","));
+    u.searchParams.set("auth_type", "rerequest"); // ask again for anything declined last time
+  }
   return u.toString();
 }
 

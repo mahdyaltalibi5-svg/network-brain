@@ -6,7 +6,7 @@ import { SyncButton } from "@/components/SyncButton";
 import { MetaAppForm } from "@/components/MetaAppForm";
 import { withBase } from "@/lib/base";
 import { config, integrations } from "@/lib/config";
-import { redirectUri, webhookUrl } from "@/lib/meta/connect";
+import { redirectUri, SCOPES, webhookUrl } from "@/lib/meta/connect";
 import { metaCreds } from "@/lib/meta/creds";
 import { secretStatus } from "@/lib/secrets";
 import { subscriptionCount } from "@/lib/push";
@@ -91,7 +91,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                 <ol className="mt-2 list-[lower-alpha] space-y-1.5 pl-5 text-sm text-ivory-dim">
                   <li>Signed in to Facebook as the account that manages the Summit Page and ad account, open <a className="text-gold underline-offset-2 hover:underline" href="https://developers.facebook.com/apps/creation/" target="_blank" rel="noopener">developers.facebook.com/apps/creation</a>.</li>
                   <li>Name it <span className="text-ivory">Summit CRM</span>. For use case choose <span className="text-ivory">Other</span>, then app type <span className="text-ivory">Business</span>, and pick the Summit business portfolio.</li>
-                  <li>On the app dashboard, add <span className="text-ivory">Facebook Login for Business</span> (or Facebook Login) → Settings, and paste this under <span className="text-ivory">Valid OAuth Redirect URIs</span>: <code className="code mt-1 break-all">{redirectUri()}</code></li>
+                  <li>On the app dashboard, add <span className="text-ivory">Facebook Login for Business</span> → Settings, and paste this under <span className="text-ivory">Valid OAuth Redirect URIs</span>: <code className="code mt-1 break-all">{redirectUri()}</code></li>
+                  <li>Facebook Login for Business → <span className="text-ivory">Configurations</span> → Create configuration: name it “Summit CRM”, token type <span className="text-ivory">User access token</span>, expiration <span className="text-ivory">Never</span> if offered (otherwise 60 days), tick all of: <code className="break-all text-ivory">{SCOPES.join(", ")}</code>. Copy the <span className="text-ivory">Configuration ID</span>.</li>
                   <li>Also add the <span className="text-ivory">Messenger</span> and <span className="text-ivory">Instagram</span> products (Instagram: “API setup with Facebook login”), so Facebook and Instagram DMs come in as leads. On the phone, in Instagram → Settings → Messages and story replies → Message controls, turn on <span className="text-ivory">Allow access to messages</span>.</li>
                   <li>App settings → Basic: set <span className="text-ivory">App domains</span> to <code className="text-ivory">{host}</code>, add a Privacy Policy URL (<code className="break-all text-ivory">https://www.{host}/privacy</code>), and save.</li>
                 </ol>
@@ -102,7 +103,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               <div>
                 <p className="font-medium">Paste the App ID and App secret {m.appId && <span className="text-sm text-ok">· saved{m.appName ? ` (${m.appName})` : ""}</span>}</p>
                 <p className="mt-1 text-sm text-ivory-dim">App settings → Basic. The secret is stored encrypted and never shown again.</p>
-                <div className="mt-3"><MetaAppForm appId={m.appId} /></div>
+                <div className="mt-3"><MetaAppForm appId={m.appId} configId={m.configId} /></div>
               </div>
             </li>
             <li className="grid gap-2 sm:grid-cols-[2rem_1fr] [&>*]:min-w-0">

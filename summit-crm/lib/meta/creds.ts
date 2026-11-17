@@ -9,6 +9,7 @@ export type MetaCreds = {
   appId?: string;
   appSecret?: string;
   appName?: string;
+  configId?: string;
   verifyToken?: string;
   pageId?: string;
   pageName?: string;
@@ -51,6 +52,7 @@ export async function metaCreds(): Promise<MetaCreds> {
     appId: s["meta.app_id"] ?? env("META_APP_ID"),
     appSecret: s["meta.app_secret"] ?? env("META_APP_SECRET"),
     appName: s["meta.app_name"],
+    configId: s["meta.config_id"] ?? env("META_LOGIN_CONFIG_ID"),
     verifyToken: s["meta.verify_token"] ?? env("META_VERIFY_TOKEN"),
     pageId: s["meta.page_id"] ?? env("META_PAGE_ID"),
     pageName: s["meta.page_name"],

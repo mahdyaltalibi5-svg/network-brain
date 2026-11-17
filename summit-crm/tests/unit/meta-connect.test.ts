@@ -94,6 +94,13 @@ describe("connect with Facebook", () => {
     expect(url.searchParams.get("redirect_uri")).toBe("https://www.summitcustomsuits.com/portal/api/meta/callback");
     expect(url.searchParams.get("scope")).toContain("leads_retrieval");
 
+    // Business-type apps (Facebook Login for Business) log in with a configuration instead
+    await expect(saveApp(APP_ID, SECRET, "abc")).rejects.toThrow(/Configuration ID/);
+    await saveApp(APP_ID, SECRET, "998877665544");
+    const fl4b = new URL(await loginUrl("STATE"));
+    expect(fl4b.searchParams.get("config_id")).toBe("998877665544");
+    expect(fl4b.searchParams.get("scope")).toBeNull();
+
     const r = await completeConnect("CODE");
     expect(r.log.map((s) => [s.step, s.ok])).toEqual([
       ["Facebook login", true],
