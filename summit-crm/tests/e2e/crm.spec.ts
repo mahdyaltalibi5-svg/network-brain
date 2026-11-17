@@ -144,7 +144,13 @@ test("speed to lead: a new lead waits on Respond until it's called", async ({ pa
 test("website tab explains how to connect, and the app is installable", async ({ page, request }) => {
   await signIn(page, "/portal/website");
   await expect(page.getByRole("heading", { level: 1, name: "summitcustomsuits.com" })).toBeVisible();
-  await expect(page.getByText("Connect website editing")).toBeVisible();
+  const setup = page.getByTestId("agent-setup");
+  await expect(setup.getByLabel("Claude API key")).toBeVisible();
+  await expect(setup.getByLabel("GitHub token")).toBeVisible();
+  await setup.getByLabel("Claude API key").fill("not-a-key");
+  await setup.locator("form", { has: page.getByLabel("Claude API key") }).getByRole("button", { name: "Save" }).click();
+  await expect(setup.getByRole("alert")).toContainText("doesn't look like a Claude API key");
+  expect((await request.post("/portal/api/agent", { data: { message: "x" } })).status()).toBe(401); // signed-in only
   const m = await (await request.get("/portal/manifest.webmanifest")).json();
   expect(m).toMatchObject({ name: "Summit CRM", start_url: "/portal/now", scope: "/portal/", display: "standalone" });
   expect((await request.get("/portal/sw.js")).status()).toBe(200);

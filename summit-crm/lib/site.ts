@@ -1,5 +1,6 @@
 import { config } from "./config";
 import { getDb } from "./db";
+import { getSecret } from "./secrets";
 
 /**
  * Website editing. The live site (summitcustomsuits.com) is generated from the repository; its
@@ -14,7 +15,7 @@ export type SiteSettings = {
   hours: { days: string; daysShort: string; open: string; close: string };
 };
 
-export const siteReady = () => !!(config.site.githubToken() && config.site.vercelToken());
+export const siteReady = async () => !!((await getSecret("github")) && (await getSecret("vercel")));
 
 const TIME = /^\d{1,2}(:\d{2})?\s?(am|pm)$/i;
 
@@ -58,10 +59,12 @@ export function describeChange(before: SiteSettings, after: SiteSettings): strin
 }
 
 /* ── GitHub ───────────────────────────────────────────────────────────────────────────────────── */
-async function gh<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function gh<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = await getSecret("github");
+  if (!token) throw new Error("GitHub isn't connected (add the GitHub token in Settings).");
   const res = await fetch(`https://api.github.com/repos/${config.site.repo()}/${path}`, {
     ...init,
-    headers: { Authorization: `Bearer ${config.site.githubToken()}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(init.headers ?? {}) },
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(init.headers ?? {}) },
     cache: "no-store",
   });
   const j = (await res.json().catch(() => null)) as T & { message?: string };
@@ -89,11 +92,13 @@ async function commitSettings(settings: SiteSettings, sha: string, message: stri
 }
 
 /* ── Vercel ───────────────────────────────────────────────────────────────────────────────────── */
-async function vc<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function vc<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = await getSecret("vercel");
+  if (!token) throw new Error("Vercel isn't connected (add the Vercel token in Settings).");
   const sep = path.includes("?") ? "&" : "?";
   const res = await fetch(`https://api.vercel.com${path}${sep}teamId=${config.site.vercelTeamId()}`, {
     ...init,
-    headers: { Authorization: `Bearer ${config.site.vercelToken()}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     cache: "no-store",
   });
   const j = (await res.json().catch(() => null)) as T & { error?: { message?: string } };
@@ -101,7 +106,7 @@ async function vc<T>(path: string, init: RequestInit = {}): Promise<T> {
   return j;
 }
 
-async function deploy(sha: string) {
+export async function deploy(sha: string) {
   const [org, repo] = config.site.repo().split("/");
   const d = await vc<{ id: string }>(`/v13/deployments`, {
     method: "POST",
@@ -124,7 +129,7 @@ export async function deploymentState(id: string): Promise<"building" | "live" |
 export type SiteChange = { id: string; summary: string; status: string; error: string | null; createdAt: Date; commitSha: string | null };
 
 export async function publish(input: SiteSettings): Promise<{ ok: true; change: SiteChange } | { ok: false; errors: string[] }> {
-  if (!siteReady()) return { ok: false, errors: ["Website editing isn't connected yet (GITHUB_TOKEN and VERCEL_TOKEN)."] };
+  if (!(await siteReady())) return { ok: false, errors: ["Website editing isn't connected yet: add the GitHub and Vercel tokens in Settings."] };
   const v = validateSettings(input);
   if (!v.ok) return v;
   const { settings: before, sha } = await readSettings();

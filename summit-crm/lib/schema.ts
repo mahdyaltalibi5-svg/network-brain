@@ -88,6 +88,28 @@ export const schema = [
     value      TEXT NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
+  // Website agent: one conversation per request ("make the hero say…"), its full Claude
+  // message history (append-only), and the files it changed, staged until Kobe publishes.
+  `CREATE TABLE IF NOT EXISTS agent_sessions (
+    id          TEXT PRIMARY KEY,
+    title       TEXT NOT NULL,
+    status      TEXT NOT NULL DEFAULT 'idle',
+    base_sha    TEXT NOT NULL,
+    messages    JSONB NOT NULL DEFAULT '[]',
+    summary     TEXT,
+    change_id   TEXT,
+    error       TEXT,
+    cost_cents  INTEGER NOT NULL DEFAULT 0,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS agent_files (
+    session_id TEXT NOT NULL REFERENCES agent_sessions(id) ON DELETE CASCADE,
+    path       TEXT NOT NULL,
+    original   TEXT,
+    content    TEXT NOT NULL,
+    PRIMARY KEY (session_id, path)
+  )`,
   // Website edits published from the CRM.
   `CREATE TABLE IF NOT EXISTS site_changes (
     id            TEXT PRIMARY KEY,
@@ -99,4 +121,6 @@ export const schema = [
     error         TEXT,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
+  `ALTER TABLE site_changes ADD COLUMN IF NOT EXISTS revert_of TEXT`,
+  `ALTER TABLE site_changes ADD COLUMN IF NOT EXISTS files JSONB`,
 ];

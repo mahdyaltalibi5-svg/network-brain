@@ -8,6 +8,7 @@ import { withBase } from "@/lib/base";
 import { config, integrations } from "@/lib/config";
 import { redirectUri, webhookUrl } from "@/lib/meta/connect";
 import { metaCreds } from "@/lib/meta/creds";
+import { secretStatus } from "@/lib/secrets";
 import { disconnectAction } from "./actions";
 import { stages } from "@/lib/stages";
 
@@ -23,7 +24,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const host = new URL(config.publicUrl()).hostname.replace(/^www\./, "");
   // The public address (summitcustomsuits.com/portal), whichever host this request came through.
   const origin = config.publicUrl();
-  const list = integrations(m);
+  const list = integrations(m, await secretStatus());
 
   return (
     <>

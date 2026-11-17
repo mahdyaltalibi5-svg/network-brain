@@ -6,7 +6,7 @@ import { useActionState, useEffect, useState } from "react";
 import { publishAction, type PublishState } from "@/app/(crm)/website/actions";
 import type { SiteChange, SiteSettings } from "@/lib/site";
 
-function Status({ initial, siteUrl }: { initial: SiteChange; siteUrl: string }) {
+export function ChangeStatus({ initial, siteUrl }: { initial: SiteChange; siteUrl: string }) {
   const [c, setC] = useState(initial);
   useEffect(() => {
     if (c.status !== "publishing") return;
@@ -114,7 +114,7 @@ export function WebsiteForm({ settings, siteUrl }: { settings: SiteSettings; sit
         <button className="btn" disabled={pending}>{pending ? "Publishing…" : "Publish to the website"}</button>
         <p className="text-xs text-stone">Goes live in about a minute. Every change is saved, so it can be undone.</p>
       </div>
-      {state.change && <Status key={state.change.id} initial={state.change} siteUrl={siteUrl} />}
+      {state.change && <ChangeStatus key={state.change.id} initial={state.change} siteUrl={siteUrl} />}
     </form>
   );
 }

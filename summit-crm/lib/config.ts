@@ -1,4 +1,5 @@
 import type { MetaCreds } from "./meta/creds";
+import type { SecretName } from "./secrets";
 /**
  * Every setting comes from environment variables (see .env.example). Nothing secret is
  * hard-coded. Each Meta feature switches on by itself once its variables are present.
@@ -75,7 +76,8 @@ export const config = {
 export type Integration = { name: string; ready: boolean; missing: string[]; what: string };
 
 /** What is connected, and what each part still needs. Shown on /settings. */
-export function integrations(m: MetaCreds): Integration[] {
+export function integrations(m: MetaCreds, keys: Record<SecretName, boolean>): Integration[] {
+  const has = (b: boolean) => (b ? "yes" : undefined);
   const check = (name: string, what: string, vars: [string, string | undefined][]): Integration => {
     const missing = vars.filter(([, v]) => !v).map(([k]) => k);
     return { name, what, ready: missing.length === 0, missing };
@@ -91,8 +93,13 @@ export function integrations(m: MetaCreds): Integration[] {
       ["VAPID_PRIVATE_KEY", config.push.privateKey()],
     ]),
     check("Website editing", "Publish phone, email, hours and announcement changes to summitcustomsuits.com.", [
-      ["GITHUB_TOKEN", config.site.githubToken()],
-      ["VERCEL_TOKEN", config.site.vercelToken()],
+      ["GitHub token", has(keys.github)],
+      ["Vercel token", has(keys.vercel)],
+    ]),
+    check("Website agent", "Ask for any change to the website in plain words; review it, then publish.", [
+      ["Claude API key", has(keys.anthropic)],
+      ["GitHub token", has(keys.github)],
+      ["Vercel token", has(keys.vercel)],
     ]),
     check("Lead Ads webhook", "New Instant Form leads arrive in seconds.", [
       ["Meta app", m.appSecret],
