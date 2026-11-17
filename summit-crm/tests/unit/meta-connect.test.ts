@@ -197,4 +197,26 @@ describe("connect with Facebook", () => {
     expect((await syncAds()).skipped).toBe(true);
     expect((await syncAds({ force: true })).skipped).toBe(false);
   });
+
+  it("finds form leads through the ads when the Page doesn't list the form, using whichever token Meta accepts", async () => {
+    const lead = { id: "88001", created_time: new Date().toISOString(), field_data: [{ name: "full_name", values: ["Riley Black"] }, { name: "phone_number", values: ["+18015550199"] }] };
+    fakeGraph({
+      "1443897258798067/leadgen_forms": { data: [] },
+      "act_902291632605494/ads": { data: [{ id: "A9", name: "Black Friday Ad-2", creative: { object_story_spec: { link_data: { call_to_action: { type: "SEE_DETAILS", value: { lead_gen_form_id: "F9" } } } } } }] },
+    });
+    // F9/leads: the Page token is refused, Kobe's login works
+    const inner = globalThis.fetch;
+    vi.stubGlobal("fetch", async (input: string | URL, init?: RequestInit) => {
+      const url = new URL(String(input));
+      if (url.pathname.endsWith("/F9/leads")) {
+        return url.searchParams.get("access_token") === "PAGE-TOKEN"
+          ? new Response(JSON.stringify({ error: { message: "(#200) Requires leads access" } }), { status: 400 })
+          : new Response(JSON.stringify({ data: [lead] }), { status: 200 });
+      }
+      return inner(input, init);
+    });
+    await saveApp(APP_ID, SECRET);
+    await completeConnect("CODE");
+    expect((await listLeads()).map((l) => l.fullName)).toContain("Riley Black");
+  });
 });

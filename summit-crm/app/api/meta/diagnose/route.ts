@@ -69,5 +69,28 @@ export async function GET() {
   } catch (e) {
     out.destinations = `error: ${err(e)}`;
   }
+  // Each form the ads point to: can the Page token / Kobe's login read its leads?
+  const formIds = [...new Set((Array.isArray(out.destinations) ? out.destinations : []).map((d: { form?: string | null }) => d.form).filter(Boolean))] as string[];
+  const tokens: [string, string | undefined][] = [["page", m.pageToken], ["login", m.userToken]];
+  out.ad_forms = await Promise.all(
+    formIds.map(async (id) => {
+      const row: Record<string, unknown> = { id };
+      for (const [name, token] of tokens) {
+        if (!token) continue;
+        try {
+          const f = await graph<{ name?: string; status?: string; leads_count?: number; page?: { id: string; name?: string } }>(id, { token, params: { fields: "name,status,leads_count,page{id,name}" } });
+          row[`${name}_form`] = f;
+        } catch (e) {
+          row[`${name}_form`] = `error: ${err(e)}`;
+        }
+        try {
+          row[`${name}_leads_readable`] = (await graph<{ data: unknown[] }>(`${id}/leads`, { token, params: { fields: "id", limit: "100" } })).data.length;
+        } catch (e) {
+          row[`${name}_leads_readable`] = `error: ${err(e)}`;
+        }
+      }
+      return row;
+    }),
+  );
   return Response.json(out);
 }

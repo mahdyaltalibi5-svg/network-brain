@@ -18,7 +18,8 @@ export async function GET(request: Request) {
 
   const days = Math.min(90, Math.max(1, Number(new URL(request.url).searchParams.get("days")) || 3));
   try {
-    const r = await pollLeads({ days, force: true });
+    // a manual or multi-week import is a backfill: no flood of alerts (the daily 3-day check still alerts)
+    const r = await pollLeads({ days, force: true, alert: days > 3 ? "never" : "always" });
     if (r.skipped) return Response.json({ ok: false, error: "Meta isn't connected: connect Facebook in Settings" }, { status: 409 });
     let ads: unknown = null, adsError: string | undefined;
     try {

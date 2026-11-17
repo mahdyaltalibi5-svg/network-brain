@@ -82,23 +82,78 @@ export function fromMetaLead(lead: MetaLead): LeadInput {
   };
 }
 
-export async function fetchLead(leadgenId: string) {
-  const token = (await metaCreds()).pageToken;
-  if (!token) throw new Error("Meta isn't connected (no Page token)");
-  return graph<MetaLead>(leadgenId, { token, params: { fields: LEAD_FIELDS } });
+/** The tokens that may read leads: the Page's, then Kobe's login (forms can sit outside the Page's list). */
+async function leadTokens() {
+  const m = await metaCreds();
+  return [...new Set([m.pageToken, m.userToken, m.adsToken].filter((t): t is string => !!t))];
 }
 
-/** Every lead form on the Page, then each form's recent leads. Used by the daily sync. */
-export async function fetchRecentLeads(sinceUnix: number): Promise<MetaLead[]> {
-  const { pageToken: token, pageId } = await metaCreds();
-  if (!token || !pageId) throw new Error("Meta isn't connected: connect Facebook in Settings");
-  const forms = await graphAll<{ id: string }>(`${pageId}/leadgen_forms`, { token, params: { fields: "id", limit: "100" } });
-  const filtering = JSON.stringify([{ field: "time_created", operator: "GREATER_THAN", value: sinceUnix }]);
-  const leads: MetaLead[] = [];
-  for (const form of forms) {
-    leads.push(...(await graphAll<MetaLead>(`${form.id}/leads`, { token, params: { fields: LEAD_FIELDS, filtering, limit: "100" } })));
+export async function fetchLead(leadgenId: string) {
+  const tokens = await leadTokens();
+  if (!tokens.length) throw new Error("Meta isn't connected (no Page token)");
+  let last: unknown;
+  for (const token of tokens) {
+    try {
+      return await graph<MetaLead>(leadgenId, { token, params: { fields: LEAD_FIELDS } });
+    } catch (e) {
+      last = e;
+    }
   }
-  return leads;
+  throw last;
+}
+
+/**
+ * Every lead form we can find (the Page's form list, plus the forms the ads actually point to,
+ * which Meta doesn't always list under the Page), then each form's recent leads.
+ */
+export async function leadFormIds(): Promise<string[]> {
+  const m = await metaCreds();
+  const ids = new Set<string>();
+  if (m.pageId && m.pageToken) {
+    try {
+      for (const f of await graphAll<{ id: string }>(`${m.pageId}/leadgen_forms`, { token: m.pageToken, params: { fields: "id", limit: "100" } })) ids.add(f.id);
+    } catch {
+      // fall through to the ads' forms
+    }
+  }
+  if (m.adAccountId && m.adsToken) {
+    type Cta = { value?: { lead_gen_form_id?: string } };
+    const ads = await graphAll<{ creative?: { object_story_spec?: { link_data?: { call_to_action?: Cta }; video_data?: { call_to_action?: Cta } }; asset_feed_spec?: { call_to_actions?: Cta[] } } }>(
+      `${m.adAccountId}/ads`,
+      { token: m.adsToken, params: { fields: "creative{object_story_spec,asset_feed_spec}", limit: "200" } },
+    ).catch(() => []);
+    for (const a of ads) {
+      const s = a.creative?.object_story_spec;
+      for (const cta of [s?.link_data?.call_to_action, s?.video_data?.call_to_action, ...(a.creative?.asset_feed_spec?.call_to_actions ?? [])]) {
+        if (cta?.value?.lead_gen_form_id) ids.add(String(cta.value.lead_gen_form_id));
+      }
+    }
+  }
+  return [...ids];
+}
+
+export async function fetchRecentLeads(sinceUnix: number): Promise<MetaLead[]> {
+  const tokens = await leadTokens();
+  if (!tokens.length) throw new Error("Meta isn't connected: connect Facebook in Settings");
+  const filtering = JSON.stringify([{ field: "time_created", operator: "GREATER_THAN", value: sinceUnix }]);
+  const byId = new Map<string, MetaLead>();
+  const errors: string[] = [];
+  const forms = await leadFormIds();
+  for (const form of forms) {
+    let ok = false;
+    for (const token of tokens) {
+      try {
+        for (const l of await graphAll<MetaLead>(`${form}/leads`, { token, params: { fields: LEAD_FIELDS, filtering, limit: "100" } })) byId.set(l.id, { ...l, form_id: l.form_id ?? form });
+        ok = true;
+        break;
+      } catch (e) {
+        errors.push(`form ${form}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    if (!ok && forms.length === 1) throw new Error(errors.join("; "));
+  }
+  if (forms.length && !byId.size && errors.length >= forms.length * tokens.length) throw new Error(`Meta wouldn't share the leads: ${errors[0]}`);
+  return [...byId.values()];
 }
 
 /* ── Webhooks ─────────────────────────────────────────────────────────── */
