@@ -153,4 +153,9 @@ export const schema = [
     PRIMARY KEY (day, ad_id)
   )`,
   `CREATE INDEX IF NOT EXISTS meta_daily_campaign_idx ON meta_daily (campaign_id, day)`,
+  // Lost leads keep all their data; the reason is recorded.
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS lost_reason TEXT`,
+  // Instagram/Facebook DMs no longer become leads: any that did are kept, marked lost.
+  `UPDATE leads SET stage = 'lost', lost_reason = COALESCE(lost_reason, 'Instagram/Facebook message (DM leads turned off)'), updated_at = now()
+   WHERE meta_lead_id LIKE 'dm:%' AND stage <> 'lost'`,
 ];

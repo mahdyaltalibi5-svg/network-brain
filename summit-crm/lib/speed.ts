@@ -18,11 +18,12 @@ const verb: Record<Channel, string> = { call: "Called", text: "Texted", email: "
 
 const firstName = (l: Pick<Lead, "fullName">) => l.fullName?.trim().split(/\s+/)[0] ?? "";
 
+/** The first message Kobe sends (text or email). Form answers like "2_suits_+_free…" stay out of it. */
 export function textTemplate(l: Pick<Lead, "fullName" | "occasion">) {
   const name = firstName(l);
-  const about = l.occasion ? ` about ${l.occasion.toLowerCase()}` : "";
-  return `Hi${name ? ` ${name}` : ""}, it's Kobe from Summit Customs. Thanks for reaching out${about}. When's a good time for a quick call?`;
+  return `Hi${name ? ` ${name}` : ""}, this is Kobe with Summit Custom Suits.\n\nThanks for your interest in a custom suit. When is a good time to hop on a call?`;
 }
+export const EMAIL_SUBJECT = "Your custom suit with Summit Custom Suits";
 
 /** Logs a contact attempt and stops the clock if it's the first. Returns minutes taken, if it was. */
 export async function touchLead(id: string, channel: Channel): Promise<number | null> {
@@ -53,7 +54,7 @@ export function formatMinutes(m: number) {
 /** Leads nobody has reached yet, oldest first. */
 export async function waitingLeads(): Promise<Lead[]> {
   const db = await getDb();
-  const rows = await db.query(`SELECT id FROM leads WHERE first_contact_at IS NULL AND stage = 'new' ORDER BY lead_created_at ASC LIMIT 100`);
+  const rows = await db.query(`SELECT id FROM leads WHERE first_contact_at IS NULL AND stage = 'new' ORDER BY lead_created_at DESC LIMIT 100`);
   return (await Promise.all(rows.map((r) => getLead(String(r.id))))).filter(Boolean) as Lead[];
 }
 

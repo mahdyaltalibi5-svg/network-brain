@@ -15,6 +15,7 @@ export type Lead = {
   phone: string | null;
   occasion: string | null;
   notes: string | null;
+  lostReason: string | null;
   answers: { question: string; answer: string }[];
   stage: StageId;
   valueCents: number | null;
@@ -56,6 +57,7 @@ function toLead(r: LeadRow): Lead {
     phone: (r.phone as string) ?? null,
     occasion: (r.occasion as string) ?? null,
     notes: (r.notes as string) ?? null,
+    lostReason: (r.lost_reason as string) ?? null,
     answers: json(r.answers, []),
     stage: r.stage as StageId,
     valueCents: r.value_cents == null ? null : Number(r.value_cents),
@@ -195,7 +197,7 @@ export async function getLead(id: string) {
 }
 
 export type LeadFilter = { q?: string; source?: string; campaign?: string; range?: string; sort?: string };
-export const SORTS = { activity: "Recently active", new: "Newest first", old: "Oldest first", value: "Highest value", followup: "Next follow-up" } as const;
+export const SORTS = { new: "Newest first", activity: "Recently active", old: "Oldest first", value: "Highest value", followup: "Next follow-up" } as const;
 
 /** Leads for the pipeline, filtered and sorted. `range` is days back (7/30/90) or empty for all. */
 export async function listLeads(f: LeadFilter = {}) {
@@ -221,7 +223,7 @@ export async function listLeads(f: LeadFilter = {}) {
     followup: "follow_up_at ASC NULLS LAST, lead_created_at DESC",
     activity: "updated_at DESC",
   };
-  const order = orders[f.sort ?? "activity"] ?? orders.activity;
+  const order = orders[f.sort ?? "new"] ?? orders.new; // newest leads on top by default
   const rows = await db.query(`SELECT * FROM leads ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY ${order} LIMIT 1000`, params);
   return rows.map(toLead);
 }
@@ -245,6 +247,18 @@ export async function activities(leadId: string): Promise<Activity[]> {
 }
 
 /** Moves a lead to a new stage, records it, and reports the stage to Meta. */
+export const LOST_REASONS = ["No response", "Not interested", "Price", "Went elsewhere", "Timing / event cancelled", "Spam or duplicate", "Other"] as const;
+
+/** Marks a lead lost (nothing is deleted; it can be reopened by moving it to any other stage). */
+export async function markLost(id: string, reason: string, note?: string) {
+  const db = await getDb();
+  const r = reason.trim().slice(0, 80) || "Other";
+  await db.query(`UPDATE leads SET lost_reason = $2 WHERE id = $1`, [id, r]);
+  const lead = await moveLead(id, "lost");
+  await log(id, "note", `Marked lost: ${r}${note?.trim() ? ` · ${note.trim().slice(0, 500)}` : ""}`);
+  return lead;
+}
+
 export async function moveLead(id: string, to: StageId, opts: { valueCents?: number | null } = {}) {
   const db = await getDb();
   const current = await getLead(id);
@@ -255,7 +269,8 @@ export async function moveLead(id: string, to: StageId, opts: { valueCents?: num
     `UPDATE leads SET stage = $2, value_cents = $3, updated_at = now(),
        booked_at = CASE WHEN $4::boolean AND booked_at IS NULL THEN now() ELSE booked_at END,
        ordered_at = CASE WHEN $5::boolean AND ordered_at IS NULL THEN now() ELSE ordered_at END,
-       first_contact_at = CASE WHEN $2 <> 'new' THEN COALESCE(first_contact_at, now()) ELSE first_contact_at END
+       first_contact_at = CASE WHEN $2 NOT IN ('new', 'lost') THEN COALESCE(first_contact_at, now()) ELSE first_contact_at END,
+       lost_reason = CASE WHEN $2 = 'lost' THEN lost_reason ELSE NULL END
      WHERE id = $1 RETURNING *`,
     [id, to, value, bookedStages.includes(to), orderedStages.includes(to)],
   );

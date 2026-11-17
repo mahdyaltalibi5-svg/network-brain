@@ -25,9 +25,6 @@ export const SCOPES = [
   "ads_read",
   "ads_management",
   "business_management",
-  "pages_messaging",
-  "instagram_basic",
-  "instagram_manage_messages",
 ];
 
 export const redirectUri = () => `${config.publicUrl()}/api/meta/callback`;
@@ -151,9 +148,9 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
       await graph(`${m.appId}/subscriptions`, {
         token: app,
         method: "POST",
-        params: { object: "page", callback_url: webhookUrl(), fields: "leadgen,messages,message_echoes", verify_token: m.verifyToken ?? "", include_values: "true" },
+        params: { object: "page", callback_url: webhookUrl(), fields: "leadgen", verify_token: m.verifyToken ?? "", include_values: "true" },
       });
-      await graph(`${page.id}/subscribed_apps`, { token: page.access_token, method: "POST", params: { subscribed_fields: "leadgen,messages,message_echoes" } });
+      await graph(`${page.id}/subscribed_apps`, { token: page.access_token, method: "POST", params: { subscribed_fields: "leadgen" } });
       // Ads can use lead forms that live on another of Kobe's Pages: subscribe those for leads too.
       const others: string[] = [];
       for (const p of pages.filter((x) => x.id !== page!.id)) {
@@ -164,28 +161,9 @@ export async function completeConnect(code: string): Promise<{ ok: boolean; log:
           // not allowed on that Page; polling still covers its forms
         }
       }
-      log.push({ step: "Instant lead webhook", ok: true, detail: `New form leads (${[page.name, ...others].join(", ")}) and Messenger messages arrive in seconds` });
+      log.push({ step: "Instant lead webhook", ok: true, detail: `New form leads (${[page.name, ...others].join(", ")}) arrive in seconds` });
     } catch (e) {
       log.push({ step: "Instant lead webhook", ok: false, detail: `${msg(e)}. Form leads still arrive by polling.` });
-    }
-    // Instagram DMs: the Page's linked Instagram account
-    try {
-      const p = await graph<{ instagram_business_account?: { id: string; username?: string } }>(page.id, {
-        token: page.access_token,
-        params: { fields: "instagram_business_account{id,username}" },
-      });
-      const ig = p.instagram_business_account;
-      if (!ig) throw new Error("No Instagram account is linked to this Page (link it in Meta Business Suite → Settings → Instagram)");
-      await graph(`${m.appId}/subscriptions`, {
-        token: app,
-        method: "POST",
-        params: { object: "instagram", callback_url: webhookUrl(), fields: "messages", verify_token: m.verifyToken ?? "", include_values: "true" },
-      });
-      save["meta.ig_id"] = ig.id;
-      save["meta.ig_username"] = ig.username ?? ig.id;
-      log.push({ step: "Instagram messages", ok: true, detail: `DMs to @${ig.username ?? ig.id} become leads` });
-    } catch (e) {
-      log.push({ step: "Instagram messages", ok: false, detail: msg(e) });
     }
   }
 

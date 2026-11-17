@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft, CalendarHeart, FileText, Mail, Phone, Ruler, Scissors, Shirt, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, CalendarHeart, CircleSlash, FileText, Mail, Phone, Ruler, Scissors, Shirt, Sparkles, Trash2 } from "lucide-react";
 import { Avatar, SourceBadge, StageBadge } from "@/components/Badges";
 import { ContactButtons } from "@/components/ContactButtons";
 import { FileUpload } from "@/components/FileUpload";
@@ -11,10 +11,10 @@ import { Since } from "@/components/Since";
 import { StageSelect } from "@/components/StageSelect";
 import { withBase } from "@/lib/base";
 import { money, sourceLabel, when } from "@/lib/format";
-import { activities, getLead } from "@/lib/leads";
+import { activities, getLead, LOST_REASONS } from "@/lib/leads";
 import { files, garments, GARMENT_KINDS, GARMENT_STATUS, MEASUREMENTS, PREFERENCES } from "@/lib/profile";
 import { formatMinutes, textTemplate } from "@/lib/speed";
-import { addNoteAction, deleteLeadAction, moveLeadAction, updateContactAction } from "../../actions";
+import { addNoteAction, markLostAction, moveLeadAction, updateContactAction } from "../../actions";
 import { addGarmentAction, deleteFileAction, deleteGarmentAction, garmentStatusAction, saveDetailsAction, saveMeasurementsAction, savePreferencesAction } from "../../profile-actions";
 
 export const metadata: Metadata = { title: "Client" };
@@ -75,20 +75,21 @@ export default async function LeadPage({ params, searchParams }: { params: Promi
             <StageSelect id={lead.id} stage={lead.stage} valueCents={lead.valueCents} action={moveLeadAction} />
           </div>
         </div>
-        {(lead.platform === "instagram_dm" || lead.platform === "messenger") && (
-          <a
-            href={lead.platform === "instagram_dm" ? "https://www.instagram.com/direct/inbox/" : "https://business.facebook.com/latest/inbox/all"}
-            target="_blank"
-            rel="noopener"
-            className="btn mt-5"
-          >
-            Reply in {lead.platform === "instagram_dm" ? "Instagram" : "Messenger"}
-          </a>
-        )}
         <div className="mt-5 hidden max-w-md md:block">
           <ContactButtons id={lead.id} phone={lead.phone} email={lead.email} text={textTemplate(lead)} />
         </div>
       </section>
+
+      {lead.stage === "lost" && (
+        <div className="card flex flex-wrap items-center gap-3 border-bad/30 p-4 text-sm" role="status">
+          <CircleSlash className="h-4 w-4 text-bad" aria-hidden="true" />
+          <span>Lost{lead.lostReason ? `: ${lead.lostReason}` : ""}. Their details are kept.</span>
+          <form action={moveLeadAction} className="ml-auto">
+            <input type="hidden" name="id" value={lead.id} /><input type="hidden" name="stage" value="contacted" /><input type="hidden" name="value" value="" />
+            <button className="btn-ghost">Reopen</button>
+          </form>
+        </div>
+      )}
 
       {/* Tabs */}
       <nav aria-label="Client sections" className="glass -mx-1 flex gap-1 overflow-x-auto !rounded-full p-1">
@@ -172,15 +173,20 @@ export default async function LeadPage({ params, searchParams }: { params: Promi
                   .map(([k, v]) => <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-2"><dt className="text-stone">{k}</dt><dd className="break-words">{v}</dd></div>)}
               </dl>
             </section>
-            <details className="text-sm">
-              <summary className="inline-flex cursor-pointer items-center gap-1.5 text-stone hover:text-bad"><Trash2 className="h-3.5 w-3.5" aria-hidden="true" />Delete this lead</summary>
-              <form action={deleteLeadAction} className="mt-3 space-y-2">
-                <input type="hidden" name="id" value={lead.id} />
-                <input type="hidden" name="confirm" value="yes" />
-                <p className="text-ivory-dim">For spam, duplicates and tests. The lead and its history are removed for good.</p>
-                <button className="btn-ghost !border-bad/60 !text-bad">Yes, delete it</button>
-              </form>
-            </details>
+            {lead.stage !== "lost" && (
+              <details className="text-sm" data-testid="mark-lost">
+                <summary className="inline-flex cursor-pointer items-center gap-1.5 text-stone hover:text-bad"><CircleSlash className="h-3.5 w-3.5" aria-hidden="true" />Mark as lost</summary>
+                <form action={markLostAction} className="card mt-3 space-y-3 p-4">
+                  <input type="hidden" name="id" value={lead.id} />
+                  <p className="text-ivory-dim">Moves them out of the active pipeline. Everything is kept, including their email for later, and you can reopen them any time.</p>
+                  <div><label className="label" htmlFor="lost-reason">Reason</label>
+                    <select id="lost-reason" name="reason" className="field" defaultValue="No response">{LOST_REASONS.map((r) => <option key={r}>{r}</option>)}</select>
+                  </div>
+                  <div><label className="label" htmlFor="lost-note">Note (optional)</label><input id="lost-note" name="note" className="field" placeholder="Went with a suit from Nordstrom" /></div>
+                  <button className="btn-ghost !border-bad/60 !text-bad">Mark as lost</button>
+                </form>
+              </details>
+            )}
           </aside>
         </div>
       )}

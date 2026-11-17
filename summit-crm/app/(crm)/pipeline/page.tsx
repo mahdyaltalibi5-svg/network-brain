@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
-import { CalendarClock, Columns3, Download, List, Plus, Search } from "lucide-react";
+import { CalendarClock, Columns3, Download, FileDown, List, Plus, Search } from "lucide-react";
+import { withBase } from "@/lib/base";
 import { Avatar, SourceBadge, StageBadge } from "@/components/Badges";
 import { Board, type CardLead } from "@/components/Board";
 import { ago, money } from "@/lib/format";
@@ -54,6 +55,7 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
               <List className="h-3.5 w-3.5" aria-hidden="true" /> List
             </Link>
           </div>
+          <a href={withBase(`/api/leads/export${qs({ view: undefined }).replace("/pipeline", "")}`)} className="btn-ghost" download><FileDown className="h-3.5 w-3.5" aria-hidden="true" />Export CSV</a>
           <Link href="/settings#import" className="btn-ghost"><Download className="h-3.5 w-3.5" aria-hidden="true" />Import from Meta</Link>
           <details className="relative">
             <summary className="btn cursor-pointer list-none"><Plus className="h-3.5 w-3.5" aria-hidden="true" />New lead</summary>
@@ -99,7 +101,7 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
         </div>
         <div>
           <label htmlFor="f-sort" className="label !mb-1">Sort</label>
-          <select id="f-sort" name="sort" defaultValue={sp.sort ?? "activity"} className="field !w-40">
+          <select id="f-sort" name="sort" defaultValue={sp.sort ?? "new"} className="field !w-40">
             {Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
         </div>

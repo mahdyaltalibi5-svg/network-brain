@@ -109,7 +109,8 @@ test("import the lead file downloaded from Meta", async ({ page }) => {
   await expect(page.getByRole("region", { name: "Where they came from" }).getByText("Kobe.Ascend - LEADS")).toBeVisible();
 });
 
-test("speed to lead: a new lead waits on Respond until it's called", async ({ page, request }) => {
+test("speed to lead: a new lead waits on Respond until it's called", async ({ page: first, request }) => {
+  let page = first;
   const res = await request.post("/portal/api/leads", {
     data: { name: "Riley Fast", phone: "801-555-0199", occasion: "Tuxedo" },
     headers: { origin: "https://summitcustomsuits.com" },
@@ -122,23 +123,37 @@ test("speed to lead: a new lead waits on Respond until it's called", async ({ pa
   await expect(card.locator(".font-mono")).toHaveText(/^\d+:\d{2}$/); // live clock
   await expect(page.getByRole("link", { name: /Today/ }).first().locator("span")).toHaveText(/\d+/); // badge
 
-  // keep the browser from leaving for the dialer; the click handler still logs the call
-  await page.evaluate(() => document.addEventListener("click", (e) => { if ((e.target as Element).closest('a[href^="tel:"],a[href^="sms:"]')) e.preventDefault(); }, true));
   const beacon = page.waitForRequest((r) => r.url().includes("/touch") && r.method() === "POST");
   await card.getByRole("link", { name: "Call" }).click();
   await beacon;
-  await expect.poll(async () => (await page.reload(), await page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" }).count())).toBe(0);
+  // logged automatically: the list refreshes and Riley is no longer waiting
+  await expect(page.locator('[data-testid="waiting"] li', { hasText: "Riley Fast" })).toHaveCount(0);
   await expect(page.getByTestId("speed")).toContainText("Leads answered (30 days)");
 
+  // that tab is now handing off to the phone's dialer; carry on in a fresh one (same sign-in)
+  page = await first.context().newPage();
   await page.goto("/portal/pipeline");
   await page.getByRole("link", { name: "Riley Fast" }).click();
+  await page.waitForURL(/\/leads\//);
   await expect(page.getByTestId("response")).toHaveText(/First response in/);
   await expect(page.getByText(/Called 801-555-0199 · first response in/)).toBeVisible();
 
-  await page.getByText("Delete this lead").click();
-  await page.getByRole("button", { name: "Yes, delete it" }).click();
-  await expect(page).toHaveURL(/\/portal\/pipeline$/);
-  await expect(page.getByRole("link", { name: "Riley Fast" })).toHaveCount(0);
+
+  // lost, not deleted: the lead and its details stay, and it can be reopened
+  await page.getByText("Mark as lost").first().click();
+  await page.getByLabel("Reason").selectOption("Went elsewhere");
+  await page.getByRole("button", { name: "Mark as lost" }).click();
+  await expect(page.getByText("Lost: Went elsewhere. Their details are kept.")).toBeVisible();
+  await expect(page.getByText(/Marked lost: Went elsewhere/)).toBeVisible();
+  await page.getByRole("button", { name: "Reopen" }).click();
+  await expect(page.getByText(/Lost: Went elsewhere/)).toHaveCount(0);
+
+  // export: a CSV with the lead's details
+  const csv = await page.request.get("/portal/api/leads/export?q=Riley");
+  expect(csv.headers()["content-type"]).toContain("text/csv");
+  const body = await csv.text();
+  expect(body).toContain('"Name","Email","Phone","Stage"');
+  expect(body).toContain('"Riley Fast"');
 });
 
 test("website tab explains how to connect, and the app is installable", async ({ page, request }) => {

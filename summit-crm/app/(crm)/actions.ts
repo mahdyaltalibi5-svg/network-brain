@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addNote, deleteLead, moveLead, updateContact, upsertLead } from "@/lib/leads";
+import { addNote, markLost, moveLead, updateContact, upsertLead } from "@/lib/leads";
 import { parseMoney } from "@/lib/format";
 import { isStage } from "@/lib/stages";
 
@@ -50,10 +50,9 @@ export async function createLeadAction(form: FormData) {
   redirect(`/leads/${lead.id}`);
 }
 
-export async function deleteLeadAction(form: FormData) {
+export async function markLostAction(form: FormData) {
   const id = text(form, "id");
-  if (id && form.get("confirm") === "yes") await deleteLead(id);
+  if (id) await markLost(id, text(form, "reason") || "Other", text(form, "note"));
   revalidatePath("/", "layout");
-  revalidatePath("/now");
-  redirect("/pipeline");
+  revalidatePath(`/leads/${id}`);
 }

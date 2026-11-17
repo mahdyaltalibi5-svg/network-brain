@@ -124,10 +124,10 @@ describe("speed to lead", () => {
   });
 
   it("drafts a personal first text", () => {
-    expect(textTemplate({ fullName: "Jordan Reyes", occasion: "Wedding" })).toBe(
-      "Hi Jordan, it's Kobe from Summit Customs. Thanks for reaching out about wedding. When's a good time for a quick call?",
+    expect(textTemplate({ fullName: "Tommy Sims", occasion: "2_suits_+_free_custom_sport_coat" })).toBe(
+      "Hi Tommy, this is Kobe with Summit Custom Suits.\n\nThanks for your interest in a custom suit. When is a good time to hop on a call?",
     );
-    expect(textTemplate({ fullName: null, occasion: null })).toMatch(/^Hi, it's Kobe/);
+    expect(textTemplate({ fullName: null, occasion: null })).toMatch(/^Hi, this is Kobe/);
   });
 });
 
