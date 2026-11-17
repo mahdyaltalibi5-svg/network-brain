@@ -9,7 +9,7 @@ export async function saveAppAction(_prev: AppState, form: FormData): Promise<Ap
   try {
     const app = await saveApp(String(form.get("appId") ?? ""), String(form.get("appSecret") ?? ""), String(form.get("configId") ?? ""));
     revalidatePath("/settings");
-    return { ok: `Saved ${app.name ?? app.id}.` };
+    return { ok: app.needsSecret ? "Saved the App ID and Configuration ID. The App secret is still needed." : `Saved ${app.name ?? app.id}. Now tap Connect with Facebook.` };
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
   }

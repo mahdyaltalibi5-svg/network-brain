@@ -36,13 +36,25 @@ export const webhookUrl = () => `${config.publicUrl()}/api/meta/webhook`;
 const appToken = (id: string, secret: string) => `${id}|${secret}`;
 const msg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
-/** Saves the Meta app's ID and secret after checking them against the Graph API. */
+/**
+ * Saves the Meta app's ID (and Configuration ID), and its secret after checking the pair against
+ * the Graph API. The secret can come later: someone without Facebook access can save the IDs, and
+ * the account owner pastes only the secret. A blank secret keeps the one already saved.
+ */
 export async function saveApp(appId: string, appSecret: string, configId = "") {
   appId = appId.trim();
   appSecret = appSecret.trim();
   configId = configId.trim();
   if (configId && !/^\d{5,25}$/.test(configId)) throw new Error("The Configuration ID is a long number (Facebook Login for Business → Configurations).");
   if (!/^\d{5,25}$/.test(appId)) throw new Error("The App ID is a long number, shown at the top of the app dashboard.");
+  if (!appSecret) {
+    const saved = await metaCreds();
+    if (saved.appSecret && saved.appId === appId) appSecret = saved.appSecret;
+    else {
+      await writeSettings({ "meta.app_id": appId, "meta.config_id": configId || null, "meta.app_name": null });
+      return { id: appId, name: undefined, needsSecret: true };
+    }
+  }
   if (!/^[0-9a-f]{32}$/i.test(appSecret)) throw new Error("The App secret is 32 letters and numbers (App settings → Basic → App secret → Show).");
   let app: { id: string; name?: string };
   try {
@@ -61,7 +73,7 @@ export async function saveApp(appId: string, appSecret: string, configId = "") {
     },
     SECRET_KEYS,
   );
-  return app;
+  return { ...app, needsSecret: false };
 }
 
 /** The Facebook Login address Kobe is sent to. */

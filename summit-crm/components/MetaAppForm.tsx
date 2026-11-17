@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { saveAppAction, type AppState } from "@/app/(crm)/settings/actions";
 
-export function MetaAppForm({ appId, configId }: { appId?: string; configId?: string }) {
+export function MetaAppForm({ appId, configId, hasSecret }: { appId?: string; configId?: string; hasSecret?: boolean }) {
   const [state, action, pending] = useActionState<AppState, FormData>(saveAppAction, {});
   return (
     <form action={action} className="grid gap-3 sm:grid-cols-[1fr_1.4fr_1fr_auto] sm:items-end">
@@ -13,7 +13,7 @@ export function MetaAppForm({ appId, configId }: { appId?: string; configId?: st
       </div>
       <div>
         <label className="label" htmlFor="meta-app-secret">App secret</label>
-        <input id="meta-app-secret" name="appSecret" type="password" autoComplete="off" required className="field" placeholder={appId ? "Saved. Paste again to change it" : ""} />
+        <input id="meta-app-secret" name="appSecret" type="password" autoComplete="off" className="field" placeholder={hasSecret ? "Saved. Paste again to change it" : "Paste it here"} />
       </div>
       <div>
         <label className="label" htmlFor="meta-config-id">Configuration ID</label>

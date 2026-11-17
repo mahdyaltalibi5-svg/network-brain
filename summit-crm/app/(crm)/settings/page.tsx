@@ -101,9 +101,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             <li className="grid gap-2 sm:grid-cols-[2rem_1fr] [&>*]:min-w-0">
               <span className="grid h-7 w-7 place-items-center rounded-full border border-gold/50 text-xs text-gold">2</span>
               <div>
-                <p className="font-medium">Paste the App ID and App secret {m.appId && <span className="text-sm text-ok">· saved{m.appName ? ` (${m.appName})` : ""}</span>}</p>
+                <p className="font-medium">
+                  Paste the App ID, App secret and Configuration ID{" "}
+                  {m.appId && m.appSecret ? <span className="text-sm text-ok">· saved{m.appName ? ` (${m.appName})` : ""}</span> : m.appId ? <span className="text-sm text-warn" data-testid="needs-secret">· IDs saved; App secret still needed</span> : null}
+                </p>
                 <p className="mt-1 text-sm text-ivory-dim">App settings → Basic. The secret is stored encrypted and never shown again.</p>
-                <div className="mt-3"><MetaAppForm appId={m.appId} configId={m.configId} /></div>
+                <div className="mt-3"><MetaAppForm appId={m.appId} configId={m.configId} hasSecret={!!m.appSecret} /></div>
               </div>
             </li>
             <li className="grid gap-2 sm:grid-cols-[2rem_1fr] [&>*]:min-w-0">
