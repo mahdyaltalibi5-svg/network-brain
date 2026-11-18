@@ -223,11 +223,11 @@ export async function disconnect() {
  * Pulls recent form leads and imports any the webhook missed. Called every 5 minutes by the
  * reminder scheduler (throttled to every 4 minutes) and by "Sync now".
  */
-export async function pollLeads({ days, force = false, alert = "always" }: { days?: number; force?: boolean; alert?: AlertMode } = {}) {
+export async function pollLeads({ days, force = false, alert = "always", minIntervalMs = 4 * 60_000 }: { days?: number; force?: boolean; alert?: AlertMode; minIntervalMs?: number } = {}) {
   const m = await metaCreds();
   if (!m.pageId || !m.pageToken) return { skipped: true as const, fetched: 0, created: 0 };
   const now = Date.now();
-  if (!force && m.lastPollAt && now - m.lastPollAt.getTime() < 4 * 60_000) return { skipped: true as const, fetched: 0, created: 0 };
+  if (!force && m.lastPollAt && now - m.lastPollAt.getTime() < minIntervalMs) return { skipped: true as const, fetched: 0, created: 0 };
   // overlap the last poll by 15 minutes; first run looks back 3 days
   const since = days ? now - days * 86_400_000 : (m.lastPollAt?.getTime() ?? now - 3 * 86_400_000) - 15 * 60_000;
   const leads = await fetchRecentLeads(Math.floor(since / 1000));

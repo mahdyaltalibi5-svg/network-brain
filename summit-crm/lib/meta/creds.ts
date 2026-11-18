@@ -28,6 +28,8 @@ export type MetaCreds = {
   igUsername?: string;
   adsSyncedAt?: Date;
   adsError?: string;
+  lastWebhookAt?: Date;
+  webhookError?: string;
   log: ConnectStep[];
 };
 
@@ -71,6 +73,8 @@ export async function metaCreds(): Promise<MetaCreds> {
     igUsername: s["meta.ig_username"],
     adsSyncedAt: date(s["meta.ads_synced_at"]),
     adsError: s["meta.ads_error"],
+    lastWebhookAt: date(s["meta.last_webhook_at"]),
+    webhookError: s["meta.webhook_error"],
     log,
   };
 }

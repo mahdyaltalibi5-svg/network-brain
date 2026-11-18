@@ -6,10 +6,10 @@ import { pollLeads } from "./connect";
  * daily job). Both parts are throttled (form leads every 4 minutes, ad results hourly) and never
  * throw, so a Meta hiccup can't break a page.
  */
-export async function autoSync() {
+export async function autoSync({ leadIntervalMs }: { leadIntervalMs?: number } = {}) {
   const out: { leads?: unknown; ads?: unknown; error?: string } = {};
   try {
-    out.leads = await pollLeads();
+    out.leads = await pollLeads({ minIntervalMs: leadIntervalMs });
   } catch (e) {
     out.error = e instanceof Error ? e.message : String(e);
   }

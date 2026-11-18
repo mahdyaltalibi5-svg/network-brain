@@ -72,6 +72,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               </ul>
             )}
             <p className="mt-4 text-xs text-stone">
+              <span data-testid="instant-status" className={m.lastWebhookAt ? "text-ok" : "text-warn"}>
+                {m.lastWebhookAt
+                  ? `Instant delivery working: last lead pushed by Meta ${m.lastWebhookAt.toLocaleString("en-US", { timeZone: "America/Denver", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}. `
+                  : "Instant delivery: no lead pushed by Meta yet. "}
+              </span>
               {m.lastPollAt ? `Last checked for new leads ${m.lastPollAt.toLocaleString("en-US", { timeZone: "America/Denver", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}. ` : ""}
               {m.userTokenExpiresAt ? `Facebook asks you to sign in again by ${longDate(m.userTokenExpiresAt)}; you'll get a reminder a week before. Form leads keep arriving either way.` : ""}
             </p>

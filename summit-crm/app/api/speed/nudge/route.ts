@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   // Pull new Meta form leads first (backs up the webhook), so they get alerts in this same run.
-  const meta = await autoSync();
+  const meta = await autoSync({ leadIntervalMs: 50_000 }); // a 1-minute scheduler = new form leads within a minute
   await warnIfExpiring().catch(() => false);
   const speed = await sendNudges();
   const followUps = await sendFollowUpReminders();

@@ -13,7 +13,7 @@ export class GraphError extends Error {
 /** Minimal Graph API client: one place for the version, the base URL and error handling. */
 export async function graph<T>(
   path: string,
-  { token, params = {}, method = "GET", body }: { token: string; params?: Record<string, string>; method?: "GET" | "POST"; body?: unknown },
+  { token, params = {}, method = "GET", body }: { token: string; params?: Record<string, string>; method?: "GET" | "POST" | "DELETE"; body?: unknown },
 ): Promise<T> {
   const url = path.startsWith("https://") ? new URL(path) : new URL(`https://graph.facebook.com/${config.meta.graphVersion()}/${path.replace(/^\//, "")}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
