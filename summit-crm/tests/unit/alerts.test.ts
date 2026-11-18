@@ -56,3 +56,17 @@ describe("lead alerts", () => {
     expect(pushes.at(-1)!.body).toContain("Test alert");
   });
 });
+
+describe("Meta test leads", () => {
+  it("files test leads as lost, and only alerts for them when Meta pushed them instantly", async () => {
+    const { importMetaLead } = await import("@/lib/leads");
+    const test = { id: "900", created_time: new Date().toISOString(), field_data: [{ name: "full_name", values: ["<test lead: dummy data for full_name>"] }] };
+    const polled = await importMetaLead(test, { alert: "always" });
+    expect(polled.lead.fullName).toBe("Meta test lead");
+    const { getLead } = await import("@/lib/leads");
+    expect((await getLead(polled.lead.id))!).toMatchObject({ stage: "lost", lostReason: "Meta test lead" });
+    expect(pushes).toHaveLength(0);
+    await importMetaLead({ ...test, id: "901" }, { alert: "always", instant: true });
+    expect(pushes.map((p) => p.title)).toEqual(["Instant leads are working"]);
+  });
+});

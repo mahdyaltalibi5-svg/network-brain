@@ -1,6 +1,6 @@
 import { withBase } from "./base";
 import { getDb } from "./db";
-import type { LeadInput } from "./meta/leadgen";
+import { fromMetaLead, isTestLead, type LeadInput, type MetaLead } from "./meta/leadgen";
 import { sendStageEvent, type CapiResult } from "./meta/capi";
 import { bookedStages, orderedStages, stage as stageOf, type StageId } from "./stages";
 import type { FunnelCounts } from "./meta/insights";
@@ -131,7 +131,20 @@ export function leadAlert(lead: Lead): { title: string; body: string } {
   return { title: `New lead${lead.occasion ? ` · ${lead.occasion}` : ""}`, body: `${who} via the website. Tap to call.` };
 }
 
-export async function upsertLead(input: LeadInput, { alert = "auto" }: { alert?: AlertMode } = {}): Promise<{ lead: Lead; created: boolean }> {
+/**
+ * Imports a Meta lead. Test leads (from Meta's testing tools) are filed as lost straight away;
+ * they alert only when pushed instantly (that alert is the proof the instant path works).
+ */
+export async function importMetaLead(meta: MetaLead, { alert, instant = false }: { alert: AlertMode; instant?: boolean }) {
+  const test = isTestLead(meta);
+  const input = fromMetaLead(meta);
+  if (test) input.fullName = "Meta test lead";
+  const r = await upsertLead(input, { alert: test && !instant ? "never" : alert, testAlert: test });
+  if (test && r.created) await markLost(r.lead.id, "Meta test lead");
+  return r;
+}
+
+export async function upsertLead(input: LeadInput, { alert = "auto", testAlert = false }: { alert?: AlertMode; testAlert?: boolean } = {}): Promise<{ lead: Lead; created: boolean }> {
   const db = await getDb();
   if (input.metaLeadId) {
     const existing = await db.query(`SELECT * FROM leads WHERE meta_lead_id = $1`, [input.metaLeadId]);
@@ -179,7 +192,8 @@ export async function upsertLead(input: LeadInput, { alert = "auto" }: { alert?:
   // again from here would count each one twice. Their later stages are still reported.
   // Alert the phone right away (see AlertMode).
   if (alert === "always" || (alert === "auto" && Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000)) {
-    await notifyAll({ ...leadAlert(lead), url: withBase(`/leads/${lead.id}`), tag: `lead-${lead.id}` });
+    const a = testAlert ? { title: "Instant leads are working", body: "Meta's test lead reached the CRM in seconds. Real leads will arrive the same way." } : leadAlert(lead);
+    await notifyAll({ ...a, url: withBase(`/leads/${lead.id}`), tag: `lead-${lead.id}` });
   }
   const result: CapiResult =
     lead.source === "website" ? { sent: false, skipped: "already reported by the website's Meta Pixel" }

@@ -1,6 +1,6 @@
 import { metaCreds } from "@/lib/meta/creds";
-import { upsertLead } from "@/lib/leads";
-import { fetchLead, fromMetaLead, leadgenIds, verifySignature } from "@/lib/meta/leadgen";
+import { importMetaLead } from "@/lib/leads";
+import { fetchLead, leadgenIds, verifySignature } from "@/lib/meta/leadgen";
 import { writeSettings } from "@/lib/vault";
 
 /**
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   const results = [];
   for (const change of changes) {
     try {
-      const { lead, created } = await upsertLead(fromMetaLead(await fetchLead(change.leadgen_id)), { alert: "always" });
+      const { lead, created } = await importMetaLead(await fetchLead(change.leadgen_id), { alert: "always", instant: true });
       results.push({ leadgen_id: change.leadgen_id, id: lead.id, created });
     } catch (e) {
       // Still answer 200: Meta retries failed deliveries for hours, and the daily sync

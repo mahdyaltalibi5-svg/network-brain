@@ -49,6 +49,9 @@ const pretty = (key: string) => key.replace(/[_?]+/g, " ").replace(/\s+/g, " ").
  * Turns Meta's `field_data` into CRM fields. Standard question keys (full_name, email,
  * phone_number…) map to columns; every answer, custom questions included, is kept in `answers`.
  */
+/** Leads made by Meta's testing tools carry "<test lead: dummy data for …>" answers. */
+export const isTestLead = (lead: MetaLead) => (lead.field_data ?? []).some((f) => (f.values ?? []).some((v) => /^<test lead/i.test(v)));
+
 export function fromMetaLead(lead: MetaLead): LeadInput {
   const answers: { question: string; answer: string }[] = [];
   const byKey = new Map<string, string>();

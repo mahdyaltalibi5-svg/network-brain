@@ -1,11 +1,11 @@
 import { config } from "../config";
-import { upsertLead, type AlertMode } from "../leads";
+import { importMetaLead, type AlertMode } from "../leads";
 import { notifyAll } from "../push";
 import { withBase } from "../base";
 import { readSettings, writeSettings } from "../vault";
 import { metaCreds, SECRET_KEYS, type ConnectStep } from "./creds";
 import { graph, graphAll } from "./graph";
-import { fetchRecentLeads, fromMetaLead } from "./leadgen";
+import { fetchRecentLeads } from "./leadgen";
 import { syncAds } from "./ads-sync";
 
 /**
@@ -232,7 +232,7 @@ export async function pollLeads({ days, force = false, alert = "always", minInte
   const since = days ? now - days * 86_400_000 : (m.lastPollAt?.getTime() ?? now - 3 * 86_400_000) - 15 * 60_000;
   const leads = await fetchRecentLeads(Math.floor(since / 1000));
   let created = 0;
-  for (const l of leads) if ((await upsertLead(fromMetaLead(l), { alert })).created) created++;
+  for (const l of leads) if ((await importMetaLead(l, { alert })).created) created++;
   await writeSettings({ "meta.last_poll": new Date(now).toISOString() });
   return { skipped: false as const, fetched: leads.length, created };
 }
