@@ -1,3 +1,4 @@
+import { getDb } from "../db";
 import { metaCreds } from "./creds";
 import { graph, graphAll } from "./graph";
 import { leadFormIds } from "./leadgen";
@@ -37,6 +38,17 @@ export async function instantStatus() {
       }
     }),
   );
+  // How fast real form leads actually reached the CRM: from submission on Meta to arriving here.
+  const db = await getDb();
+  out.recent_leads = (
+    await db.query<{ initials: string; submitted: string; arrived: string; seconds: number }>(
+      `SELECT regexp_replace(COALESCE(full_name, '?'), '(\\w)\\w*\\s*', '\\1', 'g') AS initials,
+              lead_created_at AS submitted, created_at AS arrived,
+              EXTRACT(EPOCH FROM created_at - lead_created_at)::int AS seconds
+       FROM leads WHERE source = 'meta' AND meta_lead_id NOT LIKE 'dm:%' AND COALESCE(full_name, '') <> 'Meta test lead'
+       ORDER BY created_at DESC LIMIT 15`,
+    )
+  ).map((r) => ({ who: r.initials, submitted: r.submitted, arrived: r.arrived, seconds: Number(r.seconds) }));
   return out;
 }
 
