@@ -9,7 +9,7 @@ import { config, integrations } from "@/lib/config";
 import { redirectUri, SCOPES, webhookUrl } from "@/lib/meta/connect";
 import { metaCreds } from "@/lib/meta/creds";
 import { secretStatus } from "@/lib/secrets";
-import { subscriptionCount } from "@/lib/push";
+import { subscriptionCount, subscriptions } from "@/lib/push";
 import { disconnectAction } from "./actions";
 import { stages } from "@/lib/stages";
 
@@ -27,6 +27,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const origin = config.publicUrl();
   const list = integrations(m, await secretStatus());
   const devices = await subscriptionCount();
+  const deviceList = await subscriptions();
 
   return (
     <>
@@ -155,8 +156,15 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <AlertsToggle publicKey={config.push.publicKey()} />
           <p className="mt-3 text-sm text-ivory-dim" data-testid="alert-devices">
             {devices ? `Lead alerts are on for ${devices} device${devices === 1 ? "" : "s"}.` : "No device has lead alerts on yet. Turn them on from Kobe’s phone."}{" "}
-            Every new lead from a Facebook or Instagram ad, an Instagram or Facebook message, or the website sends one.
+            Every new lead from a Facebook or Instagram ad or the website sends one, then reminders at 5, 15 and 60 minutes until someone calls, texts or emails them.
           </p>
+          {deviceList.length > 0 && (
+            <ul className="mt-2 space-y-1 text-sm text-ivory-dim" data-testid="alert-device-list">
+              {deviceList.map((d, i) => (
+                <li key={i}>• {d.label} ({d.service}), added {d.added.toLocaleDateString("en-US", { timeZone: "America/Denver", month: "short", day: "numeric" })}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 

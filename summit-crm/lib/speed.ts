@@ -97,7 +97,7 @@ export async function sendNudges(now = new Date()) {
     await db.query(`UPDATE leads SET nudges = $2 WHERE id = $1`, [r.id, due]);
     await notifyAll({
       title: `Still waiting · ${formatMinutes(Number(r.age))}`,
-      body: `${r.full_name ?? "A new lead"}${r.occasion ? ` · ${r.occasion}` : ""} hasn't heard from you yet.`,
+      body: `${r.full_name ?? "A new lead"}${r.occasion ? ` · ${r.occasion.replace(/_/g, " ")}` : ""} hasn't heard from you yet. Tap to call.`,
       url: withBase(`/leads/${r.id}`),
       tag: `lead-${r.id}`,
     });

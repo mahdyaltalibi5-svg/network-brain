@@ -41,12 +41,15 @@ export default async function TodayPage() {
   await connection();
   const [waiting, due, upcoming, stats] = await Promise.all([waitingLeads(), dueFollowUps(), upcomingFollowUps(7), speedStats(30)]);
   const nowMs = new Date().getTime();
+  // Speed to lead is about the people who just arrived; older uncontacted leads get their own list.
+  const fresh = waiting.filter((l) => nowMs - l.leadCreatedAt.getTime() < 24 * 3_600_000);
+  const older = waiting.filter((l) => nowMs - l.leadCreatedAt.getTime() >= 24 * 3_600_000);
 
   return (
     <div className="space-y-8">
       <div>
         <p className="eyebrow">Today</p>
-        <h1 className="mt-2 font-display text-5xl">{waiting.length + due.length ? `${waiting.length + due.length} to reach` : "All caught up"}</h1>
+        <h1 className="mt-2 font-display text-5xl">{fresh.length + due.length ? `${fresh.length + due.length} to reach` : "All caught up"}</h1>
         <p className="mt-2 max-w-2xl text-sm text-ivory-dim">New leads first: reply inside 5 minutes and they are far more likely to book. Then your follow-ups.</p>
       </div>
 
@@ -54,15 +57,15 @@ export default async function TodayPage() {
 
       <section aria-labelledby="w-h">
         <h2 id="w-h" className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-ivory">
-          <Zap className="h-4 w-4 text-gold" aria-hidden="true" /> Waiting for a first reply <span className="pill">{waiting.length}</span>
+          <Zap className="h-4 w-4 text-gold" aria-hidden="true" /> Reply now <span className="pill">{fresh.length}</span>
         </h2>
-        {waiting.length === 0 ? (
-          <p className="tile text-sm text-ivory-dim">Nobody waiting. New leads appear here the moment they arrive.</p>
+        {fresh.length === 0 ? (
+          <p className="tile text-sm text-ivory-dim">Nobody new waiting. New leads appear here (and on your phone) seconds after they submit.</p>
         ) : (
           <ul className="space-y-3" data-testid="waiting">
-            {waiting.map((l) => (
+            {fresh.map((l) => (
               <LeadRow key={l.id} l={l} aside={<span className="shrink-0 text-xs text-stone">waiting <Since iso={l.leadCreatedAt.toISOString()} className="text-base" /></span>}>
-                {l.occasion && <span>{l.occasion}</span>}
+                {l.occasion && <span>{l.occasion.replace(/_/g, " ")}</span>}
                 <SourceBadge source={l.source} short />
                 {l.campaignName && <span className="truncate text-xs text-stone">{l.campaignName}</span>}
               </LeadRow>
@@ -70,6 +73,23 @@ export default async function TodayPage() {
           </ul>
         )}
       </section>
+
+      {older.length > 0 && (
+        <details className="group" data-testid="older-waiting">
+          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold tracking-wide text-ivory-dim hover:text-ivory">
+            Older leads never contacted <span className="pill">{older.length}</span>
+            <span className="text-xs font-normal text-stone">More than a day old. Call, or mark them lost so they stop showing.</span>
+          </summary>
+          <ul className="mt-3 space-y-3">
+            {older.map((l) => (
+              <LeadRow key={l.id} l={l} aside={<span className="shrink-0 text-xs text-stone">{Math.floor((nowMs - l.leadCreatedAt.getTime()) / 86_400_000)}d ago</span>}>
+                {l.occasion && <span>{l.occasion.replace(/_/g, " ")}</span>}
+                {l.campaignName && <span className="truncate text-xs text-stone">{l.campaignName}</span>}
+              </LeadRow>
+            ))}
+          </ul>
+        </details>
+      )}
 
       <section aria-labelledby="f-h">
         <h2 id="f-h" className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-ivory">

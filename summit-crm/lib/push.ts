@@ -25,6 +25,16 @@ export async function removeSubscription(endpoint: string) {
   await db.query(`DELETE FROM push_subscriptions WHERE endpoint = $1`, [endpoint]);
 }
 
+/** Devices with alerts on: a label (Phone / Computer + browser) and when they were added. */
+export async function subscriptions() {
+  const db = await getDb();
+  return (await db.query<{ label: string | null; created_at: unknown; endpoint: string }>(`SELECT label, created_at, endpoint FROM push_subscriptions ORDER BY created_at`)).map((r) => ({
+    label: r.label ?? "Device",
+    service: /apple\.com/.test(r.endpoint) ? "iPhone / Safari" : /fcm\.googleapis|google/.test(r.endpoint) ? "Chrome / Android" : /mozilla/.test(r.endpoint) ? "Firefox" : /windows|notify\.windows/.test(r.endpoint) ? "Edge" : "Browser",
+    added: r.created_at instanceof Date ? r.created_at : new Date(String(r.created_at)),
+  }));
+}
+
 export async function subscriptionCount() {
   const db = await getDb();
   return Number((await db.query(`SELECT count(*)::int AS n FROM push_subscriptions`))[0].n);

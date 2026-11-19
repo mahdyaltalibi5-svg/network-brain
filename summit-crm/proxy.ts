@@ -3,7 +3,7 @@ import { SESSION_COOKIE, verifySession } from "@/lib/auth";
 
 /** Everything is private except sign-in and the endpoints Meta, Vercel Cron and the website call. */
 const PUBLIC = [
-  /^\/login$/, /^\/api\/meta\/webhook$/, /^\/api\/meta\/sync$/, /^\/api\/leads$/, /^\/api\/health$/, /^\/api\/speed\/nudge$/,
+  /^\/login$/, /^\/api\/meta\/webhook$/, /^\/api\/meta\/sync$/, /^\/api\/leads$/, /^\/api\/health$/, /^\/api\/speed\/nudge$/, /^\/api\/speed\/tick$/,
   // installable app: the manifest, service worker and icons load without a session
   /^\/manifest\.webmanifest$/, /^\/sw\.js$/, /^\/icons\//, /^\/apple-icon/,
 ];

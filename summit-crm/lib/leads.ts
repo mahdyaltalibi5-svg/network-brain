@@ -190,6 +190,8 @@ export async function upsertLead(input: LeadInput, { alert = "auto", testAlert =
   await log(lead.id, "created", `Lead from ${from}${lead.campaignName ? ` (${lead.campaignName})` : ""}`);
   // Website enquiries already fire "Lead" from the Meta Pixel on the booking page; sending it
   // again from here would count each one twice. Their later stages are still reported.
+  // Start the speed-to-lead clock (5/15/60-minute reminders) for a fresh lead.
+  if (Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000 && !testAlert) await import("./ticker").then((t) => t.kickTicker()).catch(() => false);
   // Alert the phone right away (see AlertMode).
   if (alert === "always" || (alert === "auto" && Date.now() - lead.leadCreatedAt.getTime() < 30 * 60_000)) {
     const a = testAlert ? { title: "Instant leads are working", body: "Meta's test lead reached the CRM in seconds. Real leads will arrive the same way." } : leadAlert(lead);

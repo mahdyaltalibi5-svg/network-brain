@@ -9,7 +9,7 @@ async function waitingCount() {
   await connection();
   try {
     const db = await getDb();
-    return Number((await db.query(`SELECT count(*)::int AS n FROM leads WHERE first_contact_at IS NULL AND stage = 'new'`))[0].n);
+    return Number((await db.query(`SELECT count(*)::int AS n FROM leads WHERE first_contact_at IS NULL AND stage = 'new' AND lead_created_at > now() - interval '24 hours'`))[0].n);
   } catch {
     return 0;
   }
